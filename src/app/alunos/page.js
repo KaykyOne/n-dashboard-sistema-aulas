@@ -22,17 +22,17 @@ export default function AlunosPage() {
 
       <div className="row-span-1 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="row-span-1 grid grid-cols-1 gap-4" >
-          <div className="p-6 row-span-1 bg-white" >
+          <div className="p-6 row-span-1 bg-white rounded-sm" >
             <h1><strong>Total</strong> de Alunos Ativos:</h1>
             <h1 className="font-bold text-7xl">400</h1>
           </div>
-          <div className="p-6 row-span-1 bg-white" >
+          <div className="p-6 row-span-1 bg-white rounded-sm" >
             <h1>Relação <strong>Aluno</strong> x <strong>Instrutor</strong>:</h1>
             <h1 className="font-bold text-7xl">80</h1>
           </div>
         </div>
 
-        <div className="p-6 row-span-1 bg-white" >
+        <div className="p-6 row-span-1 bg-white rounded-sm" >
           <h1>Média de novos <strong>Alunos</strong> por Mês</h1>
           <h1 className="font-bold text-9xl">25</h1>
           <div className="border-2 border-solid border-black">

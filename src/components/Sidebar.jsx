@@ -16,7 +16,7 @@ export default function Sidebar() {
 
 
   const cssPadrao = "flex items-center gap-2 p-2 rounded-lg hover:text-[#6F0A59] hover:font-bold";
-  const cssSelecionado = "flex items-center gap-2 p-2 rounded-lg text-[#6F0A59] font-bold border-2 border-solid";
+  const cssSelecionado = "flex items-center gap-2 p-2 rounded-lg w-full text-[#6F0A59] font-bold bg-gray-200 border-solid";
 
   return (
     <aside className="w-64 bg-white h-screen p-4 shadow-md fixed left-0 top-0">
@@ -62,19 +62,23 @@ export default function Sidebar() {
         </Link>
       </nav>
 
-      <Button className="w-full mt-3" onClick={() => setAbrirModalAluno(true)}>
-        Novo Aluno
-        <i className="material-icons">add</i>
-      </Button>
+      <Link href="/alunos/novoAluno">
+        <Button className="w-full mt-3" onClick={() => setSelectedpage("/novoAluno")}>
+          Novo Aluno
+          <i className="material-icons">add</i>
+        </Button>
+      </Link>
 
-      <Button className="w-full mt-3" onClick={() => setAbrirModalAula(true)}>
-        Nova Aula
-        <i className="material-icons">add</i>
-      </Button>
+      <Link href="/aulas/novaAula">
+        <Button className="w-full mt-3" onClick={() => setSelectedpage("/novaAula")}>
+          Nova Aula
+          <i className="material-icons">add</i>
+        </Button>
+      </Link>
 
       {abrirModalAluno && (
         <Modal onClose={() => setAbrirModalAluno(false)}>
-          <FormNovoAluno/>
+          <FormNovoAluno />
         </Modal>
       )}
 
