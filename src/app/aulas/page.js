@@ -25,7 +25,6 @@ export default function AulasPage() {
   const [dataSelecionada, setDataSelecionada] = useState(new Date());
 
   const aulasFiltradas = aulas.filter((aula) => {
-
     aula.data.toLowerCase().includes(search.toLowerCase())
   }
   );
@@ -56,22 +55,24 @@ export default function AulasPage() {
 
       <div className="p-6 row-span-2 bg-white rounded-sm">
         {/* Barra de pesquisa */}
-        <div className='flex align-middle gap-4 mb-3'>
+        <div className='grid grid-cols-5 align-middle gap-4 mb-3'>
           <Combobox
             options={opcoes}
             value={tipo}
             onChange={setTipo}
             placeholder="Escolha o tipo"
+            className={'col-span-2'}
           />
-
-          <DatePicker value={dataSelecionada} onChange={setDataSelecionada} />
 
           <Combobox
             options={opcoes}
             value={tipo}
             onChange={setTipo}
             placeholder="Escolha o instrutor"
+            className={'col-span-2'}
           />
+
+          <DatePicker value={dataSelecionada} onChange={setDataSelecionada} />
         </div>
 
 

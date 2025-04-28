@@ -62,31 +62,12 @@ export default function Sidebar() {
         </Link>
       </nav>
 
-      <Link href="/alunos/novoAluno">
-        <Button className="w-full mt-3" onClick={() => setSelectedpage("/novoAluno")}>
-          Novo Aluno
-          <i className="material-icons">add</i>
-        </Button>
-      </Link>
-
       <Link href="/aulas/novaAula">
         <Button className="w-full mt-3" onClick={() => setSelectedpage("/novaAula")}>
           Nova Aula
-          <i className="material-icons">add</i>
+          <span className="material-icons">add</span>
         </Button>
       </Link>
-
-      {abrirModalAluno && (
-        <Modal onClose={() => setAbrirModalAluno(false)}>
-          <FormNovoAluno />
-        </Modal>
-      )}
-
-      {abrirModalAula && (
-        <Modal onClose={() => setAbrirModalAula(false)}>
-          <p>Formulário de nova aula</p>
-        </Modal>
-      )}
 
       <div className="mt-15 flex justify-center items-center pb-4">
         <Image src={desenho} alt="Desenho do menu lateral" width={200} height={100} />
