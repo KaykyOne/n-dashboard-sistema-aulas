@@ -1,50 +1,63 @@
 "use client"
 import { Combobox } from '@/components/ui/combobox'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from '../../components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 
+const veiculos = [
+  { veiculo_id: 1, placa: "ABC1234", modelo: "Onix", tipo: "A", disponibilidade: true },
+  { veiculo_id: 2, placa: "DEF5678", modelo: "HB20", tipo: "B", disponibilidade: false },
+  { veiculo_id: 3, placa: "GHI9012", modelo: "Kwid", tipo: "A", disponibilidade: true },
+  { veiculo_id: 4, placa: "JKL3456", modelo: "Corolla", tipo: "B", disponibilidade: true },
+  { veiculo_id: 5, placa: "MNO7890", modelo: "Civic", tipo: "B", disponibilidade: false },
+  { veiculo_id: 6, placa: "PQR1234", modelo: "Uno", tipo: "A", disponibilidade: true },
+  { veiculo_id: 7, placa: "STU5678", modelo: "Gol", tipo: "E", disponibilidade: false },
+];
+
+const veiculosOptions = veiculos.map((v) => ({
+  value: v.veiculo_id.toString(), // ou pode ser a placa se quiser
+  label: `${v.modelo} - ${v.placa}`, // o que aparece na lista
+}))
+
+
+const instrutores = [
+  { instrutor_id: 1, nome_instrutor: "João Silva", tipo_instrutor: "A", atividade_instrutor: true },
+  { instrutor_id: 2, nome_instrutor: "Maria Souza", tipo_instrutor: "B", atividade_instrutor: false },
+  { instrutor_id: 3, nome_instrutor: "Carlos Lima", tipo_instrutor: "AB", atividade_instrutor: true },
+  { instrutor_id: 4, nome_instrutor: "Fernanda Alves", tipo_instrutor: "A", atividade_instrutor: true },
+  { instrutor_id: 5, nome_instrutor: "Pedro Henrique", tipo_instrutor: "B", atividade_instrutor: false },
+];
+
+const instrutoresOptions = instrutores.map((i) => ({
+  value: i.instrutor_id.toString(),
+  label: i.nome_instrutor,
+}))
 
 export default function VeiculoPage() {
   const [search, setSearch] = useState("");
+  const [veiculosFiltrados, setVeiculosFiltrados] = useState(veiculos);
 
-  const veiculos = [
-    { veiculo_id: 1, placa: "ABC1234", modelo: "Onix", tipo: "A", disponibilidade: true },
-    { veiculo_id: 2, placa: "DEF5678", modelo: "HB20", tipo: "B", disponibilidade: false },
-    { veiculo_id: 3, placa: "GHI9012", modelo: "Kwid", tipo: "A", disponibilidade: true },
-    { veiculo_id: 4, placa: "JKL3456", modelo: "Corolla", tipo: "B", disponibilidade: true },
-    { veiculo_id: 5, placa: "MNO7890", modelo: "Civic", tipo: "B", disponibilidade: false },
-    { veiculo_id: 6, placa: "PQR1234", modelo: "Uno", tipo: "A", disponibilidade: true },
-    { veiculo_id: 7, placa: "STU5678", modelo: "Gol", tipo: "E", disponibilidade: false },
-  ];
+  const filtrarVeiculos = () => {
+    const veiculosFiltro = veiculosFiltrados.filter((veiculo) =>
+      veiculo.placa.toLowerCase().includes(search.toLowerCase())
+    );
+    setVeiculosFiltrados(veiculosFiltro);
+  }
 
-  const veiculosOptions = veiculos.map((v) => ({
-    value: v.veiculo_id.toString(), // ou pode ser a placa se quiser
-    label: `${v.modelo} - ${v.placa}`, // o que aparece na lista
-  }))
+  useEffect(() => {
+    if (search == "") {
+      setVeiculosFiltrados(veiculos);
+      return;
+    }
+    filtrarVeiculos();
+  }, [search])
 
-
-  const instrutores = [
-    { instrutor_id: 1, nome_instrutor: "João Silva", tipo_instrutor: "A", atividade_instrutor: true },
-    { instrutor_id: 2, nome_instrutor: "Maria Souza", tipo_instrutor: "B", atividade_instrutor: false },
-    { instrutor_id: 3, nome_instrutor: "Carlos Lima", tipo_instrutor: "AB", atividade_instrutor: true },
-    { instrutor_id: 4, nome_instrutor: "Fernanda Alves", tipo_instrutor: "A", atividade_instrutor: true },
-    { instrutor_id: 5, nome_instrutor: "Pedro Henrique", tipo_instrutor: "B", atividade_instrutor: false },
-  ];
-
-  const instrutoresOptions = instrutores.map((i) => ({
-    value: i.instrutor_id.toString(),
-    label: i.nome_instrutor,
-  }))
-
-
-  const veiculosFiltrados = veiculos.filter((veiculo) =>
-    veiculo.placa.toLowerCase().includes(search.toLowerCase())
-  );
-
-
+  const handleAlterState = (veiculo) => {
+    veiculo.disponibilidade = !veiculo.disponibilidade;
+    filtrarVeiculos();
+  }
 
   return (
     <div className='flex flex-col gap-4 text-[#6F0A59]'>
@@ -123,7 +136,7 @@ export default function VeiculoPage() {
           />
 
           {/* Tabela */}
-          <div className='flex-1 max-h-[500px] overflow-auto'>
+          <div className='flex-1 h-[300px] overflow-auto'>
             <Table className="table-fixed w-full">
 
               <TableHeader>
@@ -141,8 +154,13 @@ export default function VeiculoPage() {
                     <TableCell className={'font-bold'}>{veiculo.placa}</TableCell>
                     <TableCell>{veiculo.modelo}</TableCell>
                     <TableCell>{veiculo.tipo}</TableCell>
-                    <TableCell className={veiculo.disponibilidade ? "bg-green-700 text-white font-medium" : "bg-red-700 text-white font-medium"}>
-                      {veiculo.disponibilidade ? "Ativo" : "Inátivo"}
+                    <TableCell>
+                      <Button
+                        className={'w-full'}
+                        variant={veiculo.disponibilidade ? "green" : "destructive"}
+                        onClick={() => handleAlterState(veiculo)}>
+                        {veiculo.disponibilidade ? "Ativo" : "Inativo"}
+                      </Button>
                     </TableCell>
                     <TableCell className={'max-w-[100px]'}>
                       <Button className={'w-full'} variant={'alert'}>
