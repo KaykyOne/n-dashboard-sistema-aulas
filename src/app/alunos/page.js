@@ -47,9 +47,9 @@ const opcoesDeTipo = [
 export default function AlunosPage() {
 
   //Buscar
-  const { alunos: usuarios, loading, buscarAlunos } = useAlunos();
+  const { alunos: usuarios, loading, buscarAlunos, getInstrutoresResponsaveis, instrturesResponsaveis } = useAlunos();
   const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
-  const [instrutresAtivos, setInstutoresAtivos] = useState([]);
+
 
   //Editar
   const [editando, setEditando] = useState(false);
@@ -112,7 +112,9 @@ export default function AlunosPage() {
     setCpf(user.cpf);
     setCpfInstrutorResponsavel(user.cpf);
     setTelefone(user.telefone);
-    setCategoria(user.categoria_pretendida);
+    let userCategoria = user.categoria_pretendida.toUpperCase();
+    let categorias =userCategoria.split("");
+    setCategoria(categorias);
     setOutraCidade(user.outra_cidade);
   }
 
@@ -122,15 +124,18 @@ export default function AlunosPage() {
   }, []);
 
   useEffect(() => {
+    if(cpfInstrutorResponsavel.length >= 11){
+      getInstrutoresResponsaveis(cpfInstrutorResponsavel);
+    }
+  }, [cpfInstrutorResponsavel])
+
+  useEffect(() => {
     // Sempre que "usuarios" mudar, atualiza os filtrados
     setUsuariosFiltrados(usuarios);
     setSearchForAtv("Ativo");
     filtrarUsuarios();
   }, [usuarios]);
 
-  useEffect(() => {
-    setInstutoresAtivos(instrutores);
-  }, [instrutores])
 
   useEffect(() => {
     if (searchForName == "" && searchForCPF == "" && searchForCat == "") {
@@ -205,7 +210,7 @@ export default function AlunosPage() {
 
   return (
     <div className="relative">
-      {loading && <Loading />}
+      {loading || loadingInstrutor && <Loading />}
       <div className="flex flex-col gap-4">
         <div className="grid grid-cols-3 gap-4">
           {/* Form de cadastro */}
@@ -281,7 +286,7 @@ export default function AlunosPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {instrutresAtivos.map((instrutor) => (
+                  {instrturesResponsaveis.map((instrutor) => (
                     <TableRow key={instrutor.instrutor_id}>
                       <TableCell>{instrutor.instrutor_id}</TableCell>
                       <TableCell>{instrutor.nome_instrutor}</TableCell>
@@ -346,6 +351,7 @@ export default function AlunosPage() {
                   <TableHead>Telefone</TableHead>
                   <TableHead>Categoria</TableHead>
                   <TableHead>Data Cadastro</TableHead>
+                  <TableHead>Outra Cidade</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
@@ -359,6 +365,7 @@ export default function AlunosPage() {
                     <TableCell>{user.telefone}</TableCell>
                     <TableCell>{user.categoria_pretendida.toUpperCase()}</TableCell>
                     <TableCell>{format(user.data_cadastro, 'dd/MM/yyyy')}</TableCell>
+                    <TableCell>{user.outra_cidade ? "Sim" : "Não"}</TableCell>
                     <TableCell>
                       <Button
                         className={'w-full'}

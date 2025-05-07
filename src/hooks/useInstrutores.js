@@ -11,7 +11,7 @@ export default function useInstrutores() {
         try{
             let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/adm/buscarTodosInstrutores?autoescola_id=${autoescola_id}`);
             let respostaJson = await res.json();
-            console.log(respostaJson);
+            // console.log(respostaJson);
             setInstrutores(respostaJson);
         }catch(error){
             console.error(`erro ao buscar isntrutores: ${error}`);
