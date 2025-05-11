@@ -1,7 +1,7 @@
 "use client"
 import { Combobox } from '@/components/ui/combobox'
 import React, { useEffect } from 'react'
-import { Button } from '../../components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';

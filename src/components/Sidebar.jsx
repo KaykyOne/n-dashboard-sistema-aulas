@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../imgs/NovusCFC.png";
@@ -8,12 +8,15 @@ import desenho from "../imgs/DesenhoMenu.png";
 import { Button } from "./ui/button";
 import Modal from "../components/Modal";
 import FormNovoAluno from "./forms/FormNovoAluno";
+import { usePathname  } from "next/navigation";
 
 export default function Sidebar() {
-  const [selectedPage, setSelectedpage] = useState("/");
-  const [abrirModalAluno, setAbrirModalAluno] = useState(false);
-  const [abrirModalAula, setAbrirModalAula] = useState(false);
+  const [selectedPage, setSelectedpage] = useState("");
+  const path = usePathname();
 
+  useEffect(() => {
+    setSelectedpage(path);
+  })
 
   const cssPadrao = "flex items-center gap-2 p-2 rounded-lg hover:text-[#6F0A59] hover:font-bold";
   const cssSelecionado = "flex items-center gap-2 p-2 rounded-lg w-full text-[#6F0A59] font-bold bg-gray-200 border-solid";
@@ -26,7 +29,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="mt-4 space-y-2">
-        <Link onClick={() => setSelectedpage("/")} href="/" className={selectedPage === "/" ? cssSelecionado : cssPadrao}>
+        <Link onClick={() => setSelectedpage("/inicio")} href="/inicio" className={selectedPage === "/inicio" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">home</i>
           Início
         </Link>

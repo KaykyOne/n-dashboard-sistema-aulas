@@ -8,7 +8,10 @@ import { Button } from '@/components/ui/button';
 import useAula from '@/hooks/useAulas';
 import useInstrutores from '@/hooks/useInstrutores';
 import Loading from '@/components/Loading';
+import Modal from '@/components/Modal';
+import Image from 'next/image';
 
+import deleteImage from '../../../imgs/imageDelete.svg'
 
 const opcoesAula = [
   {
@@ -26,12 +29,14 @@ const opcoesAula = [
 ]
 
 export default function AulasPage() {
-  const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos } = useAula();
-  const {buscarInstrutores, instrutores, loading: loadingInstrutor} = useInstrutores();
+  const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos, deleteAula, buscarAulasInstrutor } = useAula();
+  const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
 
   const [aulas, setAulas] = useState([]);
   const [aulasFiltradas, setAulasFiltradas] = useState([]);
   const [tipo, setTipo] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [moodalContent, setModalContent] = useState();
 
   aulasFiltradas.sort((a, b) => {
     let hora1, hora2;
@@ -53,6 +58,43 @@ export default function AulasPage() {
     value: i.instrutor_id.toString(),
     label: i.nome_instrutor,
   }));
+
+  const confirmDeleteAula = async (id) => {
+    if (!id) return;
+    setModalVisible(true);
+    setModalContent(
+      <div className='flex flex-col gap-3 text-center justify-center items-center'>
+        <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
+        <Image width={500} className='m-5' src={deleteImage} alt='Imagem Delete' />
+        <div className='flex gap-2'>
+          <Button variant={'green'} onClick={() => {
+            setModalVisible(false);
+            deleteAula(id);
+          }}>
+            Confirmar
+            <span className="material-icons">
+              check_circle
+            </span>
+          </Button>
+          <Button
+            variant={'destructive'}
+            onClick={() => setModalVisible(false)}>
+            Cancelar
+            <span className="material-icons">
+              cancel
+            </span>
+          </Button>
+        </div>
+      </div>
+    )
+
+    return;
+  }
+
+  useEffect(() => {
+    if (!modalVisible && instrutor && data)
+      buscarAulasInstrutor(instrutor, data);
+  }, [modalVisible])
 
   useEffect(() => {
     buscarInstrutores(1);
@@ -84,7 +126,7 @@ export default function AulasPage() {
 
   return (
     <div className='relative'>
-      {loadingAulas || loadingInstrutor && <Loading />}    
+      {loadingAulas || loadingInstrutor && <Loading />}
       <div className="grid grid-cols-1 gap-4">
 
         <div className="row-span-1 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -152,7 +194,8 @@ export default function AulasPage() {
                     <TableCell className={'max-w-[60px]'}>
                       <Button
                         className={"w-full"}
-                        variant={"destructive"}>
+                        variant={"destructive"}
+                        onClick={() => confirmDeleteAula(aula.aula_id)}>
                         Excluir
                         <span className="material-icons">
                           delete
@@ -168,7 +211,8 @@ export default function AulasPage() {
                     <TableCell className={'max-w-[60px]'}>
                       <Button
                         className={"w-full"}
-                        variant={"alert"}>
+                        variant={"alert"}
+                      >
                         Marcar Aula
                         <span className="material-icons">
                           touch_app
@@ -181,8 +225,10 @@ export default function AulasPage() {
           </Table>
         </div>
       </div>
+      {modalVisible &&
+        <Modal onClose={() => setModalVisible(false)}>
+          {moodalContent}
+        </Modal>}
     </div>
-
-
   );
 }

@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState, useEffect } from "react";
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
 import useAlunos from "@/hooks/useAlunos";
 import useInstrutores from "@/hooks/useInstrutores";

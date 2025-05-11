@@ -6,76 +6,12 @@ import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/datePicker';
 import { Combobox } from '@/components/ui/combobox';
+import useFinanceiro from '@/hooks/useFinanceiro';
+import Loading from '@/components/Loading';
+import Modal from '@/components/Modal';
+import Image from 'next/image';
 
-const transacoes = [
-  {
-    transacao_id: 1,
-    usuario: { usuario_id: 3, nome: "roberto", sobrenome: "carlos", cpf: "12345678912" },
-    tipo: 'entrada',
-    valor: 150.00,
-    data: '2025-05-01',
-    descricao: 'Pagamento da matrícula',
-  },
-  {
-    transacao_id: 2,
-    usuario: { usuario_id: 3, nome: "roberto", sobrenome: "carlos", cpf: "12345678912" },
-    tipo: 'saida',
-    valor: 50.00,
-    data: '2025-05-02',
-    descricao: 'Compra de material',
-  },
-  {
-    transacao_id: 3,
-    usuario: { usuario_id: 3, nome: "roberto", sobrenome: "carlos", cpf: "12345678912" },
-    tipo: 'entrada',
-    valor: 100.00,
-    data: '2025-05-03',
-    descricao: 'Aula avulsa',
-  },
-  {
-    transacao_id: 4,
-    usuario: { usuario_id: 3, nome: "roberto", sobrenome: "carlos", cpf: "12345678912" },
-    tipo: 'saida',
-    valor: 25.00,
-    data: '2025-05-04',
-    descricao: 'Taxa de manutenção',
-  },
-  {
-    transacao_id: 5,
-    usuario: { usuario_id: 3, nome: "carlos", sobrenome: "carlos", cpf: "231231232313" },
-    tipo: 'debito',
-    valor: 280.00,
-    data: '2025-05-04',
-    descricao: 'Taxa de manutenção',
-  },
-];
-
-const transacoesAluno = [
-  {
-    transacao_id: 1,
-    usuario: { usuario_id: 3, nome: "roberto", sobrenome: "carlos", cpf: "12345678912" },
-    tipo: 'entrada',
-    valor: 150.00,
-    data: '2025-05-01',
-    descricao: 'Pagamento da matrícula',
-  },
-  {
-    transacao_id: 2,
-    usuario: { usuario_id: 3, nome: "roberto", sobrenome: "carlos", cpf: "12345678912" },
-    tipo: 'saida',
-    valor: 50.00,
-    data: '2025-05-02',
-    descricao: 'Compra de material',
-  },
-  {
-    transacao_id: 3,
-    usuario: { usuario_id: 3, nome: "roberto", sobrenome: "carlos", cpf: "12345678912" },
-    tipo: 'entrada',
-    valor: 100.00,
-    data: '2025-05-03',
-    descricao: 'Aula avulsa',
-  },
-];
+import deleteImage from '@/imgs/imageDelete.svg';
 
 const opcoesPesquisa = [
   {
@@ -93,6 +29,11 @@ const opcoesPesquisa = [
 ]
 
 export default function FinanceiroPage() {
+
+  //Hooks
+  const { criarTransacao, error, res, loading, transacoes, transacoesUsuario, buscarTransacoes, buscarTransacaoPorUsuario, excluirTransacao } = useFinanceiro();
+
+  //Transacoes
   const [entradas, setEntradas] = useState([]);
   const [saidas, setSaidas] = useState([]);
   const [debitos, setDebitos] = useState([]);
@@ -108,27 +49,61 @@ export default function FinanceiroPage() {
   const [buscaPorNome, setBuscaPorNome] = useState("");
   const [buscaPorCPF, setBuscaPorCPF] = useState("");
 
+  //Transacao por usuario
+  const [cpfPesquisa, setCpfPesquisa] = useState("");
 
   // Criar Transação
   const [tipoTransacao, setTipoTransacao] = useState("Entrada");
+  const [cpfCriar, setCpfCriar] = useState("");
+  const [valorCriar, setValorCriar] = useState("");
+  const [descricaoCriar, setDescicaoCriar] = useState("");
+
+  //Excluir Transacao
+  const [modalVisible, setModalVisible] = useState(false);
+  const [moodalContent, setModalContent] = useState();
 
   useEffect(() => {
-    const entrada = transacoes.filter(transacao => transacao.tipo === "entrada");
-    const saida = transacoes.filter(transacao => transacao.tipo === "saida");
-    const debito = transacoes.filter(transacao => transacao.tipo === "debito");
-    setEntradas(entrada);
-    setSaidas(saida);
-    setDebitos(debito);
+    const buscar = async () => {
+      buscarTransacoes(1);
+    }
+    buscar();
+  }, [])
 
-    const sumE = Object.values(entrada).reduce((acc, item) => acc + item.valor, 0);
-    const sumS = Object.values(saida).reduce((acc, item) => acc + item.valor, 0);
-    let sumD = Object.values(debito).reduce((acc, item) => acc + item.valor, 0);
-    sumD = sumE - sumD;
-    if (sumD > 0) sumD = 0;
-    setSumDebitos(formatarValor(sumD));
-    setSumEntradas(formatarValor(sumE));
-    setSumSaidas(formatarValor(sumS));
-  }, []);
+  useEffect(() => {
+    setEntradas(0);
+    setSaidas(0);
+    setDebitos(0);
+
+    if (transacoes) {
+      console.log('Transações:', transacoes); // Exibe as transações logo no início
+
+      const entrada = transacoes.filter(transacao => transacao.tipo === "entrada");
+      const saida = transacoes.filter(transacao => transacao.tipo === "saida");
+      const debito = transacoes.filter(transacao => transacao.tipo === "debito");
+
+      // Exibindo as transações filtradas para verificação
+      // console.log('Entradas:', entrada);
+      // console.log('Saídas:', saida);
+      // console.log('Débitos:', debito);
+
+      setEntradas(entrada);
+      setSaidas(saida);
+      setDebitos(debito);
+
+      // Calcular os somatórios corretamente
+      const sumE = entrada.reduce((acc, item) => acc + parseFloat(item.valor), 0);
+      const sumS = saida.reduce((acc, item) => acc + parseFloat(item.valor), 0);
+      let sumD = debito.reduce((acc, item) => acc + parseFloat(item.valor), 0);
+
+      console.log('Entradas o adm', sumE);
+      console.log('Saídas: o adm', sumS);
+      console.log('Débitos:o adm', sumD);
+      // Formatar os valores
+      setSumDebitos(formatarValor(parseFloat(sumD)));
+      setSumEntradas(formatarValor(parseFloat(sumE)));
+      setSumSaidas(formatarValor(parseFloat(sumS)));
+    }
+  }, [transacoes]);
 
   useEffect(() => {
     let filtered = [...entradas, ...saidas, ...debitos];
@@ -144,16 +119,39 @@ export default function FinanceiroPage() {
       filtered = filtered.filter(transacao => transacao.tipo === tipoFiltro.toLocaleLowerCase());
     }
 
-    if(buscaPorNome){
+    if (buscaPorNome) {
       filtered = filtered.filter(transacao => (transacao.usuario.nome + "" + transacao.usuario.sobrenome).toLocaleLowerCase().includes((buscaPorNome.trim()).toLocaleLowerCase()))
     }
 
-    if(buscaPorCPF){
+    if (buscaPorCPF) {
       filtered = filtered.filter(transacao => (transacao.usuario.cpf).includes(buscaPorCPF))
     }
 
     setFilteredTransacoes(filtered);
   }, [startDate, endDate, tipoFiltro, entradas, saidas, debitos, buscaPorNome, buscaPorCPF]);
+
+  useEffect(() => {
+    if (error) {
+      alert(error);
+      return;
+    } else if (res) {
+      alert(res);
+      setTipoTransacao("");
+      setCpfCriar("");
+      setValorCriar("");
+      setDescicaoCriar("");
+    }
+
+  }, [loading])
+
+  useEffect(() => {
+    const pesquisar = async () => {
+      await buscarTransacaoPorUsuario(cpfPesquisa)
+    }
+
+    pesquisar();
+
+  }, [cpfPesquisa])
 
   const formatarValor = (valor) => {
     const valorPositivo = Math.abs(valor);
@@ -168,10 +166,58 @@ export default function FinanceiroPage() {
     setStartDate('');
     setEndDate('');
     setTipoFiltro('');
+  };
+
+  const handleConfirm = async () => {
+    const transacao = {
+      cpf: cpfCriar,
+      valor: valorCriar,
+      descricao: descricaoCriar.toLocaleLowerCase(),
+      tipo: tipoTransacao.toLocaleLowerCase(),
+    }
+
+    await criarTransacao(transacao);
+  };
+
+  const deleteTransacao = async (id) => {
+    console.log("asdasd");
+    if (!id) return;
+    setModalContent(
+      <div className='flex flex-col gap-3 text-center justify-center items-center'>
+        <h1 className='text-2xl mb-2'>Deseja realmente excluir essa transação?</h1>
+        <Image width={500} className='m-5' src={deleteImage} alt='Imagem Delete' />
+        <div className='flex gap-2'>
+          <Button variant={'green'} onClick={() => {
+            setModalVisible(false);
+            excluirTransacao(id, 1, cpfPesquisa);
+          }}>
+            Confirmar
+            <span className="material-icons">
+              check_circle
+            </span>
+          </Button>
+          <Button
+            variant={'destructive'}
+            onClick={() => setModalVisible(false)}>
+            Cancelar
+            <span className="material-icons">
+              cancel
+            </span>
+          </Button>
+        </div>
+      </div>
+    )
+    setModalVisible(true);
+
   }
 
   return (
     <div className='flex flex-col gap-4'>
+      {loading && <Loading />}
+      {modalVisible &&
+        <Modal onClose={() => setModalVisible(false)}>
+          {moodalContent}
+        </Modal>}
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 text-green-800'>
         <div className='bg-green-200 p-4 rounded-md'>
           <h1 className='text-2xl font-medium'>Entradas: </h1>
@@ -209,6 +255,8 @@ export default function FinanceiroPage() {
               pattern="\d{11}"
               maxLength={11}
               required
+              value={cpfCriar}
+              onChange={(e) => setCpfCriar(e.target.value)}
             />
             <h1 className='text-2xl font-medium'>Valor:</h1>
             <div className='flex gap-2'>
@@ -219,10 +267,20 @@ export default function FinanceiroPage() {
                 inputMode="numeric"
                 pattern="\d{11}"
                 maxLength={11}
-                required />
+                required
+                value={valorCriar}
+                onChange={(e) => setValorCriar(parseFloat(e.target.value) || 0)} />
             </div>
+            <h1 className='text-2xl font-medium'>Oque é? (Descrição):</h1>
+            <Input
+              placeholder="Descreva sobre oque é isso (máximo 30 caracteres)"
+              type="text"
+              maxLength={30}
+              required
+              value={descricaoCriar}
+              onChange={(e) => setDescicaoCriar(e.target.value)} />
           </form>
-          <Button className={'w-full'}>
+          <Button className={'w-full'} onClick={handleConfirm}>
             Confirmar
             <span className="material-icons">
               done
@@ -241,6 +299,8 @@ export default function FinanceiroPage() {
               pattern="\d{11}"
               maxLength={11}
               required
+              value={cpfPesquisa}
+              onChange={(e) => setCpfPesquisa(e.target.value)}
             />
             <Button>Pesquisar
               <span className="material-icons">
@@ -256,10 +316,11 @@ export default function FinanceiroPage() {
                   <TableHead>Data</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Tipo</TableHead>
+                  <TableHead>Excluir</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transacoesAluno.map((transacao) =>
+                {transacoesUsuario.map((transacao) =>
                   <TableRow key={transacao.transacao_id}>
                     <TableCell>{format(transacao.data, "dd/MM/yyyy")}</TableCell>
                     <TableCell>{formatarValor(transacao.valor)}</TableCell>
@@ -268,6 +329,14 @@ export default function FinanceiroPage() {
                         "bg-yellow-200 text-yellow-800 font-bold"}`
                     }>
                       {transacao.tipo}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant={'destructive'}
+                        className={'w-full'}
+                        onClick={() => deleteTransacao(transacao.transacao_id)}>
+                        Excluir
+                      </Button>
                     </TableCell>
                   </TableRow>
                 )}
@@ -281,7 +350,7 @@ export default function FinanceiroPage() {
       <div className='bg-white p-4 rounded-md'>
         <div className='grid grid-cols-8 gap-4 p-4'>
           <Input placeholder={"Nome do Aluno"} className={'col-span-2'} value={buscaPorNome} onChange={(e) => setBuscaPorNome(e.target.value)} />
-          <Input placeholder={"CPF do Aluno"} className={'col-span-2'} value={buscaPorCPF} onChange={(e) => setBuscaPorCPF(e.target.value)}/>
+          <Input placeholder={"CPF do Aluno"} className={'col-span-2'} value={buscaPorCPF} onChange={(e) => setBuscaPorCPF(e.target.value)} />
           <DatePicker value={startDate} onChange={setStartDate} placeholder="Data Inicial" className={'col-span-1'} />
           <DatePicker value={endDate} onChange={setEndDate} placeholder="Data Final" className={'col-span-1'} />
           <Combobox
@@ -299,36 +368,46 @@ export default function FinanceiroPage() {
           </Button>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Nome Aluno:</TableHead>
-              <TableHead>CPF Aluno:</TableHead>
-              <TableHead>Valor</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead>Excluir</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredTransacoes.length > 0 && filteredTransacoes.map((transacao) =>
-              <TableRow className={'capitalize'} key={transacao.transacao_id}>
-                <TableCell className={
-                  transacao.tipo === "entrada" ? "bg-green-200 text-green-800 font-bold" :
-                    transacao.tipo === "saida" ? "bg-red-200 text-red-800 font-bold" :
-                      "bg-yellow-200 text-yellow-800 font-bold"
-                }>
-                  {transacao.tipo}
-                </TableCell>
-                <TableCell>{transacao.usuario.nome + " " + transacao.usuario.sobrenome}</TableCell>
-                <TableCell>{transacao.usuario.cpf}</TableCell>
-                <TableCell>{formatarValor(transacao.valor)}</TableCell>
-                <TableCell>{format(transacao.data, 'dd/MM/yyyy')}</TableCell>
-                <TableCell><Button variant={'destructive'} className={'w-full'}>Excluir</Button></TableCell>
+        <div className='flex max-h-[500px] scroll-auto'>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Nome Aluno:</TableHead>
+                <TableHead>CPF Aluno:</TableHead>
+                <TableHead>Valor</TableHead>
+                <TableHead>Data</TableHead>
+                <TableHead>Excluir</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredTransacoes.length > 0 && filteredTransacoes.map((transacao) =>
+                <TableRow className={'capitalize'} key={transacao.transacao_id}>
+                  <TableCell className={
+                    transacao.tipo === "entrada" ? "bg-green-200 text-green-800 font-bold" :
+                      transacao.tipo === "saida" ? "bg-red-200 text-red-800 font-bold" :
+                        "bg-yellow-200 text-yellow-800 font-bold"
+                  }>
+                    {transacao.tipo}
+                  </TableCell>
+                  <TableCell>{transacao.nome + " " + transacao.sobrenome}</TableCell>
+                  <TableCell>{(transacao.cpf).length > 11 && "inviável"}</TableCell>
+                  <TableCell>{formatarValor(transacao.valor)}</TableCell>
+                  <TableCell>{format(transacao.data, 'dd/MM/yyyy')}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant={'destructive'}
+                      className={'w-full'}
+                      onClick={() => deleteTransacao(transacao.transacao_id)}>
+                      Excluir
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
       </div>
     </div>
   );

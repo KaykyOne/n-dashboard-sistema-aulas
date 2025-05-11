@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
-import DesenhoTranquilidade from "../imgs/DesenhoTranquilidade.svg"
+import DesenhoTranquilidade from "@/imgs/DesenhoTranquilidade.svg"
 import { useState, useEffect } from "react";
 
-export default function Dashboard() {
+export default function page() {
   const [mensagemDiaria, setMensagemDiaria] = useState('');
 
   const listas = [
@@ -12,14 +12,14 @@ export default function Dashboard() {
     "A intervenção pode levar a falhas.",
     "Use o sistema sempre pensando no bem da autoescola, e não na vontade dos alunos!"
   ]
-  
+
   const dicas = [
     "Aulas de mais podem dar vantagens indesejadas!",
     "Não ataque o paquistão ;)",
     "Manter uma rotina previsível é o melhor a se fazer!"
   ]
 
-  let verLista = listas.map(function(element){
+  let verLista = listas.map(function (element) {
     return <li key={element}>{element}</li>
   })
 
