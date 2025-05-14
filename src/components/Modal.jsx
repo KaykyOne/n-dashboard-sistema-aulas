@@ -1,6 +1,6 @@
 export default function Modal({ children, onClose }) {
     return (
-      <div className="fixed inset-0 h-full w-full bg-black/50 flex justify-center items-center z-50">
+      <div className="fixed flex inset-0 h-full w-full bg-black/50 justify-center items-center z-50">
         <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-5xl relative">
           <button
             onClick={onClose}

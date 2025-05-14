@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getToken } from '@/lib/utils';
 import useGeneric from './useGeneric';
+import { toast } from 'react-toastify';
 
 export default function useInstrutores() {
 
@@ -14,8 +15,6 @@ export default function useInstrutores() {
   }
 
   async function mudarAtividadeInstrutor(id_instrutor) {
-    setLoading(true);
-
     try {
       const token = getToken();
       const res = await fetch(
@@ -30,12 +29,10 @@ export default function useInstrutores() {
 
       if (!res.ok) throw new Error("Erro ao mudar atividade");
 
-      console.log("Atividade alterada com sucesso");
+      toast.success("Atividade alterada com sucesso");
     } catch (error) {
-      console.error(`Erro ao mudar atividade do instrutor: ${error}`);
-    } finally {
-      setLoading(false);
-    }
+      toast.error(`Erro ao mudar atividade do instrutor: ${error}`);
+    } 
   }
 
   return { buscarInstrutores, mudarAtividadeInstrutor, loading, instrutores };

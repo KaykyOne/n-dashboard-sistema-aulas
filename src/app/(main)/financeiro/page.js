@@ -132,11 +132,9 @@ export default function FinanceiroPage() {
 
   useEffect(() => {
     if (error) {
-      alert(error);
       return;
     } else if (res) {
-      alert(res);
-      setTipoTransacao("");
+      setTipoTransacao("Entrada");
       setCpfCriar("");
       setValorCriar("");
       setDescicaoCriar("");

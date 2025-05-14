@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Combobox } from '@/components/ui/combobox';
@@ -10,6 +10,7 @@ import useInstrutores from '@/hooks/useInstrutores';
 import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
 import Image from 'next/image';
+import { Input } from '@/components/ui/input';
 
 import deleteImage from '../../../imgs/imageDelete.svg'
 
@@ -36,7 +37,17 @@ export default function AulasPage() {
   const [aulasFiltradas, setAulasFiltradas] = useState([]);
   const [tipo, setTipo] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [moodalContent, setModalContent] = useState();
+  const [modalContent, setModalContent] = useState();
+  const [textConfirm, setTextConfirm] = useState("");
+
+  const instrutoresOptions = useMemo(() => {
+    return instrutores
+      .filter(i => i.atividade_instrutor === true)
+      .map(i => ({
+        value: i.instrutor_id.toString(),
+        label: i.nome_instrutor,
+      }));
+  }, [instrutores]);
 
   aulasFiltradas.sort((a, b) => {
     let hora1, hora2;
@@ -54,10 +65,9 @@ export default function AulasPage() {
     return minutosA - minutosB;
   });
 
-  const instrutoresOptions = instrutores.filter(i => i.atividade_instrutor == true).map((i) => ({
-    value: i.instrutor_id.toString(),
-    label: i.nome_instrutor,
-  }));
+  const novasAulas = useMemo(() => {
+    return [...horariosVagos, ...aulasMarcadas];
+  }, [horariosVagos, aulasMarcadas]);
 
   const confirmDeleteAula = async (id) => {
     if (!id) return;
@@ -87,8 +97,36 @@ export default function AulasPage() {
         </div>
       </div>
     )
-
     return;
+  }
+
+  const createAula = async (hora) => {
+    setModalContent(
+      <div className='flex flex-col gap-3 text-center justify-center items-center'>
+        <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
+        <Image width={500} className='m-5' src={deleteImage} alt='Imagem Delete' />
+        <div className='flex gap-2'>
+          <Button variant={'green'} onClick={() => {
+            setModalVisible(false);
+            deleteAula(id);
+          }}>
+            Confirmar
+            <span className="material-icons">
+              check_circle
+            </span>
+          </Button>
+          <Button
+            variant={'destructive'}
+            onClick={() => setModalVisible(false)}>
+            Cancelar
+            <span className="material-icons">
+              cancel
+            </span>
+          </Button>
+        </div>
+      </div>
+    );
+    setModalVisible(true);
   }
 
   useEffect(() => {
@@ -101,15 +139,10 @@ export default function AulasPage() {
   }, [])
 
   useEffect(() => {
-    setAulas([]);
-    setAulasFiltradas([]);
-    if (!loadingAulas) {
-      const novasAulas = [...horariosVagos, ...aulasMarcadas];
-      setAulas(novasAulas);
-      setAulasFiltradas(novasAulas);
-      setTipo(opcoesAula[2].value);
-    }
-  }, [loadingAulas]);
+    setAulas(novasAulas);
+    setAulasFiltradas(novasAulas);
+    setTipo(opcoesAula[2].value);
+  }, [novasAulas]);
 
 
   useEffect(() => {
@@ -126,29 +159,8 @@ export default function AulasPage() {
 
   return (
     <div className='relative'>
-      {loadingAulas || loadingInstrutor && <Loading />}
+      {(loadingAulas || loadingInstrutor) && <Loading />}
       <div className="grid grid-cols-1 gap-4">
-
-        <div className="row-span-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="row-span-1 grid grid-cols-1 gap-4" >
-            <div className="p-6 row-span-1 bg-white rounded-sm" >
-              <h1>Número de <strong>Aulas</strong> Marcadas Hoje:</h1>
-              <h1 className="font-bold text-7xl">400</h1>
-            </div>
-            <div className="p-6 row-span-1 bg-white rounded-sm" >
-              <h1>Meta miníma de aulas:</h1>
-              <h1 className="font-bold text-7xl">80</h1>
-            </div>
-          </div>
-
-          <div className="p-6 row-span-1 bg-white rounded-sm" >
-            <h1>Média de aulas marcadas por dia:</h1>
-            <h1 className="font-bold text-9xl">25</h1>
-            <div className="border-2 border-solid border-black">
-              <div style={{ width: "80%" }} className="bottom-0 h-5 bg-[#6F0A59]" />
-            </div>
-          </div>
-        </div>
 
         <div className={`p-6 row-span-2 bg-white rounded-sm`}>
           {/* Barra de pesquisa */}
@@ -174,7 +186,6 @@ export default function AulasPage() {
 
           </div>
 
-
           <Table className={'text-2xl'}>
             <TableHeader>
               <TableRow>
@@ -189,7 +200,7 @@ export default function AulasPage() {
                 aula.nome != null ?
                   <TableRow key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id}>
                     <TableCell>{aula.hora}</TableCell>
-                    <TableCell>{aula.nome + " " + aula.sobrenome}</TableCell>
+                    <TableCell className={'capitalize'}>{aula.nome + " " + aula.sobrenome}</TableCell>
                     <TableCell>{aula.placa}</TableCell>
                     <TableCell className={'max-w-[60px]'}>
                       <Button
@@ -204,7 +215,7 @@ export default function AulasPage() {
                     </TableCell>
                   </TableRow>
                   :
-                  <TableRow key={aula} className={"bg-red-700 text-white cursor-pointer hover:bg-red-900"}>
+                  <TableRow key={`vaga-${aula} `} className={"bg-red-700 text-white cursor-pointer hover:bg-red-900"}>
                     <TableCell>{aula}</TableCell>
                     <TableCell>Vaga</TableCell>
                     <TableCell>Vaga</TableCell>
@@ -212,6 +223,7 @@ export default function AulasPage() {
                       <Button
                         className={"w-full"}
                         variant={"alert"}
+                        onClick={() => createAula(aula)}
                       >
                         Marcar Aula
                         <span className="material-icons">
@@ -225,10 +237,12 @@ export default function AulasPage() {
           </Table>
         </div>
       </div>
+
       {modalVisible &&
         <Modal onClose={() => setModalVisible(false)}>
-          {moodalContent}
+          {modalContent}
         </Modal>}
+
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import "../globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import { ToastContainer } from 'react-toastify';
 
 export default function RootLayout({ children }) {
   return (
@@ -17,6 +18,14 @@ export default function RootLayout({ children }) {
           <Header />
           <main className="p-6">{children}</main>
         </div>
+        <ToastContainer
+          theme="colored"
+          closeOnClick={false}
+          limit={4}
+          newestOnTop={true}
+          closeButton={true}
+          position="top-right"
+          pauseOnHover={true} />
       </body>
     </html>
   );
