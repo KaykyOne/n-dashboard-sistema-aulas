@@ -9,10 +9,10 @@ import useAula from '@/hooks/useAulas';
 import useInstrutores from '@/hooks/useInstrutores';
 import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
-import Image from 'next/image';
-import { Input } from '@/components/ui/input';
 
-import deleteImage from '../../../imgs/imageDelete.svg'
+const basePath = process.env.NODE_ENV === 'production'
+  ? '/n-dashboard-sistema-aulas'
+  : '';
 
 const opcoesAula = [
   {
@@ -75,7 +75,10 @@ export default function AulasPage() {
     setModalContent(
       <div className='flex flex-col gap-3 text-center justify-center items-center'>
         <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
-        <Image width={500} className='m-5' src={deleteImage} alt='Imagem Delete' />
+        <img
+          src={`${basePath}/imgs/imageDelete.png`}
+          alt="logo da empresa"
+          className="w-auto h-auto" />
         <div className='flex gap-2'>
           <Button variant={'green'} onClick={() => {
             setModalVisible(false);
@@ -104,7 +107,10 @@ export default function AulasPage() {
     setModalContent(
       <div className='flex flex-col gap-3 text-center justify-center items-center'>
         <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
-        <Image width={500} className='m-5' src={deleteImage} alt='Imagem Delete' />
+        <img
+          src={`${basePath}/imgs/imageDelete.png`}
+          alt="logo da empresa"
+          className="w-auto h-auto" />
         <div className='flex gap-2'>
           <Button variant={'green'} onClick={() => {
             setModalVisible(false);

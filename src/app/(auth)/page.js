@@ -1,7 +1,5 @@
 "use client";
-import Image from "next/image";
-import imagemLogin from "../../imgs/imagemLogin.png";
-import logo from "../../imgs/NovusCFC.png";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useLogin from "@/hooks/useLogin";
@@ -9,10 +7,14 @@ import Loading from "@/components/Loading";
 import { useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
+const basePath = process.env.NODE_ENV === 'production'
+  ? '/n-dashboard-sistema-aulas'
+  : '';
+
 const LoginImage = () => (
   <div className="flex justify-center overflow-hidden">
-    <Image
-      src={imagemLogin}
+    <img
+      src={`${basePath}/imgs/imagemLogin.png`}
       alt="imagem do login"
       className="max-w-[0px] md:max-w-[500px] h-auto"
     />
@@ -20,7 +22,6 @@ const LoginImage = () => (
 );
 
 const LoginForm = ({ loginState }) => {
-
   const { cpf, error, login, senha, setCpf, setSenha, salvar, setSalvar } = loginState;
 
   useEffect(() => {
@@ -31,15 +32,14 @@ const LoginForm = ({ loginState }) => {
       setCpf(cpf);
       setSenha(senha);
     }
-  }, [])
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center p-6 text-center gap-2">
-      <Image
-        src={logo}
-        alt="imagem do login"
-        width={100}
-        height={100}
+      <img
+        src={`${basePath}/imgs/NovusCFC.png`}
+        alt="logo da empresa"
+        className="w-auto h-auto"
       />
       <h1 className="text-2xl font-bold mb-4">Login</h1>
       {error && <h1>{error}</h1>}
@@ -52,24 +52,22 @@ const LoginForm = ({ loginState }) => {
         placeholder={"Senha"}
         type={"password"}
         value={senha}
-        onChange={(e) => setSenha(e.target.value)} />
-
+        onChange={(e) => setSenha(e.target.value)}
+      />
       <div className="flex gap-2 cursor-pointer">
         <input type="checkbox" className="cursor-pointer" id="check" name="checkbox" checked={salvar} onChange={(e) => setSalvar(e.target.checked)} />
         <label className="cursor-pointer" htmlFor="check">Salvar Acesso</label>
       </div>
-
-      <Button className={'w-full'} onClick={login}>
-        <span className="material-icons">
-          logout
-        </span>
-        Fazer Login</Button>
+      <Button className="w-full" onClick={login}>
+        <span className="material-icons">logout</span>
+        Fazer Login
+      </Button>
     </div>
-  )
+  );
 };
 
 export default function Page() {
-  const loginState = useLogin(); // usa o hook só aqui
+  const loginState = useLogin();
   const { loading, confirmado } = loginState;
   const router = useRouter();
 
@@ -77,7 +75,7 @@ export default function Page() {
     if (confirmado.usuario_id > 0) {
       router.push('/inicio');
     }
-  }, [confirmado])
+  }, [confirmado]);
 
   return (
     <div className="flex h-screen justify-center items-center bg-gray-100">
