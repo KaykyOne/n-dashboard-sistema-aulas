@@ -8,7 +8,7 @@ const nextConfig = {
     trailingSlash: true,
   }),
   eslint: {
-    ignoreDuringBuilds: true, // <- Isso aqui impede o ESLint de travar a build
+    ignoreDuringBuilds: true,
   },
 };
 
