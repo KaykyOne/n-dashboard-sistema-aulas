@@ -14,7 +14,7 @@ const basePath = process.env.NODE_ENV === 'production'
 const LoginImage = () => (
   <div className="flex justify-center overflow-hidden">
     <img
-      src={`${basePath}/imgs/imagemLogin.png`}
+      src={`${basePath}/imagemLogin.png`}
       alt="imagem do login"
       className="max-w-[0px] md:max-w-[500px] h-auto"
     />
@@ -37,7 +37,7 @@ const LoginForm = ({ loginState }) => {
   return (
     <div className="flex flex-col justify-center items-center p-6 text-center gap-2">
       <img
-        src={`${basePath}/imgs/NovusCFC.png`}
+        src={`${basePath}/NovusCFC.png`}
         alt="logo da empresa"
         className="w-auto h-auto"
       />
