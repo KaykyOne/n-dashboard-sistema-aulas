@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import logo from "../imgs/NovusCFC.png";
-import desenho from "../imgs/DesenhoMenu.png";
 import { Button } from "./ui/button";
-import Modal from "../components/Modal";
-import FormNovoAluno from "./forms/FormNovoAluno";
 import { usePathname  } from "next/navigation";
+
+const basePath = process.env.NODE_ENV === 'production'
+  ? '/n-dashboard-sistema-aulas'
+  : '';
 
 export default function Sidebar() {
   const [selectedPage, setSelectedpage] = useState("");
@@ -24,7 +23,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white h-screen p-4 shadow-md fixed left-0 top-0">
       <div className="flex justify-center items-center py-4 align-middle gap-2">
-        <Image className="rounded-sm" src={logo} alt="Logo da Autoescola" width={40} height={40} />
+        <img className="rounded-sm w-[40px] h-[40px]" src={`${basePath}/NovusCFC.png`} alt="Logo da Autoescola"/>
         <h1 className="font-medium">NovusCFC</h1>
       </div>
 
@@ -73,7 +72,7 @@ export default function Sidebar() {
       </Link>
 
       <div className="mt-15 flex justify-center items-center pb-4">
-        <Image src={desenho} alt="Desenho do menu lateral" width={200} height={100} />
+        <img src={`${basePath}/DesenhoMenu.png`} className="w-[200px] h-[120px]" alt="Desenho do menu lateral" />
       </div>
     </aside>
   );
