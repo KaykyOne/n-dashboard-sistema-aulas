@@ -68,7 +68,7 @@ export default function Sidebar() {
       </Link>
 
       <div className="mt-15 flex justify-center items-center pb-4">
-        <img src={`${basePath}/DesenhoMenu.png`} className="w-[200px] h-[120px]" alt="Desenho do menu lateral" />
+        <img src={`/DesenhoMenu.png`} className="w-[200px] h-[120px]" alt="Desenho do menu lateral" />
       </div>
     </aside>
   );

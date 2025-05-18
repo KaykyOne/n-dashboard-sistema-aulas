@@ -71,7 +71,7 @@ export default function AulasPage() {
       <div className='flex flex-col gap-3 text-center justify-center items-center'>
         <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
         <img
-          src={`/imageDelete.png`}
+          src={`/imageDelete.svg`}
           alt="logo da empresa"
           className="w-auto h-auto" />
         <div className='flex gap-2'>
@@ -103,7 +103,7 @@ export default function AulasPage() {
       <div className='flex flex-col gap-3 text-center justify-center items-center'>
         <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
         <img
-          src={`/imageDelete.png`}
+          src={`/imageDelete.svg`}
           alt="logo da empresa"
           className="w-auto h-auto" />
         <div className='flex gap-2'>
