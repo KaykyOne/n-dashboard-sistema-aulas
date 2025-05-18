@@ -7,14 +7,10 @@ import Loading from "@/components/Loading";
 import { useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
-const basePath = process.env.NODE_ENV === 'production'
-  ? '/n-dashboard-sistema-aulas'
-  : '';
-
 const LoginImage = () => (
   <div className="flex justify-center overflow-hidden">
     <img
-      src={`${basePath}/imagemLogin.png`}
+      src={`/imagemLogin.png`}
       alt="imagem do login"
       className="max-w-[0px] md:max-w-[500px] h-auto"
     />
@@ -37,7 +33,7 @@ const LoginForm = ({ loginState }) => {
   return (
     <div className="flex flex-col justify-center items-center p-6 text-center gap-2">
       <img
-        src={`${basePath}/NovusCFC.png`}
+        src={`/NovusCFC.png`}
         alt="logo da empresa"
         className="w-auto h-auto"
       />

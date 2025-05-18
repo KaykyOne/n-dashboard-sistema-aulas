@@ -10,10 +10,6 @@ import useInstrutores from '@/hooks/useInstrutores';
 import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
 
-const basePath = process.env.NODE_ENV === 'production'
-  ? '/n-dashboard-sistema-aulas'
-  : '';
-
 const opcoesAula = [
   {
     value: "Marcada",
@@ -38,7 +34,6 @@ export default function AulasPage() {
   const [tipo, setTipo] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState();
-  const [textConfirm, setTextConfirm] = useState("");
 
   const instrutoresOptions = useMemo(() => {
     return instrutores
@@ -76,7 +71,7 @@ export default function AulasPage() {
       <div className='flex flex-col gap-3 text-center justify-center items-center'>
         <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
         <img
-          src={`${basePath}/imgs/imageDelete.png`}
+          src={`/imageDelete.png`}
           alt="logo da empresa"
           className="w-auto h-auto" />
         <div className='flex gap-2'>
@@ -108,7 +103,7 @@ export default function AulasPage() {
       <div className='flex flex-col gap-3 text-center justify-center items-center'>
         <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
         <img
-          src={`${basePath}/imgs/imageDelete.png`}
+          src={`/imageDelete.png`}
           alt="logo da empresa"
           className="w-auto h-auto" />
         <div className='flex gap-2'>

@@ -5,10 +5,6 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { usePathname  } from "next/navigation";
 
-const basePath = process.env.NODE_ENV === 'production'
-  ? '/n-dashboard-sistema-aulas'
-  : '';
-
 export default function Sidebar() {
   const [selectedPage, setSelectedpage] = useState("");
   const path = usePathname();
@@ -23,7 +19,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white h-screen p-4 shadow-md fixed left-0 top-0">
       <div className="flex justify-center items-center py-4 align-middle gap-2">
-        <img className="rounded-sm w-[40px] h-[40px]" src={`${basePath}/NovusCFC.png`} alt="Logo da Autoescola"/>
+        <img className="rounded-sm w-[40px] h-[40px]" src={`/NovusCFC.png`} alt="Logo da Autoescola"/>
         <h1 className="font-medium">NovusCFC</h1>
       </div>
 

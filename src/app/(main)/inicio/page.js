@@ -2,9 +2,6 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-const basePath = process.env.NODE_ENV === 'production'
-  ? '/n-dashboard-sistema-aulas'
-  : '';
 
 export default function page() {
   const [mensagemDiaria, setMensagemDiaria] = useState('');
@@ -46,7 +43,7 @@ export default function page() {
 
           <h4 className="text-2xl font-medium">Feito por NovusTech</h4>
         </div>
-        <img alt="Imagem Tranquila" src={`${basePath}/DesenhoTranquilidade.svg`} />
+        <img alt="Imagem Tranquila" src={`/DesenhoTranquilidade.svg`} />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col bg-white p-5 rounded-sm">
