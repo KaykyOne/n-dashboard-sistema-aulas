@@ -1,16 +1,13 @@
-/** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === 'production';
 
 const nextConfig = {
   ...(isProd && {
     output: 'export',
-    basePath: '/n-dashboard-sistema-aulas',
-    trailingSlash: true,
+    trailingSlash: true, // esse pode continuar
   }),
   eslint: {
     ignoreDuringBuilds: true,
   },
 };
-
 
 export default nextConfig;
