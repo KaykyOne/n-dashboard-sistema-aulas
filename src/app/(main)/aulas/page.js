@@ -26,7 +26,7 @@ const opcoesAula = [
 ]
 
 export default function AulasPage() {
-  const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos, deleteAula, buscarAulasInstrutor } = useAula();
+  const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos, deleteAula, buscarAulasInstrutor} = useAula();
   const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
 
   const [aulas, setAulas] = useState([]);

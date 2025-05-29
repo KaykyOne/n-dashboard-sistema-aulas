@@ -39,10 +39,10 @@ export default function Header() {
 
   return (
     <header className="bg-white flex items-center justify-between px-6 h-20 w-full shadow-sm">
-      <h1 className="text-[#6F0A59] text-2xl font-light">Autoescola</h1>
+      <h1 className="text-[#6F0A59]  lg:text-2xl font-light">Autoescola</h1>
 
-      <div className="flex gap-3 align-middle">
-        <h2 className="mr-[100px]">Tempo: {tempo}</h2>
+      <div className="md:flex gap-3 items-center">
+        <h2 className="mr-4">Tempo: {tempo}</h2>
         <Link href="/">
           <Button className="text-white px-4 py-2">
             Sair

@@ -48,7 +48,17 @@ const opcoesDeTipo = [
 export default function AlunosPage() {
 
   //Buscar
-  const { alunos: usuarios, loading, buscarAlunos, getInstrutoresResponsaveis, instrturesResponsaveis, inserirAluno } = useAlunos();
+  const {
+    alunos: usuarios,
+    loading,
+    buscarAlunos,
+    getInstrutoresResponsaveis,
+    instrturesResponsaveis,
+    inserirAluno,
+    excluirAlunoInstrutor,
+    inserirRelacao,
+    alterAtividadeAluno } = useAlunos();
+
   const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
 
   //Editar
@@ -62,6 +72,7 @@ export default function AlunosPage() {
   const [telefone, setTelefone] = useState("");
   const [categoria, setCategoria] = useState("");
   const [outraCidade, setOutraCidade] = useState(false);
+  const [instrutorResponsa, setInstrutorResponsa] = useState();
 
   //Pesquisar
   const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios);
@@ -87,7 +98,6 @@ export default function AlunosPage() {
     })
     setUsuariosFiltrados(users);
   };
-
   const handleCheckboxChange = (event, tipo) => {
     setCategoria((prev) => {
       let novaCategoria;
@@ -104,7 +114,6 @@ export default function AlunosPage() {
       return novaCategoria.replace(/,/g, "");
     });
   };
-
   const cancelEdit = () => {
     setNome("");
     setSobrenome("");
@@ -134,9 +143,9 @@ export default function AlunosPage() {
   }, []);
   useEffect(() => {
     if (cpfInstrutorResponsavel.length >= 11) {
-      alert("asdads");
       getInstrutoresResponsaveis(cpfInstrutorResponsavel);
     }
+
   }, [cpfInstrutorResponsavel])
   useEffect(() => {
     // Sempre que "usuarios" mudar, atualiza os filtrados
@@ -189,8 +198,7 @@ export default function AlunosPage() {
     }
 
     return true;
-  }
-
+  };
   const handleCadastrar = async () => {
     const test = testCampos();
     if (test) {
@@ -250,21 +258,30 @@ export default function AlunosPage() {
       setOutraCidade(false);
     }
   };
-  const handleAlterState = (user) => {
-    user.atividade = !user.atividade;
-    filtrarUsuarios();
+  const handleAlterState = async (user) => {
+    const res = await alterAtividadeAluno(user.usuario_id);
+    if (res) {
+      console.log(res);
+      user.atividade = !user.atividade;
+      filtrarUsuarios();
+    }
   };
-
+  const handleDeleteRelation = async (instrutor) => {
+    await excluirAlunoInstrutor(cpfInstrutorResponsavel, instrutor.instrutor_id);
+  };
+  const handleCreateRelation = async () => {
+    await inserirRelacao(cpfInstrutorResponsavel, instrutorResponsa);
+  };
   const instrutoresOptions = instrutores.filter(i => i.atividade_instrutor == true).map((i) => ({
     value: i.instrutor_id.toString(),
     label: i.nome_instrutor,
-  }))
+  }));
 
   return (
     <div className="relative">
       {loading || loadingInstrutor && <Loading />}
       <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
           {/* Form de cadastro */}
           <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
@@ -346,16 +363,24 @@ export default function AlunosPage() {
           <div className="flex flex-col col-span-1 p-6 bg-white rounded-sm gap-3">
             <div className="flex flex-col gap-2">
               <h1 className="font-bold text-3xl">Instrutores Respónsaveis pelo Aluno:</h1>
-              <Input placeholder={"CPF"} className={"mt-3"} value={cpfInstrutorResponsavel} onChange={(e) => setCpfInstrutorResponsavel(e.target.value)} />
-              <Combobox options={instrutoresOptions} placeholder='Escolha o Instrutor' />
-              <Button className="mt-4">
+              <Input
+                placeholder={"CPF"}
+                className={"mt-3"}
+                value={cpfInstrutorResponsavel}
+                onChange={(e) => setCpfInstrutorResponsavel(e.target.value)} />
+              <Combobox
+                options={instrutoresOptions}
+                placeholder='Escolha o Instrutor'
+                onChange={setInstrutorResponsa}
+                value={instrutorResponsa} />
+              <Button className="mt-4" onClick={() => handleCreateRelation()}>
                 Adicionar Responsável
                 <span className="material-icons">
                   add
                 </span>
               </Button>
             </div>
-            <div className='flex flex-col flex-1 overflow-x-auto border-gray-200 border-solid border-2 w-full max-h-[200px] rounded-sm'>
+            <div className='flex flex-col flex-1 overflow-x-auto border-gray-200 border-solid border-2 w-full rounded-sm'>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -368,7 +393,7 @@ export default function AlunosPage() {
                     <TableRow key={instrutor.instrutor_id}>
                       <TableCell>{instrutor.instrutor_id}</TableCell>
                       <TableCell>{instrutor.nome_instrutor}</TableCell>
-                      <TableCell><Button variant={'destructive'}>Excluir</Button></TableCell>
+                      <TableCell><Button variant={'destructive'} onClick={() => handleDeleteRelation(instrutor)}>Excluir</Button></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

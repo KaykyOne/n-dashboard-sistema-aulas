@@ -18,7 +18,7 @@ const LoginImage = () => (
 );
 
 const LoginForm = ({ loginState }) => {
-  const { cpf, error, login, senha, setCpf, setSenha, salvar, setSalvar } = loginState;
+  const { cpf, error, login, senha, setCpf, setSenha, salvar, setSalvar, loading } = loginState;
 
   useEffect(() => {
     const cpf = localStorage.getItem("cpf");
@@ -54,7 +54,7 @@ const LoginForm = ({ loginState }) => {
         <input type="checkbox" className="cursor-pointer" id="check" name="checkbox" checked={salvar} onChange={(e) => setSalvar(e.target.checked)} />
         <label className="cursor-pointer" htmlFor="check">Salvar Acesso</label>
       </div>
-      <Button className="w-full" onClick={login}>
+      <Button className="w-full" onClick={login} disabled={loading}>
         <span className="material-icons">logout</span>
         Fazer Login
       </Button>
@@ -68,8 +68,14 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    if (confirmado.usuario_id > 0) {
-      router.push('/inicio');
+    if (confirmado.usuario_id > 0) {  
+      localStorage.setItem("dados", confirmado.autoescola_id);
+      if (confirmado.tipo_usuario === "superadm") {
+        router.push('/autoescolas');
+      } else if (confirmado.tipo_usuario === "adm") {
+        router.push('/inicio');
+      }
+    
     }
   }, [confirmado]);
 

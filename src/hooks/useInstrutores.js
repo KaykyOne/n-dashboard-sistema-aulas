@@ -11,6 +11,7 @@ export default function useInstrutores() {
   async function buscarInstrutores(autoescola_id) {
     if (autoescola_id === 0) return;
     const res = await GenericSearch('adm', 'buscarTodosInstrutores', `?autoescola_id=${autoescola_id}`);
+    console.log(res);
     setInstrutores(res);
   }
 

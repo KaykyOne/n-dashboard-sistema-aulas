@@ -10,7 +10,6 @@ export default function useLogin() {
 
   const login = async () => {
     setError("");
-
     // Validação simples
     if (!cpf || !senha) {
       setError("Preencha CPF e senha corretamente.");

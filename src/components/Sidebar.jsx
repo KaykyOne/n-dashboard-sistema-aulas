@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { usePathname  } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
   const [selectedPage, setSelectedpage] = useState("");
@@ -11,64 +11,66 @@ export default function Sidebar() {
 
   useEffect(() => {
     setSelectedpage(path);
-  })
+  }, [path]); // ✅ Executa só quando a URL muda
 
   const cssPadrao = "flex items-center gap-2 p-2 rounded-lg hover:text-[#6F0A59] hover:font-bold";
   const cssSelecionado = "flex items-center gap-2 p-2 rounded-lg w-full text-[#6F0A59] font-bold bg-gray-200 border-solid";
 
+  const classTextResponsive = "hidden lg:inline";
+
   return (
-    <aside className="w-64 bg-white h-screen p-4 shadow-md fixed left-0 top-0">
-      <div className="flex justify-center items-center py-4 align-middle gap-2">
-        <img className="rounded-sm w-[40px] h-[40px]" src={`/NovusCFC.png`} alt="Logo da Autoescola"/>
-        <h1 className="font-medium">NovusCFC</h1>
+    <aside className=" bg-white h-screen p-4 shadow-md fixed left-0 top-0">
+      <div className="flex justify-start items-center py-4 gap-2">
+        <img className="rounded-sm w-[40px] h-[40px]" src={`/NovusCFC.png`} alt="Logo da Autoescola" />
+        <h1 className={`font-medium ${classTextResponsive}`}>NovusCFC</h1>
       </div>
 
       <nav className="mt-4 space-y-2">
-        <Link onClick={() => setSelectedpage("/inicio")} href="/inicio" className={selectedPage === "/inicio" ? cssSelecionado : cssPadrao}>
+        <Link href="/inicio" className={selectedPage === "/inicio" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">home</i>
-          Início
+          <p className={classTextResponsive}> Início </p>
         </Link>
 
-        <Link onClick={() => setSelectedpage("/veiculos")} href="/veiculos" className={selectedPage === "/veiculos" ? cssSelecionado : cssPadrao}>
+        <Link href="/veiculos" className={selectedPage === "/veiculos" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">directions_car</i>
-          Veículos
+          <p className={classTextResponsive}>Veículos</p>
         </Link>
 
-        <Link onClick={() => setSelectedpage("/instrutores")} href="/instrutores" className={selectedPage === "/instrutores" ? cssSelecionado : cssPadrao}>
+        <Link href="/instrutores" className={selectedPage === "/instrutores" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">group</i>
-          Instrutores
+          <p className={classTextResponsive}>Instrutores</p>
         </Link>
 
-        <Link onClick={() => setSelectedpage("/alunos")} href="/alunos" className={selectedPage === "/alunos" ? cssSelecionado : cssPadrao}>
+        <Link href="/alunos" className={selectedPage === "/alunos" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">person</i>
-          Alunos
+          <p className={classTextResponsive}>Alunos</p>
         </Link>
 
-        <Link onClick={() => setSelectedpage("/financeiro")} href="/financeiro" className={selectedPage === "/financeiro" ? cssSelecionado : cssPadrao}>
+        <Link href="/financeiro" className={selectedPage === "/financeiro" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">payments</i>
-          Financeiro
+          <p className={classTextResponsive}>Financeiro</p>
         </Link>
 
-        <Link onClick={() => setSelectedpage("/aulas")} href="/aulas" className={selectedPage === "/aulas" ? cssSelecionado : cssPadrao}>
+        <Link href="/aulas" className={selectedPage === "/aulas" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">school</i>
-          Aulas
+          <p className={classTextResponsive}>Aulas</p>
         </Link>
 
-        <Link onClick={() => setSelectedpage("/configuracoes")} href="/configuracoes" className={selectedPage === "/configuracoes" ? cssSelecionado : cssPadrao}>
+        <Link href="/configuracoes" className={selectedPage === "/configuracoes" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">settings</i>
-          Configurações
+          <p className={classTextResponsive}>Configurações</p>   
         </Link>
       </nav>
 
       <Link href="/aulas/novaAula">
-        <Button className="w-full mt-3" onClick={() => setSelectedpage("/novaAula")}>
-          Nova Aula
+        <Button className="w-full mt-3">
+          <p className={classTextResponsive}>Nova Aula</p>
           <span className="material-icons">add</span>
         </Button>
       </Link>
 
       <div className="mt-15 flex justify-center items-center pb-4">
-        <img src={`/DesenhoMenu.png`} className="w-[200px] h-[120px]" alt="Desenho do menu lateral" />
+        <img src={`/DesenhoMenu.png`} className="w-[200px] h-[120px] hidden lg:inline" alt="Desenho do menu lateral" />
       </div>
     </aside>
   );

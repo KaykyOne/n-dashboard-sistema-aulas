@@ -36,7 +36,7 @@ export default function page() {
 
   return (
     <div className="flex flex-col w-full gap-4 text-[#6F0A59]">
-      <div className="grid grid-cols-2 p-10 bg-white rounded-sm">
+      <div className="grid lg:grid-cols-2 p-10 bg-white rounded-sm">
         <div className="flex flex-col text-[#6F0A59] text-start p-3 justify-center">
           <h1 className="font-bold text-6xl">Bem-Vindo</h1>
           <h3>Aproveite nosso sistema!</h3>
@@ -45,7 +45,7 @@ export default function page() {
         </div>
         <img alt="Imagem Tranquila" src={`/DesenhoTranquilidade.svg`} />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-4">
         <div className="flex flex-col bg-white p-5 rounded-sm">
           <h2 className="font-bold text-2xl">Frase do Dia:</h2>
           <h1 className="font-light text-4xl">{mensagemDiaria}</h1>

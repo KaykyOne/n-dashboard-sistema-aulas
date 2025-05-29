@@ -1,10 +1,14 @@
+"use client"
 import { useEffect, useState } from "react";
 import useGeneric from "@/hooks/useGeneric";
 import { toast } from "react-toastify";
 
 export default function useAula() {
     const { GenericDelete, GenericSearch, error, loading } = useGeneric();
-
+    let id
+    useEffect(() => {
+        id = sessionStorage.getItem("id_autoescola"); 
+    }) 
     const [aulas, setAulas] = useState([]);
     const [vagas, setVagas] = useState([]);
     const [instrutor, setInstrutor] = useState();
