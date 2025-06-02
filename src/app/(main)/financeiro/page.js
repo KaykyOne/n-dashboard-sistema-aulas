@@ -261,9 +261,13 @@ export default function FinanceiroPage() {
               <span className='font-bold text-2xl'>R$</span>
               <Input
                 placeholder="0000,00"
+                onKeyDown={(e) => {
+                  if (e.key === '.' ) {
+                    e.preventDefault();
+                  }
+                }}
+                onPaste={(e) => e.preventDefault()}
                 type="number"
-                inputMode="numeric"
-                pattern="\d{11}"
                 maxLength={11}
                 required
                 value={valorCriar}

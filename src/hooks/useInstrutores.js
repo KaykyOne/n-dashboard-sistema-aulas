@@ -1,4 +1,5 @@
-import { useState } from 'react';
+"use client"
+import { useState, useEffect } from 'react';
 import { getToken } from '@/lib/utils';
 import useGeneric from './useGeneric';
 import { toast } from 'react-toastify';
@@ -7,10 +8,14 @@ export default function useInstrutores() {
 
   const { GenericSearch, loading, error } = useGeneric();
   const [instrutores, setInstrutores] = useState([]);
+  let id
+  useEffect(() => {
+    id = sessionStorage.getItem("id_autoescola");
+  })
 
-  async function buscarInstrutores(autoescola_id) {
-    if (autoescola_id === 0) return;
-    const res = await GenericSearch('adm', 'buscarTodosInstrutores', `?autoescola_id=${autoescola_id}`);
+  async function buscarInstrutores() {
+    if (id === 0) return;
+    const res = await GenericSearch('adm', 'buscarTodosInstrutores', `?autoescola_id=${id}`);
     console.log(res);
     setInstrutores(res);
   }
@@ -33,7 +38,7 @@ export default function useInstrutores() {
       toast.success("Atividade alterada com sucesso");
     } catch (error) {
       toast.error(`Erro ao mudar atividade do instrutor: ${error}`);
-    } 
+    }
   }
 
   return { buscarInstrutores, mudarAtividadeInstrutor, loading, instrutores };

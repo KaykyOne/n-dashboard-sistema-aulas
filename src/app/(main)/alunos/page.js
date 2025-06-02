@@ -45,6 +45,21 @@ const opcoesDeTipo = [
   },
 ]
 
+const opcoesMes = [
+  { value: "0", label: "Janeiro" },
+  { value: "1", label: "Fevereiro" },
+  { value: "2", label: "Março" },
+  { value: "3", label: "Abril" },
+  { value: "4", label: "Maio" },
+  { value: "5", label: "Junho" },
+  { value: "6", label: "Julho" },
+  { value: "7", label: "Agosto" },
+  { value: "8", label: "Setembro" },
+  { value: "9", label: "Outubro" },
+  { value: "10", label: "Novembro" },
+  { value: "11", label: "Dezembro" },
+]
+
 export default function AlunosPage() {
 
   //Buscar
@@ -57,7 +72,8 @@ export default function AlunosPage() {
     inserirAluno,
     excluirAlunoInstrutor,
     inserirRelacao,
-    alterAtividadeAluno } = useAlunos();
+    alterAtividadeAluno,
+    editarAluno } = useAlunos();
 
   const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
 
@@ -80,6 +96,8 @@ export default function AlunosPage() {
   const [searchForCPF, setSearchForCPF] = useState("");
   const [searchForCat, setSearchForCat] = useState("");
   const [searchForAtv, setSearchForAtv] = useState("");
+  const [searchDataCadastro, setSearchDataCadastro] = useState("");
+
 
   //Transacao
   const [valorCriar, setValorCriar] = useState("");
@@ -88,32 +106,30 @@ export default function AlunosPage() {
   const isNumeric = (str) => /^[0-9]+$/.test(str);
 
   const filtrarUsuarios = () => {
+
     const test = searchForAtv === "Inativo" ? false : true;
     const users = usuarios.filter((user) => {
       const matchName = searchForName === "" || user.nome.toLowerCase().includes(searchForName.toLowerCase());
       const matchCpf = searchForCPF === "" || user.cpf.includes(searchForCPF);
       const matchCat = searchForCat === "" || user.categoria_pretendida.toLowerCase().includes(searchForCat.toLowerCase());
-      const matchForAtv = searchForAtv === "" || user.atividade === test;
-      return matchName && matchCpf && matchCat && matchForAtv;
+      const matchForAtv = searchForAtv === "" || user.atividade == test;
+      const userDate = new Date(user.data_cadastro).getMonth();
+      const matchData = searchDataCadastro === "" || Number(searchDataCadastro) === userDate;
+      return matchName && matchCpf && matchCat && matchForAtv && matchData;
     })
+    console.log(users);
     setUsuariosFiltrados(users);
   };
   const handleCheckboxChange = (event, tipo) => {
     setCategoria((prev) => {
-      let novaCategoria;
-
       if (event.target.checked) {
-        // Se o checkbox foi marcado, adiciona a categoria (como uma string)
-        novaCategoria = prev ? `${prev},${tipo}` : tipo;
+        return [...prev, tipo]; // adiciona
       } else {
-        // Se o checkbox foi desmarcado, remove a categoria usando replace
-        novaCategoria = prev.replace(new RegExp(`(?:^|,)?${tipo}(?:,|$)`), '');
+        return prev.filter((item) => item !== tipo); // remove
       }
-
-      // Formatar a categoria removendo vírgulas
-      return novaCategoria.replace(/,/g, "");
     });
   };
+
   const cancelEdit = () => {
     setNome("");
     setSobrenome("");
@@ -138,13 +154,11 @@ export default function AlunosPage() {
   };
 
   useEffect(() => {
-    buscarAlunos(1);
-    buscarInstrutores(1);
+    buscarAlunos();
+    buscarInstrutores();
   }, []);
   useEffect(() => {
-    if (cpfInstrutorResponsavel.length >= 11) {
-      getInstrutoresResponsaveis(cpfInstrutorResponsavel);
-    }
+    getInstrutoresResponsaveis(cpfInstrutorResponsavel);
 
   }, [cpfInstrutorResponsavel])
   useEffect(() => {
@@ -154,14 +168,14 @@ export default function AlunosPage() {
     filtrarUsuarios();
   }, [usuarios]);
   useEffect(() => {
-    if (searchForName == "" && searchForCPF == "" && searchForCat == "") {
+    if (searchForName == "" && searchForCPF == "" && searchForCat == "" && searchDataCadastro == "") {
       let test = searchForAtv == "Inativo" ? false : true;
       let users = usuarios.filter(user => user.atividade == test)
       setUsuariosFiltrados(users);
       return;
     }
     filtrarUsuarios();
-  }, [searchForName, searchForCPF, searchForCat, searchForAtv])
+  }, [searchForName, searchForCPF, searchForCat, searchForAtv, searchDataCadastro])
 
   const testCampos = () => {
     if (typeof nome != "string") {
@@ -180,7 +194,7 @@ export default function AlunosPage() {
       toast.error("erro, telefone está errado!");
       return false;
     }
-    if (typeof categoria != "string") {
+    if (categoria.length == 0) {
       toast.error("erro, categoria está errado!");
       return false;
     }
@@ -201,14 +215,15 @@ export default function AlunosPage() {
   };
   const handleCadastrar = async () => {
     const test = testCampos();
-    if (test) {
+    if (test && !editando) {
+      const categoriaFormat = categoria.join('');
       const aluno = ({
         nome: nome,
         sobrenome: sobrenome,
         cpf: cpf,
         telefone: telefone,
-        categoria: categoria,
-        outraCidade: outraCidade,
+        categoria: categoriaFormat,
+        outra_cidade: outraCidade,
       });
 
       const transacao = {
@@ -232,23 +247,20 @@ export default function AlunosPage() {
   }
   const handleEdit = async () => {
 
-    return;
     const test = testCampos();
-    if (test) {
+    if (test && editando) {
+      const categoriaFormat = categoria.join('');
 
-      let categoriaFormatada = categoria.replace(/,/g, "");
-      alert(categoriaFormatada)
-      return
       const aluno = ({
         nome: nome,
         sobrenome: sobrenome,
         cpf: cpf,
         telefone: telefone,
-        categoria: categoriaFormatada,
-        outraCidade: outraCidade,
+        categoria: categoriaFormat,
+        outra_cidade: outraCidade,
       });
 
-      await inserirAluno(aluno, transacao);
+      await editarAluno(aluno);
 
       setNome("");
       setSobrenome("");
@@ -256,6 +268,11 @@ export default function AlunosPage() {
       setTelefone("");
       setCategoria("");
       setOutraCidade(false);
+      setEditando(false);
+      setCpfInstrutorResponsavel("")
+      setInstrutorResponsa([])
+
+      await buscarAlunos();
     }
   };
   const handleAlterState = async (user) => {
@@ -424,6 +441,14 @@ export default function AlunosPage() {
                 onChange={(e) => setSearchForCPF(e.target.value)}
                 className="mb-4 w-full"
               />
+            </div>
+            <div className="flex flex-col mb-4 w-full">
+              <h3 className="font-bold">Mês Cadastro:</h3>
+              <Combobox
+                placeholder="Mês..."
+                options={opcoesMes}
+                onChange={setSearchDataCadastro}
+                value={searchDataCadastro} />
             </div>
             <div className="flex flex-col">
               <h3 className="font-bold">Categoria:</h3>

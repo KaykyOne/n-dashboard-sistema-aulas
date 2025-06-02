@@ -14,10 +14,11 @@ export default function useAula() {
     const [instrutor, setInstrutor] = useState();
     const [data, setData] = useState(new Date());
 
-    async function buscarAulasInstrutor(id, data) {
+    async function buscarAulasInstrutor(id_instrutor, data) {
+        console.log(`ROla: ${id}`)
         const [res1, res2] = await Promise.all([
-            GenericSearch('adm', 'buscarAulasDoDiaInstrutor', `?id=${id}&data=${data}`),
-            GenericSearch('adm', 'buscarHorariosVagos', `?id=${id}&data=${data}`)
+            GenericSearch('adm', 'buscarAulasDoDiaInstrutor', `?id=${id_instrutor}&data=${data}&autoescola_id=${id}`),
+            GenericSearch('adm', 'buscarHorariosVagos', `?id=${id_instrutor}&data=${data}&autoescola_id=${id}`)
         ])
 
         setAulas(res1 || []);

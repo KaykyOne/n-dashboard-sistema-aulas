@@ -8,8 +8,8 @@ export default function useAlunos() {
     const { GenericSearch, GenericCreate, GenericDeleteRelation, GenericUpdate, loading, error } = useGeneric();
     let id
     useEffect(() => {
-        id = sessionStorage.getItem("id_autoescola"); 
-    })  
+        id = sessionStorage.getItem("id_autoescola");
+    })
     const { criarTransacao } = useFinanceiro();
     const [instrturesResponsaveis, setInstrutoreResponsavel] = useState([]);
     const [alunos, setAlunos] = useState([]);
@@ -21,6 +21,10 @@ export default function useAlunos() {
     };
 
     const getInstrutoresResponsaveis = async (cpf) => {
+        if (cpf === "") {
+            setInstrutoreResponsavel([]);
+            return;
+        };
         if (!cpf) return;
         const res = await GenericSearch('adm', 'buscarInstrutorResponsavel', `?cpf=${cpf}`);
         console.log(res);
@@ -40,6 +44,19 @@ export default function useAlunos() {
         }
 
         await criarTransacao(transacao);
+    };
+
+    const editarAluno = async (aluno) => {
+        aluno.autoescola_id = id;
+        console.log(aluno);
+        const response = await GenericUpdate("adm", "attaluno", aluno);
+        console.log(response);
+        if (response.message == "Aluno atualizado com sucesso!") {
+            toast.success("Aluno editado com sucesso!");
+        } else {
+            console.error(error);
+            toast.error("Erro ao editar Aluno!");
+        }
     };
 
     const excluirAlunoInstrutor = async (cpf, id_instrutor) => {
@@ -108,6 +125,7 @@ export default function useAlunos() {
         loading,
         getInstrutoresResponsaveis,
         inserirAluno,
+        editarAluno,
         instrturesResponsaveis,
         excluirAlunoInstrutor,
         inserirRelacao,
