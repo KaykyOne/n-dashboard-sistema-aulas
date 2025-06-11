@@ -22,6 +22,7 @@ export function Combobox({
   options,
   value,
   onChange,
+  disabled,
   placeholder = "Selecione...",
   searchPlaceholder = "Buscar...",
   noResultText = "Nada encontrado.",
@@ -35,6 +36,7 @@ export function Combobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          disabled={disabled}
           variant="outline"
           role="combobox"
           aria-expanded={open}

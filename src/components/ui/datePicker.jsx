@@ -16,6 +16,7 @@ import {
 export function DatePicker({
   value,
   onChange,
+  disabled,
   placeholder = "Escolha uma data",
   formatStr = "PPP", // formato padrão: ex. Apr 9, 2025
   className,
@@ -27,6 +28,7 @@ export function DatePicker({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
+          disabled={disabled}
           className={cn(
             "w-[280px] justify-start text-left font-normal w-full",
             !value && "text-muted-foreground",

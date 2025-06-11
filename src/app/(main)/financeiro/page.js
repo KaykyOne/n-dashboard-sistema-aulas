@@ -75,7 +75,6 @@ export default function FinanceiroPage() {
     setDebitos(0);
 
     if (transacoes) {
-      console.log('Transações:', transacoes); // Exibe as transações logo no início
 
       const entrada = transacoes.filter(transacao => transacao.tipo === "entrada");
       const saida = transacoes.filter(transacao => transacao.tipo === "saida");
@@ -95,9 +94,9 @@ export default function FinanceiroPage() {
       const sumS = saida.reduce((acc, item) => acc + parseFloat(item.valor), 0);
       let sumD = debito.reduce((acc, item) => acc + parseFloat(item.valor), 0);
 
-      console.log('Entradas o adm', sumE);
-      console.log('Saídas: o adm', sumS);
-      console.log('Débitos:o adm', sumD);
+      // console.log('Entradas o adm', sumE);
+      // console.log('Saídas: o adm', sumS);
+      // console.log('Débitos:o adm', sumD);
       // Formatar os valores
       setSumDebitos(formatarValor(parseFloat(sumD)));
       setSumEntradas(formatarValor(parseFloat(sumE)));

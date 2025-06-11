@@ -41,5 +41,15 @@ export default function useInstrutores() {
     }
   }
 
-  return { buscarInstrutores, mudarAtividadeInstrutor, loading, instrutores };
+  async function buscarVeiuculosInstrutor(id_instrutor, tipo) {
+    try {
+      const res = await GenericSearch('adm', 'buscarVeiculosPorInstrutor', `?instrutor_id=${id_instrutor}&autoescola_id=${id}&tipo=${tipo}`);
+      if (!res) throw new Error("Erro ao buscar veiculos!");
+      return res;
+    } catch (error) {
+      toast.error(`Erro ao buscar veiculos do instrutor: ${error}`);
+    }
+  }
+
+  return { buscarInstrutores, mudarAtividadeInstrutor, buscarVeiuculosInstrutor, loading, instrutores };
 }

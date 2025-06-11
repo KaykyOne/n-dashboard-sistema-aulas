@@ -98,38 +98,6 @@ export default function AulasPage() {
     return;
   }
 
-  const createAula = async (hora) => {
-    setModalContent(
-      <div className='flex flex-col gap-3 text-center justify-center items-center'>
-        <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
-        <img
-          src={`/imageDelete.svg`}
-          alt="logo da empresa"
-          className="w-auto h-auto" />
-        <div className='flex gap-2'>
-          <Button variant={'green'} onClick={() => {
-            setModalVisible(false);
-            deleteAula(id);
-          }}>
-            Confirmar
-            <span className="material-icons">
-              check_circle
-            </span>
-          </Button>
-          <Button
-            variant={'destructive'}
-            onClick={() => setModalVisible(false)}>
-            Cancelar
-            <span className="material-icons">
-              cancel
-            </span>
-          </Button>
-        </div>
-      </div>
-    );
-    setModalVisible(true);
-  }
-
   useEffect(() => {
     if (!modalVisible && instrutor && data)
       buscarAulasInstrutor(instrutor, data);
