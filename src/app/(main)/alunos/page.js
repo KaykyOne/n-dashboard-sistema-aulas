@@ -98,6 +98,8 @@ export default function AlunosPage() {
   const [searchForAtv, setSearchForAtv] = useState("");
   const [searchDataCadastro, setSearchDataCadastro] = useState("");
 
+  //Navegação
+  const [numPagina, setNumPagina] = useState(0);
 
   //Transacao
   const [valorCriar, setValorCriar] = useState("");
@@ -168,6 +170,7 @@ export default function AlunosPage() {
     filtrarUsuarios();
   }, [usuarios]);
   useEffect(() => {
+    setNumPagina(0);
     if (searchForName == "" && searchForCPF == "" && searchForCat == "" && searchDataCadastro == "") {
       let test = searchForAtv == "Inativo" ? false : true;
       let users = usuarios.filter(user => user.atividade == test)
@@ -293,6 +296,13 @@ export default function AlunosPage() {
     value: i.instrutor_id.toString(),
     label: i.nome_instrutor,
   }));
+
+  const alterarNavegacao = (num) => {
+    const val = numPagina + num;
+    if (val >= 0 && (val-10) <= usuariosFiltrados.length) {
+      setNumPagina(val);
+    }
+  }
 
   return (
     <div className="relative">
@@ -469,53 +479,71 @@ export default function AlunosPage() {
           </div>
 
           {/* Tabela */}
-          <div className="flex-1 h-[300px] overflow-auto">
-            <Table className="table-fixed w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>CPF</TableHead>
-                  <TableHead>Telefone</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Data Cadastro</TableHead>
-                  <TableHead>Outra Cidade</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {usuariosFiltrados.map((user) => (
-                  <TableRow key={user.usuario_id}>
-                    <TableCell>{user.usuario_id}</TableCell>
-                    <TableCell className={"capitalize"}>{user.nome} {user.sobrenome}</TableCell>
-                    <TableCell>{user.cpf.length > 11 ? "inviável" : user.cpf}</TableCell>
-                    <TableCell>{user.telefone}</TableCell>
-                    <TableCell>{user.categoria_pretendida.toUpperCase()}</TableCell>
-                    <TableCell>{format(user.data_cadastro, 'dd/MM/yyyy')}</TableCell>
-                    <TableCell>{user.outra_cidade ? "Sim" : "Não"}</TableCell>
-                    <TableCell>
+          <div className="flex-1 overflow-auto">
+            <div className="flex flex-col">
+              {/* Cabeçalho */}
+              <div className="grid grid-cols-8 font-bold p-3 border-b bg-gray-100">
+                <p>Nome</p>
+                <p>CPF</p>
+                <p>Telefone</p>
+                <p>Categoria</p>
+                <p>Data Cadastro</p>
+                <p>Outra Cidade</p>
+                <p>Status</p>
+                <p>Ações</p>
+              </div>
+
+              {/* Lista */}
+              <div className="flex flex-col divide-y">
+                {usuariosFiltrados.filter((_, index) => index >= numPagina && index < numPagina + 10).map((user) => (
+                  <div
+                    key={user.usuario_id}
+                    className="grid grid-cols-8 items-center text-sm p-3"
+                  >
+                    <p className="capitalize">{user.nome} {user.sobrenome}</p>
+                    <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
+                    <p>{user.telefone}</p>
+                    <p>{user.categoria_pretendida.toUpperCase()}</p>
+                    <p>{format(user.data_cadastro, 'dd/MM/yyyy')}</p>
+                    <p>{user.outra_cidade ? "Sim" : "Não"}</p>
+                    <div className="p-1">
                       <Button
-                        className={'w-full'}
+                        className="w-full"
                         variant={user.atividade ? "green" : "destructive"}
-                        onClick={() => handleAlterState(user)}>
+                        onClick={() => handleAlterState(user)}
+                      >
                         {user.atividade ? "Ativo" : "Inativo"}
                       </Button>
-                    </TableCell>
-                    <TableCell className={'max-w-[100px]'}>
-                      <Button className={'w-full'} variant={'alert'} onClick={() => startEdit(user)}>
+                    </div>
+                    <div className="w-full p-1">
+                      <Button
+                        className="w-full"
+                        variant="alert"
+                        onClick={() => startEdit(user)}
+                      >
                         Editar
-                        <span className="material-icons">
-                          edit
-                        </span>
+                        <span className="material-icons">edit</span>
                       </Button>
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+            </div>
           </div>
         </div>
+
+        <div className="flex justify-center items-center text-black">
+          <span className="material-icons !text-5xl cursor-pointer" onClick={() => alterarNavegacao(-10)}>
+            arrow_left
+          </span>
+          <div className="flex flex-col gap-1 justify-center items-center">
+            {`${numPagina} - ${numPagina + 10}`}
+          </div>
+          <span className="material-icons !text-5xl cursor-pointer" onClick={() => alterarNavegacao(10)}>
+            arrow_right
+          </span>
+        </div>
+
       </div>
     </div>
   );

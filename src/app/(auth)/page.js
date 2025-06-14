@@ -12,7 +12,7 @@ const LoginImage = () => (
     <img
       src={`/imagemLogin.png`}
       alt="imagem do login"
-      className="max-w-[0px] md:max-w-[500px] h-auto"
+      className="flex-1"
     />
   </div>
 );

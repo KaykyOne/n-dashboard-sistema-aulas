@@ -26,7 +26,7 @@ const opcoesAula = [
 ]
 
 export default function AulasPage() {
-  const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos, deleteAula, buscarAulasInstrutor} = useAula();
+  const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos, deleteAula, buscarAulasInstrutor, alterarAula } = useAula();
   const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
 
   const [aulas, setAulas] = useState([]);
@@ -34,6 +34,8 @@ export default function AulasPage() {
   const [tipo, setTipo] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState();
+
+  const [aulaDrag, setAulaDrag] = useState();
 
   const instrutoresOptions = useMemo(() => {
     return instrutores
@@ -61,7 +63,12 @@ export default function AulasPage() {
   });
 
   const novasAulas = useMemo(() => {
-    return [...horariosVagos, ...aulasMarcadas];
+    const horariosVagosFormatados = horariosVagos.map(item => {
+      return { hora: item };
+    });
+
+    console.log(horariosVagosFormatados);
+    return [...horariosVagosFormatados, ...aulasMarcadas];
   }, [horariosVagos, aulasMarcadas]);
 
   const confirmDeleteAula = async (id) => {
@@ -75,9 +82,9 @@ export default function AulasPage() {
           alt="logo da empresa"
           className="w-auto h-auto" />
         <div className='flex gap-2'>
-          <Button variant={'green'} onClick={() => {
+          <Button variant={'green'} onClick={async () => {
             setModalVisible(false);
-            deleteAula(id);
+            await deleteAula(id);
           }}>
             Confirmar
             <span className="material-icons">
@@ -104,7 +111,7 @@ export default function AulasPage() {
   }, [modalVisible])
 
   useEffect(() => {
-    buscarInstrutores(1);
+    buscarInstrutores();
   }, [])
 
   useEffect(() => {
@@ -112,7 +119,6 @@ export default function AulasPage() {
     setAulasFiltradas(novasAulas);
     setTipo(opcoesAula[2].value);
   }, [novasAulas]);
-
 
   useEffect(() => {
     let filtragem;
@@ -125,6 +131,33 @@ export default function AulasPage() {
     }
 
   }, [tipo])
+
+  const dragIniti = (aula, index) => {
+    setAulaDrag({ aula: aula, index: index });
+  }
+
+  const dragDrop = async (aula, index) => {
+    const newAulas = [...aulas];
+    const aula1 = aula.hora;
+    const aula2 = aulaDrag.aula.hora;
+    const res = await alterarAula(aula.aula_id || 'vago', aula1, aulaDrag.aula.aula_id || 'vago', aula2)
+    console.log(res);
+    if (res === true) {
+      aulaDrag.aula.hora = aula1;
+      aula.hora = aula2
+      newAulas[index] = aulaDrag.aula;
+      newAulas[aulaDrag.index] = aula;
+
+      setAulas(newAulas);
+      setAulaDrag(null);
+      return;
+    } else {
+      setAulaDrag(null);
+      return;
+    }
+
+  };
+
 
   return (
     <div className='relative'>
@@ -155,7 +188,44 @@ export default function AulasPage() {
 
           </div>
 
-          <Table className={'text-2xl'}>
+          <div className='flex flex-col'>
+            <div className='grid grid-cols-4 p-3'>
+              <h1 className='text-2xl font-bold'>Hora</h1>
+              <h1 className='text-2xl font-bold'>Aluno</h1>
+              <h1 className='text-2xl font-bold'>Veículo</h1>
+              <h1 className='text-2xl font-bold'>Ação</h1>
+            </div>
+            <div className='flex flex-col gap-1'>
+              {aulasFiltradas.map((aula, index) => (
+                aula.nome != null ?
+                  <div key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id} className='grid grid-cols-4 text-start p-3 border border-gray-200 rounded-md' draggable
+                    onDrop={() => dragDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
+                    <p>{aula.hora}</p>
+                    <p>{aula.nome + " " + aula.sobrenome}</p>
+                    <p>{aula.placa}</p>
+                    <Button
+                      className={"w-full"}
+                      variant={"destructive"}
+                      onClick={() => confirmDeleteAula(aula.aula_id)}>
+                      Excluir
+                      <span className="material-icons">
+                        delete
+                      </span>
+                    </Button>
+                  </div>
+                  :
+                  <div key={`vaga-${aula.hora} `} className='grid grid-cols-4 text-start bg-red-700 text-white p-3 rounded-md' draggable
+                    onDrop={() => dragDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
+                    <p>{aula.hora}</p>
+                    <p>Vaga</p>
+                    <p>Vaga</p>
+                    <p>Vaga</p>
+                  </div>
+              ))}
+            </div>
+          </div>
+
+          {/* <Table className={'text-2xl'}>
             <TableHeader>
               <TableRow>
                 <TableHead>Hora</TableHead>
@@ -203,7 +273,7 @@ export default function AulasPage() {
                   </TableRow>
               ))}
             </TableBody>
-          </Table>
+          </Table> */}
         </div>
       </div>
 

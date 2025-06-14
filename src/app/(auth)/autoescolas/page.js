@@ -1,13 +1,13 @@
 "use client"
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useAutoescola from '@/hooks/useAutoescola';
 import { useRouter } from 'next/navigation';
 
 export default function page() {
-  const { autoescolas, searchAllAutoecolas } = useAutoescola();
+  const { autoescolas, searchAllAutoecolas, loading } = useAutoescola();
   const router = useRouter();
 
   useEffect(() => {

@@ -155,5 +155,40 @@ export default function useGeneric() {
         }
     };
 
-    return { GenericDelete, GenericCreate, GenericUpdate, GenericSearch, GenericDeleteRelation, loading, error }
+    const GenericPath = async (rota, caminho, att) => {
+        const token = getToken();
+        if (!token) {
+            setError('Sem token!');
+            return null;
+        }
+
+        setError('');
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${rota}/${caminho}${att}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            const response = await res.json();
+
+            if (!res.ok) {
+                setError(response?.message || "Erro na requisição");
+                return null;
+            }
+
+            return response;
+        } catch (error) {
+            setError(`Erro ao tentar buscar ${caminho}: ${error.message}`);
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { GenericDelete, GenericCreate, GenericUpdate, GenericSearch, GenericDeleteRelation, GenericPath, loading, error }
 }

@@ -4,7 +4,7 @@ import useGeneric from "@/hooks/useGeneric";
 import { toast } from "react-toastify";
 
 export default function useAula() {
-    const { GenericDelete, GenericSearch, GenericCreate, error, loading } = useGeneric();
+    const { GenericDelete, GenericSearch, GenericCreate, GenericPath, error, loading } = useGeneric();
     let id
     useEffect(() => {
         id = sessionStorage.getItem("id_autoescola");
@@ -38,10 +38,6 @@ export default function useAula() {
     }
 
     async function buscarHorariosLivres(id_instrutor, veiculo_id, dataA) {
-        console.log(id_instrutor)
-        console.log(veiculo_id)
-        console.log(dataA)
-
         const res = await GenericSearch('aulas', 'buscarHorarioLivre', `?instrutor_id=${id_instrutor}&veiculo_id=${veiculo_id}&data=${dataA}`)
         const horariosParaSelecao = res.map((i) => ({
             value: i,
@@ -107,8 +103,30 @@ export default function useAula() {
     const deleteAula = async (id) => {
         const res = await GenericDelete("adm", id, 'removerAula', 'id');
         toast.info(res.message);
+        if(res){
+            buscarAulasInstrutor(instrutor, data);
+        }
     }
 
-    return { setInstrutor, instrutor, data, setData, aulas, loading, vagas, deleteAula, buscarAulasInstrutor, inserirAula, buscarHorariosLivres, InsertClass };
+    const alterarAula = async (id1, hora1, id2, hora2) => {
+        console.log('iniciando!')
+        try {
+            const att = `?id1=${id1}&hora1=${hora1}&id2=${id2}&hora2=${hora2}`;
+            const response = await GenericPath('aulas', 'trocarHorarios', att);
+            console.log(response);
+            if (response.sucesso == true) {
+                toast.success("Aula auterada com sucesso!");
+                return true;
+            } else {
+                toast.error(`Erro, não é possivel mudar as aulas, os veiculos ou alunos estão em aulas iguais`);
+                return false;
+            }
+        }catch(error){
+            toast.error(error);
+            return false;
+        }
+    }
+
+    return { setInstrutor, instrutor, data, setData, aulas, loading, vagas, deleteAula, buscarAulasInstrutor, inserirAula, buscarHorariosLivres, InsertClass, alterarAula };
 }
 

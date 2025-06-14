@@ -104,6 +104,14 @@ export default function Page() {
     setLiberaHorario(!!dataSelecionada)
   }, [dataSelecionada])
 
+  useEffect(() => {
+    if (horarioSelecionado && horarioAvulso) {
+      setHorarioSelecionado('');
+      setHorarioAvulso('');
+      toast.warn("Escolha somente um tipo de horário!")
+    }
+  }, [horarioAvulso, horarioSelecionado]);
+
   const handleTipoClick = (tipo) => {
     setTipoSelecionado(prev => (prev === tipo ? null : tipo))
   }

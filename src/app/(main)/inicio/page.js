@@ -43,7 +43,7 @@ export default function page() {
 
           <h4 className="text-2xl font-medium">Feito por NovusTech</h4>
         </div>
-        <img alt="Imagem Tranquila" src={`/DesenhoTranquilidade.svg`} />
+        <img alt="Imagem Tranquila" className="flex flex-1" src={`/DesenhoTranquilidade.svg`} />
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <div className="flex flex-col bg-white p-5 rounded-sm">

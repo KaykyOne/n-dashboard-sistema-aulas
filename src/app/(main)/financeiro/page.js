@@ -73,7 +73,7 @@ export default function FinanceiroPage() {
     setEntradas(0);
     setSaidas(0);
     setDebitos(0);
-
+    console.log(transacoes);
     if (transacoes) {
 
       const entrada = transacoes.filter(transacao => transacao.tipo === "entrada");

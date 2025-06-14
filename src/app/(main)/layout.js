@@ -2,6 +2,7 @@ import "../globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { ToastContainer } from 'react-toastify';
+import LoadingUIProvider from '../LoadingProvider';
 
 export default function RootLayout({ children }) {
   return (
@@ -16,7 +17,11 @@ export default function RootLayout({ children }) {
         <Sidebar />
         <div className="flex-1 ml-20 lg:ml-56">
           <Header />
-          <main className="p-6">{children}</main>
+          <main className="p-6">
+            <LoadingUIProvider>
+            {children}
+            </LoadingUIProvider>
+          </main>
         </div>
         <ToastContainer
           theme="colored"

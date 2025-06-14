@@ -1,5 +1,6 @@
 // app/(auth)/layout.js
 import "../globals.css";
+import LoadingUIProvider from '../LoadingProvider';
 export default function AuthLayout({ children }) {
   return (
     <html lang="pt-br">
@@ -10,7 +11,9 @@ export default function AuthLayout({ children }) {
         />
       </head>
       <body className="bg-gray-100">
-        {children}
+        <LoadingUIProvider>
+          {children}
+        </LoadingUIProvider>
       </body>
     </html>
   )
