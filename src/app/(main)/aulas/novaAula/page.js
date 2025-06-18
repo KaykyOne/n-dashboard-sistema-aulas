@@ -117,7 +117,7 @@ export default function Page() {
       setHorarioAvulso('');
       toast.warn("Escolha somente um tipo de horário!")
     }
-    setLiberarSubmit(true);
+    setLiberarSubmit(!!horarioAvulso || !!horarioSelecionado);
   }, [horarioAvulso, horarioSelecionado]);
 
   const handleTipoClick = (tipo) => {
@@ -249,7 +249,7 @@ export default function Page() {
             </div>
           </div>
 
-          <Button disabled={liberarSubmit} className="mt-4" onClick={() => handleConfirm()}>Confirmar</Button>
+          <Button disabled={!liberarSubmit} className="mt-4" onClick={() => handleConfirm()}>Confirmar</Button>
         </div>
 
         {/* Lista de alunos */}
