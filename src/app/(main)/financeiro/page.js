@@ -73,7 +73,7 @@ export default function FinanceiroPage() {
     setEntradas(0);
     setSaidas(0);
     setDebitos(0);
-    console.log(transacoes);
+    // console.log(transacoes);
     if (transacoes) {
 
       const entrada = transacoes.filter(transacao => transacao.tipo === "entrada");
@@ -119,11 +119,11 @@ export default function FinanceiroPage() {
     }
 
     if (buscaPorNome) {
-      filtered = filtered.filter(transacao => (transacao.usuario.nome + "" + transacao.usuario.sobrenome).toLocaleLowerCase().includes((buscaPorNome.trim()).toLocaleLowerCase()))
+      filtered = filtered.filter(transacao => (transacao.nome + "" + transacao.sobrenome).toLocaleLowerCase().includes((buscaPorNome.trim()).toLocaleLowerCase()))
     }
 
     if (buscaPorCPF) {
-      filtered = filtered.filter(transacao => (transacao.usuario.cpf).includes(buscaPorCPF))
+      filtered = filtered.filter(transacao => (transacao.cpf).includes(buscaPorCPF))
     }
 
     setFilteredTransacoes(filtered);

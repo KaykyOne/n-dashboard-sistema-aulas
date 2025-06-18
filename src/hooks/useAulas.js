@@ -25,16 +25,10 @@ export default function useAula() {
         setVagas(res2 || []);
     }
 
-    async function inserirAula(aula) {
-        const { resJSON, res } = await GenericCreate("aulas", "inserirAula", aula);
-        console.log(res);
-        console.log(resJSON);
-        if (res.status === 200) {
-            toast.success("Aula Inserida com sucesso!");
-        } else {
-            console.error(error);
-            toast.error("Erro ao inserir Aula!");
-        }
+    async function testAulas(aluno_id, data, tipo, marcada_por) {
+        const pesquisa = `?aluno_id=${aluno_id}&data=${data}&tipo=${tipo}&marcada_por=${marcada_por}&autoescola_id=${id}`;
+        const res = await GenericSearch('aulas', 'testAula', pesquisa);
+        return res;
     }
 
     async function buscarHorariosLivres(id_instrutor, veiculo_id, dataA) {
@@ -103,13 +97,12 @@ export default function useAula() {
     const deleteAula = async (id) => {
         const res = await GenericDelete("adm", id, 'removerAula', 'id');
         toast.info(res.message);
-        if(res){
+        if (res) {
             buscarAulasInstrutor(instrutor, data);
         }
     }
 
     const alterarAula = async (id1, hora1, id2, hora2) => {
-        console.log('iniciando!')
         try {
             const att = `?id1=${id1}&hora1=${hora1}&id2=${id2}&hora2=${hora2}`;
             const response = await GenericPath('aulas', 'trocarHorarios', att);
@@ -121,12 +114,12 @@ export default function useAula() {
                 toast.error(`Erro, não é possivel mudar as aulas, os veiculos ou alunos estão em aulas iguais`);
                 return false;
             }
-        }catch(error){
+        } catch (error) {
             toast.error(error);
             return false;
         }
     }
 
-    return { setInstrutor, instrutor, data, setData, aulas, loading, vagas, deleteAula, buscarAulasInstrutor, inserirAula, buscarHorariosLivres, InsertClass, alterarAula };
+    return { setInstrutor, instrutor, data, setData, aulas, loading, vagas, deleteAula, buscarAulasInstrutor, buscarHorariosLivres, InsertClass, alterarAula, testAulas };
 }
 

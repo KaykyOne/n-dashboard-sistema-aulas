@@ -13,8 +13,8 @@ export default function Sidebar() {
     setSelectedpage(path);
   }, [path]); // ✅ Executa só quando a URL muda
 
-  const cssPadrao = "flex items-center gap-2 p-2 rounded-lg hover:text-[#6F0A59] hover:font-bold";
-  const cssSelecionado = "flex items-center gap-2 p-2 rounded-lg w-full text-[#6F0A59] font-bold bg-gray-200 border-solid";
+  const cssPadrao = "flex items-center gap-2 p-2 hover:text-[#6F0A59] hover:font-bold";
+  const cssSelecionado = "flex items-center gap-2 p-2 w-full text-[#6F0A59] font-bold border-2 border-white border-l-[#6F0A59]";
 
   const classTextResponsive = "hidden lg:inline";
 

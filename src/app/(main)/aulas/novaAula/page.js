@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from "@/components/ui/table"
+import Modal from '@/components/Modal'
 
 import useInstrutores from "@/hooks/useInstrutores"
 import useVeiculos from "@/hooks/useVeiculos"
@@ -17,7 +18,7 @@ import { toast } from 'react-toastify'
 
 export default function Page() {
   const { alunos, buscarAlunos, loading } = useAlunos()
-  const { vagas, buscarHorariosLivres, InsertClass } = useAula();
+  const { vagas, buscarHorariosLivres, InsertClass, testAulas } = useAula();
   const { instrutores, buscarInstrutores, loading: loadingInstrutor } = useInstrutores();
   const { buscarVeiculosTipo, loading: veiculosLoading, veiculos } = useVeiculos();
 
@@ -25,7 +26,7 @@ export default function Page() {
   const [tipoSelecionado, setTipoSelecionado] = useState(null)
   const [instrutorSelecionado, setInstrutorSelecionado] = useState('')
   const [veiculoSelecionado, setVeiculoSelecionado] = useState(null)
-  const [dataSelecionada, setDataSelecionada] = useState(null)
+  const [dataSelecionada, setDataSelecionada] = useState()
   const [aluno, setAluno] = useState([]);
   const [horarioSelecionado, setHorarioSelecionado] = useState(null)
 
@@ -36,6 +37,7 @@ export default function Page() {
   const [liberaVeiculo, setLiberaVeiculo] = useState(false)
   const [liberaData, setLiberaData] = useState(false)
   const [liberaHorario, setLiberaHorario] = useState(false)
+  const [liberarSubmit, setLiberarSubmit] = useState(false);
 
   // Busca
   const [searchForName, setSearchForName] = useState("")
@@ -43,6 +45,11 @@ export default function Page() {
 
   // Alunos filtrados
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([])
+
+  //Modal
+  const [modalContent, setModalContent] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   const tipos = ['A', 'B', 'C', 'D', 'E']
 
@@ -110,6 +117,7 @@ export default function Page() {
       setHorarioAvulso('');
       toast.warn("Escolha somente um tipo de horário!")
     }
+    setLiberarSubmit(true);
   }, [horarioAvulso, horarioSelecionado]);
 
   const handleTipoClick = (tipo) => {
@@ -117,7 +125,18 @@ export default function Page() {
   }
 
   const handleConfirm = async () => {
-    // Inserir a aula com base no tipo de usuário
+
+    const res = await testAulas(aluno.usuario_id, dataSelecionada, tipoSelecionado, 3, []);
+    if (res) {
+      setModalContent(res || '');
+      setModalVisible(true);
+    }
+    else {
+      await confirmAula();
+    }
+  };
+
+  const confirmAula = async () => {
     const aula = {
       instrutor_id: instrutorSelecionado,
       aluno_id: aluno.usuario_id,
@@ -131,10 +150,10 @@ export default function Page() {
     };
 
     await InsertClass(aula);
+    setModalVisible(false);
     setHorarioSelecionado('');
     await buscarVagos();
-
-  };
+  }
 
   const buscarVagos = async () => {
     if (dataSelecionada) {
@@ -155,7 +174,7 @@ export default function Page() {
         <div className="flex flex-col gap-4 bg-white rounded-2xl p-2">
           <div>
             <h2 className="font-semibold">Aluno Selecionado:</h2>
-            <h1 className="bg-white capitalize text-black font-bold text-2xl">{`${aluno.nome || 'Não'} ${aluno.sobrenome || 'Definido'}`}</h1>
+            {aluno.nome ? <h1 className="bg-white capitalize text-black font-bold text-2xl">{aluno.nome + " " + aluno.sobrenome}</h1> : <h1 className='bg-red-900 text-white text-2xl capitalize font-bold p-1 rounded-md'>Não Selecionado</h1>}
           </div>
 
           <div>
@@ -200,11 +219,17 @@ export default function Page() {
 
           <div className='flex flex-col'>
             <h1 className='font-semibold'>Data:</h1>
-            <DatePicker
-              value={dataSelecionada}
-              disabled={!liberaData}
-              onChange={setDataSelecionada}
-            />
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-2'>
+              <DatePicker
+                value={dataSelecionada}
+                disabled={!liberaData}
+                onChange={setDataSelecionada}
+                className={'flex-1 col-span-2'}
+              />
+              <Button onClick={() => setDataSelecionada(new Date())} className={'flex-1 col-span-1'} disabled={!liberaData}>
+                Hoje
+              </Button>
+            </div>
           </div>
 
           <div className='flex gap-2'>
@@ -224,7 +249,7 @@ export default function Page() {
             </div>
           </div>
 
-          <Button className="mt-4" onClick={() => handleConfirm()}>Confirmar</Button>
+          <Button disabled={liberarSubmit} className="mt-4" onClick={() => handleConfirm()}>Confirmar</Button>
         </div>
 
         {/* Lista de alunos */}
@@ -243,40 +268,56 @@ export default function Page() {
             className="mb-4 w-full"
           />
           <div className="flex-1 max-h-[400px] overflow-auto">
-            <Table className="table-fixed w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>CPF</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Ação</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className='flex flex-col gap-2'>
+              <div className='grid grid-cols-4 p-3'>
+                <h1 className='text-2xl font-bold'>Nome</h1>
+                <h1 className='text-2xl font-bold'>CPF</h1>
+                <h1 className='text-2xl font-bold'>Categoria</h1>
+                <h1 className='text-2xl font-bold'>Ação</h1>
+              </div>
+              <div className='flex flex-col gap-1'>
                 {usuariosFiltrados.map((user) => (
-                  <TableRow key={user.usuario_id}>
-                    <TableCell className="capitalize">{user.nome} {user.sobrenome}</TableCell>
-                    <TableCell>{user.cpf.length > 11 ? "inviável" : user.cpf}</TableCell>
-                    <TableCell>{user.categoria_pretendida.toUpperCase()}</TableCell>
-                    <TableCell>
-                      <Button
-                        className="w-full"
-                        variant="default"
-                        onClick={() => setAluno(user)}
-                      >
-                        Selecionar
-                        <span className="material-icons">
-                          touch_app
-                        </span>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                  <div key={user.usuario_id} className='grid grid-cols-4 text-start p-3 border border-gray-200 rounded-md'>
+                    <p>{user.nome}</p>
+                    <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
+                    <p>{user.categoria_pretendida.toUpperCase()}</p>
+                    <Button
+                      className="w-full"
+                      variant="default"
+                      onClick={() => setAluno(user)}
+                    >
+                      Selecionar
+                      <span className="material-icons">
+                        touch_app
+                      </span>
+                    </Button>
+                  </div>
+                ))};
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {modalVisible &&
+        <Modal onClose={() => setModalVisible(false)}>
+          <div className='flex gap-2 items-center justify-center'>
+
+            <div className='flex flex-col justify-center items-center gap-2 w-full'>
+              <span className="material-icons !text-9xl">
+                error
+              </span>
+              <h1>{modalContent}</h1>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+                <Button onClick={() => confirmAula()} className={'w-full'}>Confirmar Aula</Button>
+                <Button onClick={() => setModalVisible(false)} className={'w-full'}>Cancelar</Button>
+              </div>
+            </div>
+          </div>
+
+        </Modal>
+      }
     </div>
   )
 }

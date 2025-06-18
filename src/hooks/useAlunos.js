@@ -42,9 +42,7 @@ export default function useAlunos() {
         } else {
             toast.error(result?.error || "Erro ao cadastrar Aluno!");
             return result;
-        }
-
-        
+        } 
     };
 
     const editarAluno = async (aluno) => {
