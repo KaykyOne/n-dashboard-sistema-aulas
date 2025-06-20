@@ -8,7 +8,7 @@ export default function useFinanceiro() {
     const [transacoes, setTransacoes] = useState([]);
     const [transacoesUsuario, setTransacoesUsuario] = useState([]);
     const [res, setRes] = useState("");
-
+    const [teste, setErro] = useState();
     const criarTransacao = async (transacao) => {
 
         // Validação básica
