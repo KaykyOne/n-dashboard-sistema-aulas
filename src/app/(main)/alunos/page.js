@@ -119,7 +119,6 @@ export default function AlunosPage() {
       const matchData = searchDataCadastro === "" || Number(searchDataCadastro) === userDate;
       return matchName && matchCpf && matchCat && matchForAtv && matchData;
     })
-    console.log(users);
     setUsuariosFiltrados(users);
   };
   const handleCheckboxChange = (event, tipo) => {

@@ -5,9 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Combobox } from '@/components/ui/combobox'
 import { DatePicker } from '@/components/ui/datePicker'
 import { Button } from '@/components/ui/button'
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "@/components/ui/table"
+import Loading from '@/components/Loading'
 import Modal from '@/components/Modal'
 
 import useInstrutores from "@/hooks/useInstrutores"
@@ -18,7 +16,7 @@ import { toast } from 'react-toastify'
 
 export default function Page() {
   const { alunos, buscarAlunos, loading } = useAlunos()
-  const { vagas, buscarHorariosLivres, InsertClass, testAulas } = useAula();
+  const { vagas, buscarHorariosLivres, InsertClass, testAulas, loading: loadingAulas } = useAula();
   const { instrutores, buscarInstrutores, loading: loadingInstrutor } = useInstrutores();
   const { buscarVeiculosTipo, loading: veiculosLoading, veiculos } = useVeiculos();
 
@@ -178,6 +176,7 @@ export default function Page() {
 
   return (
     <div className='flex flex-col'>
+      {loading || loadingInstrutor || veiculosLoading || loadingAulas && <Loading/>}
       <h1 className='text-4xl font-bold ml-4'>Marcar Aulas</h1>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
         {/* Formulário */}

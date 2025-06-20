@@ -20,7 +20,7 @@ export default function useFinanceiro() {
             toast.error("Selecione o tipo!");
             return;
         }
-
+        transacao.cpf = (transacao.cpf).replace(/[^0-9]/g, '');
         // Usa o GenericCreate
         const { resJSON, res } = await GenericCreate("financeiro", "inserirTransacao", transacao);
         console.log(res);

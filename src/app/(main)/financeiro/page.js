@@ -246,11 +246,8 @@ export default function FinanceiroPage() {
           <form className='flex flex-col gap-2 mt-5'>
             <h1 className='text-2xl font-medium'>CPF:</h1>
             <Input
-              placeholder="00000000000"
+              placeholder="000.000.000-00"
               type="text"
-              inputMode="numeric"
-              pattern="\d{11}"
-              maxLength={11}
               required
               value={cpfCriar}
               onChange={(e) => setCpfCriar(e.target.value)}

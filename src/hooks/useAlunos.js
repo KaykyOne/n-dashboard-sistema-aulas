@@ -33,15 +33,15 @@ export default function useAlunos() {
 
     const inserirAluno = async (aluno, transacao) => {
         aluno.autoescola_id = id;
-        const result = await GenericCreate("adm", "addaluno", aluno);
+        const { resJSON, res } = await GenericCreate("adm", "addaluno", aluno);
 
-        if (result?.message) {
+        if (res.ok) {
             await criarTransacao(transacao);
             toast.success("Aluno cadastrado com sucesso!");
-            return result;
+            return resJSON;
         } else {
             toast.error(result?.error || "Erro ao cadastrar Aluno!");
-            return result;
+            return resJSON;
         } 
     };
 
