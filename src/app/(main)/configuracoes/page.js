@@ -28,7 +28,7 @@ export default function ConfiguracoesPage() {
         {configs.length > 0 ? configs.map(item => (
           <div key={item.id_configuracao} className='flex gap-2 w-full bg-white p-5 rounded-2xl'>
             <h1 className='font-medium capitalize'>{(item.chave).replace(/([A-Z])/g, ' $1').trim()}</h1>
-            <h1>{item.valor}</h1>
+            <input className='' value={item.valor}/>
           </div>
         )) : <h1>Nenhuma configução disponivel!</h1>}
       </div>

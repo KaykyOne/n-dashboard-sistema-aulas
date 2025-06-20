@@ -46,6 +46,11 @@ export default function Sidebar() {
           <p className={classTextResponsive}>Alunos</p>
         </Link>
 
+        <Link href="/alunos/precadastro" className={selectedPage === "/alunos/precadastro" ? cssSelecionado : cssPadrao}>
+          <i className="material-icons">person_add</i>
+          <p className={classTextResponsive}>Pre-Cadastro</p>
+        </Link>
+
         <Link href="/financeiro" className={selectedPage === "/financeiro" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">payments</i>
           <p className={classTextResponsive}>Financeiro</p>
@@ -58,7 +63,7 @@ export default function Sidebar() {
 
         <Link href="/configuracoes" className={selectedPage === "/configuracoes" ? cssSelecionado : cssPadrao}>
           <i className="material-icons">settings</i>
-          <p className={classTextResponsive}>Configurações</p>   
+          <p className={classTextResponsive}>Configurações</p>
         </Link>
       </nav>
 

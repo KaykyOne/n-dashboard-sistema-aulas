@@ -537,7 +537,7 @@ export default function AlunosPage() {
             arrow_left
           </span>
           <div className="flex flex-col gap-1 justify-center items-center">
-            {`${numPagina} - ${numPagina + 10}`}
+            {`${numPagina} - ${usuariosFiltrados.length}`}
           </div>
           <span className="material-icons !text-5xl cursor-pointer" onClick={() => alterarNavegacao(10)}>
             arrow_right

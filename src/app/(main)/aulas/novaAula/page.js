@@ -161,6 +161,16 @@ export default function Page() {
     }
   }
 
+  const selecionarAluno = (data) => {
+    setAluno(data)
+    setDataSelecionada(null);
+    setHorarioAvulso('');
+    setHorarioSelecionado('');
+    setVeiculoSelecionado('');
+    setInstrutorSelecionado('');
+    setTipoSelecionado('');
+  }
+
   const instrutoresOptions = instrutores.filter(i => i.atividade_instrutor == true).map((i) => ({
     value: i.instrutor_id.toString(),
     label: i.nome_instrutor,
@@ -174,7 +184,9 @@ export default function Page() {
         <div className="flex flex-col gap-4 bg-white rounded-2xl p-2">
           <div>
             <h2 className="font-semibold">Aluno Selecionado:</h2>
-            {aluno.nome ? <h1 className="bg-white capitalize text-black font-bold text-2xl">{aluno.nome + " " + aluno.sobrenome}</h1> : <h1 className='bg-red-900 text-white text-2xl capitalize font-bold p-1 rounded-md'>Não Selecionado</h1>}
+            {aluno.nome ? <h1 className="bg-white capitalize text-black font-bold text-2xl">{aluno.nome + " " + aluno.sobrenome}</h1> : <h1 className='bg-red-900 text-white text-2xl capitalize font-bold p-1 rounded-md flex items-center gap-1'><span className="material-icons">
+              highlight_off
+            </span> Não Selecionado</h1>}
           </div>
 
           <div>
@@ -278,13 +290,13 @@ export default function Page() {
               <div className='flex flex-col gap-1'>
                 {usuariosFiltrados.map((user) => (
                   <div key={user.usuario_id} className='grid grid-cols-4 text-start p-3 border border-gray-200 rounded-md'>
-                    <p>{user.nome}</p>
+                    <p>{user.nome + ' ' + user.sobrenome}</p>
                     <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
                     <p>{user.categoria_pretendida.toUpperCase()}</p>
                     <Button
                       className="w-full"
                       variant="default"
-                      onClick={() => setAluno(user)}
+                      onClick={() => selecionarAluno(user)}
                     >
                       Selecionar
                       <span className="material-icons">
