@@ -208,6 +208,39 @@ export default function FinanceiroPage() {
 
   }
 
+  const teclasPermitidas = [
+    'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'
+  ];
+
+  function validarTecla(e) {
+    // liberar sempre teclas permitidas
+    if (teclasPermitidas.includes(e.key)) return;
+
+    // bloquear ponto
+    if (e.key === '.') {
+      e.preventDefault();
+      return;
+    }
+
+    // bloquear segunda vírgula
+    if (e.key === ',' && valorCriar.includes(',')) {
+      e.preventDefault();
+      return;
+    }
+
+    // bloquear espaço se input vazio
+    if (e.key === ' ' && valorCriar === '') {
+      e.preventDefault();
+      return;
+    }
+
+    // bloquear tudo que não for número, vírgula ou espaço (se quiser liberar espaço em outras posições)
+    if (!/[0-9, ]/.test(e.key)) {
+      e.preventDefault();
+    }
+  }
+
+
   return (
     <div className='flex flex-col gap-4'>
       {loading && <Loading />}
@@ -258,16 +291,16 @@ export default function FinanceiroPage() {
               <Input
                 placeholder="0000,00"
                 onKeyDown={(e) => {
-                  if (e.key === '.' ) {
+                  if (validarTecla(e)) {
                     e.preventDefault();
                   }
                 }}
                 onPaste={(e) => e.preventDefault()}
-                type="number"
+                type="text"
                 maxLength={11}
                 required
                 value={valorCriar}
-                onChange={(e) => setValorCriar(parseFloat(e.target.value) || 0)} />
+                onChange={(e) => setValorCriar(e.target.value)} />
             </div>
             <h1 className='text-2xl font-medium'>Oque é? (Descrição):</h1>
             <Input

@@ -289,7 +289,7 @@ export default function Page() {
               <div className='flex flex-col gap-1'>
                 {usuariosFiltrados.map((user) => (
                   <div key={user.usuario_id} className='grid grid-cols-4 text-start p-3 border border-gray-200 rounded-md'>
-                    <p>{user.nome + ' ' + user.sobrenome}</p>
+                    <p className='capitalize'>{user.nome + ' ' + user.sobrenome}</p>
                     <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
                     <p>{user.categoria_pretendida.toUpperCase()}</p>
                     <Button
