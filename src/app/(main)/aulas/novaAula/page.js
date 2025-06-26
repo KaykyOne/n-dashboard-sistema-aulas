@@ -176,7 +176,7 @@ export default function Page() {
 
   return (
     <div className='flex flex-col'>
-      {loading || loadingInstrutor || veiculosLoading || loadingAulas && <Loading/>}
+      {loading || loadingInstrutor || veiculosLoading || loadingAulas && <Loading />}
       <h1 className='text-4xl font-bold ml-4'>Marcar Aulas</h1>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
         {/* Formulário */}
@@ -239,6 +239,9 @@ export default function Page() {
               />
               <Button onClick={() => setDataSelecionada(new Date())} className={'flex-1 col-span-1'} disabled={!liberaData}>
                 Hoje
+                <span className="material-icons">
+                  today
+                </span>
               </Button>
             </div>
           </div>
@@ -260,7 +263,12 @@ export default function Page() {
             </div>
           </div>
 
-          <Button disabled={!liberarSubmit} className="mt-4" onClick={() => handleConfirm()}>Confirmar</Button>
+          <Button disabled={!liberarSubmit} className="mt-4" onClick={() => handleConfirm()}>
+            Confirmar
+            <span className="material-icons">
+              check
+            </span>
+          </Button>
         </div>
 
         {/* Lista de alunos */}
@@ -303,7 +311,7 @@ export default function Page() {
                       </span>
                     </Button>
                   </div>
-                ))};
+                )) || []}
               </div>
             </div>
           </div>

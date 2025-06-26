@@ -8,7 +8,7 @@ import { Combobox } from "@/components/ui/combobox";
 import useAlunos from "@/hooks/useAlunos";
 import useInstrutores from "@/hooks/useInstrutores";
 import Loading from "@/components/Loading";
-import { format } from 'date-fns'
+import { addYears, format, parse } from 'date-fns'
 import { toast } from "react-toastify";
 
 const opcoesAtivoInativo = [
@@ -79,6 +79,7 @@ export default function AlunosPage() {
 
   //Editar
   const [editando, setEditando] = useState(false);
+  const [idEdit, setIdEdit] = useState("")
   const [cpfInstrutorResponsavel, setCpfInstrutorResponsavel] = useState("");
 
   //Cadastrar
@@ -89,6 +90,7 @@ export default function AlunosPage() {
   const [categoria, setCategoria] = useState("");
   const [outraCidade, setOutraCidade] = useState(false);
   const [instrutorResponsa, setInstrutorResponsa] = useState();
+  const [dataCadastro, setDataCadastro] = useState("");
 
   //Pesquisar
   const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios);
@@ -130,21 +132,24 @@ export default function AlunosPage() {
       }
     });
   };
-
   const cancelEdit = () => {
     setNome("");
     setSobrenome("");
     setCpf("");
     setCpfInstrutorResponsavel("");
+    setInstrutorResponsa("")
     setTelefone("");
+    setDataCadastro("");
     setCategoria("");
     setOutraCidade(false);
     setEditando(false);
+    setIdEdit("");
   };
   const startEdit = (user) => {
     setEditando(true);
     setNome(user.nome);
     setSobrenome(user.sobrenome);
+    setDataCadastro(format(user.data_cadastro, 'yyyy-MM-dd'));
     setCpf(user.cpf);
     setCpfInstrutorResponsavel(user.cpf);
     setTelefone(user.telefone);
@@ -153,6 +158,26 @@ export default function AlunosPage() {
     setCategoria(categorias);
     setOutraCidade(user.outra_cidade);
   };
+  const clearAll = () => {
+    setEditando(false);
+    setCpfInstrutorResponsavel("");
+
+    setNome("");
+    setSobrenome("");
+    setCpf("");
+    setTelefone("");
+    setCategoria("");
+    setOutraCidade(false);
+    setInstrutorResponsa(undefined);
+    setDataCadastro("");
+
+    setUsuariosFiltrados(usuarios);
+    setSearchForName("");
+    setSearchForCPF("");
+    setSearchForCat("");
+    setSearchForAtv("");
+    setSearchDataCadastro("");
+  };
 
   useEffect(() => {
     buscarAlunos();
@@ -160,7 +185,6 @@ export default function AlunosPage() {
   }, []);
   useEffect(() => {
     getInstrutoresResponsaveis(cpfInstrutorResponsavel);
-
   }, [cpfInstrutorResponsavel])
   useEffect(() => {
     // Sempre que "usuarios" mudar, atualiza os filtrados
@@ -223,8 +247,10 @@ export default function AlunosPage() {
         nome: nome,
         sobrenome: sobrenome,
         cpf: cpf,
+        tipo: 'aluno',
         telefone: telefone,
         categoria: categoriaFormat,
+        data_cadastro: dataCadastro,
         outra_cidade: outraCidade,
       });
 
@@ -241,6 +267,7 @@ export default function AlunosPage() {
       setSobrenome("");
       setCpf("");
       setTelefone("");
+      setDataCadastro("");
       setCategoria("");
       setOutraCidade(false);
       setValorCriar("");
@@ -254,11 +281,14 @@ export default function AlunosPage() {
       const categoriaFormat = categoria.join('');
 
       const aluno = ({
+        usuario_id: idEdit,
         nome: nome,
         sobrenome: sobrenome,
         cpf: cpf,
+        tipo: 'aluno',
         telefone: telefone,
         categoria: categoriaFormat,
+        data_cadastro: dataCadastro,
         outra_cidade: outraCidade,
       });
 
@@ -269,10 +299,12 @@ export default function AlunosPage() {
       setCpf("");
       setTelefone("");
       setCategoria("");
+      setDataCadastro("");
       setOutraCidade(false);
       setEditando(false);
       setCpfInstrutorResponsavel("")
       setInstrutorResponsa([])
+      setIdEdit("");
 
       await buscarAlunos();
     }
@@ -289,6 +321,7 @@ export default function AlunosPage() {
     await excluirAlunoInstrutor(cpfInstrutorResponsavel, instrutor.instrutor_id);
   };
   const handleCreateRelation = async () => {
+    if (!cpfInstrutorResponsavel || cpfInstrutorResponsavel === "") return;
     await inserirRelacao(cpfInstrutorResponsavel, instrutorResponsa);
   };
   const instrutoresOptions = instrutores.filter(i => i.atividade_instrutor == true).map((i) => ({
@@ -298,10 +331,10 @@ export default function AlunosPage() {
 
   const alterarNavegacao = (num) => {
     const val = numPagina + num;
-    if (val >= 0 && (val-10) <= usuariosFiltrados.length) {
+    if (val >= 0 && (val - 10) <= usuariosFiltrados.length) {
       setNumPagina(val);
     }
-  }
+  };
 
   return (
     <div className="relative">
@@ -313,10 +346,13 @@ export default function AlunosPage() {
           <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
             <h1 className="font-bold text-3xl">{editando ? 'Editando' : 'Cadastrar'} Aluno:</h1>
 
+            <p className="text-xl font-semibold">Nome:</p>
             <Input type="text" placeholder="Nome" required maxLength={20} value={nome} onChange={(e) => setNome(e.target.value)} />
+            <p className="text-xl font-semibold">Sobrenome:</p>
             <Input type="text" placeholder="Sobrenome" required maxLength={20} value={sobrenome} onChange={(e) => setSobrenome(e.target.value)} />
+            <p className="text-xl font-semibold">CPF:</p>
             <Input type="text" placeholder="CPF" required minLength={11} maxLength={11} value={cpf} onChange={(e) => setCpf(e.target.value)} />
-            <h3 className="font-bold text-2xl">Categoria:</h3>
+            <p className="text-xl font-semibold">Categoria:</p>
             <div className="flex gap-2">
               {opcoesDeTipo.map((tipo) => {
                 const isChecked = categoria.includes(tipo.value);
@@ -335,15 +371,19 @@ export default function AlunosPage() {
                 );
               })}
             </div>
+            <p className="text-xl font-semibold">Telefone:</p>
             <Input type="text" placeholder="Telefone" required minLength={10} maxLength={11} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+            <p className="text-xl font-semibold">Data Cadastro:</p>
+            <Input type="date" placeholder="dia/mes/ano" required minLength={10} maxLength={10} value={dataCadastro} onChange={(e) => setDataCadastro(e.target.value)} />
             <div className="flex gap-2">
               <input type="checkbox" id="outraCidade" checked={outraCidade} onChange={(e) => setOutraCidade(e.target.checked)} />
-              <label className="font-bold" htmlFor="outraCidade">Outra Cidade(isso dará privilégio para o aluno)</label>
+              <label className="font-bold" htmlFor="outraCidade">Privilégio(isso dará privilégio para o aluno)</label>
             </div>
             {!editando &&
-              <div className="border-gray-300 border-2 p-3 rounded-2xl">
+              <div className="flex flex-col border-gray-300 border-2 p-3 rounded-2xl gap-2">
                 <h1 className="text-2xl font-bold">Finaceiro Inicial</h1>
-                <div className='flex gap-2 pt-2'>
+                <p className="text-xl font-semibold">Valor:</p>
+                <div className='flex gap-2'>
                   <span className='font-bold text-2xl'>R$</span>
                   <Input
                     placeholder="Valor"
@@ -355,7 +395,7 @@ export default function AlunosPage() {
                     value={valorCriar || ""}
                     onChange={(e) => setValorCriar(e.target.valueAsNumber || 0)} />
                 </div>
-                <h1 className='font-medium'>Descrição:</h1>
+                <p className="text-xl font-semibold">Descrição:</p>
                 <Input
                   placeholder="Descreva sobre oque é isso (máximo 30 caracteres)"
                   type="text"
@@ -395,7 +435,7 @@ export default function AlunosPage() {
                 value={cpfInstrutorResponsavel}
                 onChange={(e) => setCpfInstrutorResponsavel(e.target.value)} />
               <Combobox
-                options={instrutoresOptions}
+                options={instrutoresOptions || []}
                 placeholder='Escolha o Instrutor'
                 onChange={setInstrutorResponsa}
                 value={instrutorResponsa} />
@@ -475,19 +515,28 @@ export default function AlunosPage() {
                 onChange={setSearchForAtv}
                 value={searchForAtv} />
             </div>
+            <div className="h-full justify-center items-end">
+              <Button onClick={() => clearAll()}>
+                Limpar
+                <span className="material-icons">
+                  cleaning_services
+                </span>
+              </Button>
+            </div>
           </div>
 
           {/* Tabela */}
           <div className="flex-1 overflow-auto">
             <div className="flex flex-col">
               {/* Cabeçalho */}
-              <div className="grid grid-cols-8 font-bold p-3 border-b bg-gray-100">
+              <div className="grid grid-cols-9 font-bold p-3 border-b bg-gray-100">
                 <p>Nome</p>
                 <p>CPF</p>
                 <p>Telefone</p>
                 <p>Categoria</p>
                 <p>Data Cadastro</p>
-                <p>Outra Cidade</p>
+                <p>Data Limite</p>
+                <p>Preferência</p>
                 <p>Status</p>
                 <p>Ações</p>
               </div>
@@ -497,13 +546,14 @@ export default function AlunosPage() {
                 {usuariosFiltrados.filter((_, index) => index >= numPagina && index < numPagina + 10).map((user) => (
                   <div
                     key={user.usuario_id}
-                    className="grid grid-cols-8 items-center text-sm p-3"
+                    className="grid grid-cols-9 items-center text-sm p-3"
                   >
                     <p className="capitalize">{user.nome} {user.sobrenome}</p>
                     <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
                     <p>{user.telefone}</p>
                     <p>{user.categoria_pretendida.toUpperCase()}</p>
                     <p>{format(user.data_cadastro, 'dd/MM/yyyy')}</p>
+                    <p>{format(addYears(user.data_cadastro, 1), 'dd/MM/yyyy')}</p>
                     <p>{user.outra_cidade ? "Sim" : "Não"}</p>
                     <div className="p-1">
                       <Button
@@ -517,15 +567,18 @@ export default function AlunosPage() {
                     <div className="w-full p-1">
                       <Button
                         className="w-full"
-                        variant="alert"
-                        onClick={() => startEdit(user)}
+                        variant="alert" 
+                        onClick={() => {
+                          startEdit(user);
+                          setIdEdit(user.usuario_id);
+                        }}
                       >
                         Editar
                         <span className="material-icons">edit</span>
                       </Button>
                     </div>
                   </div>
-                ))}
+                )) || []}
               </div>
             </div>
           </div>

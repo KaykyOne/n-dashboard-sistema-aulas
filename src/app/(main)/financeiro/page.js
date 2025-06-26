@@ -248,24 +248,24 @@ export default function FinanceiroPage() {
         <Modal onClose={() => setModalVisible(false)}>
           {moodalContent}
         </Modal>}
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 text-green-800'>
+      <div className='grid grid-cols-3 gap-4 text-green-800'>
         <div className='bg-green-200 p-4 rounded-md'>
-          <h1 className='text-2xl font-medium'>Entradas: </h1>
-          <h1 className='text-4xl xl:text-6xl font-bold'>{sumEntradas}</h1>
+          <h1 className='text-xl font-medium'>Entradas: </h1>
+          <h1 className='text-2xl font-bold'>{sumEntradas}</h1>
         </div>
         <div className='bg-red-200 p-4 rounded-md text-red-800'>
-          <h1 className='text-2xl font-medium'>Saídas:</h1>
-          <h1 className='text-4xl xl:text-6xl font-bold'>{sumSaidas}</h1>
+          <h1 className='text-xl font-medium'>Saídas:</h1>
+          <h1 className='text-2xl font-bold'>{sumSaidas}</h1>
         </div>
         <div className='bg-orange-200 p-4 rounded-md text-orange-800'>
-          <h1 className='text-2xl font-medium'>Débitos:</h1>
-          <h1 className='text-4xl xl:text-6xl font-bold'>{sumDebitos}</h1>
+          <h1 className='text-xl font-medium'>Débitos:</h1>
+          <h1 className='text-2xl font-bold'>{sumDebitos}</h1>
         </div>
       </div>
 
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4'>
         {/* Parte de Criar Transacao */}
-        <div className='flex flex-col bg-white p-4 rounded-md gap-4'>
+        <div className='flex flex-col col-span-1 bg-white p-4 rounded-md gap-4'>
           <div className='flex flex-col xl:flex-row gap-4 justify-start'>
             <h1 className='text-3xl font-bold'>Gerar</h1>
             <Combobox
@@ -319,7 +319,7 @@ export default function FinanceiroPage() {
           </Button>
         </div>
         {/* Parte de visualizar Transacao */}
-        <div className='flex flex-col bg-white p-4 rounded-md gap-4'>
+        <div className='flex flex-col bg-white p-4 rounded-md gap-4 col-span-1 xl:col-span-2'>
           <h1 className='text-3xl font-bold capitalize'>Ver transações Aluno</h1>
           <h3 className='font-medium text-2xl'>CPF:</h3>
           <div className='flex flex-col md:flex-row gap-2'>
@@ -347,6 +347,7 @@ export default function FinanceiroPage() {
                   <TableHead>Data</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Tipo</TableHead>
+                  <TableHead>Descrição</TableHead>
                   <TableHead>Excluir</TableHead>
                 </TableRow>
               </TableHeader>
@@ -360,6 +361,9 @@ export default function FinanceiroPage() {
                         "bg-yellow-200 text-yellow-800 font-bold"}`
                     }>
                       {transacao.tipo}
+                    </TableCell>
+                    <TableCell>
+                      {transacao.descricao}
                     </TableCell>
                     <TableCell>
                       <Button
@@ -422,7 +426,7 @@ export default function FinanceiroPage() {
                     {transacao.tipo}
                   </TableCell>
                   <TableCell>{transacao.nome + " " + transacao.sobrenome}</TableCell>
-                  <TableCell>{(transacao.cpf).length > 11 && "inviável"}</TableCell>
+                  <TableCell>{(transacao.cpf).length > 11 ? "inviável" : transacao.cpf}</TableCell>
                   <TableCell>{formatarValor(transacao.valor)}</TableCell>
                   <TableCell>{format(transacao.data, 'dd/MM/yyyy')}</TableCell>
                   <TableCell>
@@ -434,7 +438,7 @@ export default function FinanceiroPage() {
                     </Button>
                   </TableCell>
                 </TableRow>
-              )}
+              ) || []}
             </TableBody>
           </Table>
         </div>

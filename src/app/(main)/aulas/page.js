@@ -189,20 +189,22 @@ export default function AulasPage() {
           </div>
 
           <div className='flex flex-col'>
-            <div className='grid grid-cols-4 p-3'>
+            <div className='grid grid-cols-5 p-3'>
               <h1 className='text-2xl font-bold'>Hora</h1>
               <h1 className='text-2xl font-bold'>Aluno</h1>
               <h1 className='text-2xl font-bold'>Veículo</h1>
+              <h1 className='text-2xl font-bold'>Tipo</h1>
               <h1 className='text-2xl font-bold'>Ação</h1>
             </div>
             <div className='flex flex-col gap-1'>
               {aulasFiltradas.map((aula, index) => (
                 aula.nome != null ?
-                  <div key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id} className='grid grid-cols-4 text-start p-3 border border-gray-200 rounded-md' draggable
+                  <div key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id} className='grid grid-cols-5 text-start p-3 border border-gray-200 rounded-md' draggable
                     onDrop={() => dragDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
                     <p>{aula.hora}</p>
                     <p>{aula.nome + " " + aula.sobrenome}</p>
                     <p>{aula.placa}</p>
+                    <p className='font-black'>{aula.tipo}</p>
                     <Button
                       className={"w-full"}
                       variant={"destructive"}

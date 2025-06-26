@@ -5,7 +5,7 @@ import useGeneric from './useGeneric'
 export default function useAutoescola() {
     const [autoescolas, setAutoescolas] = useState([]);
 
-    const { GenericSearch, loading, error } = useGeneric();
+    const { GenericSearch, GenericPath, loading, error } = useGeneric();
 
     let id
     useEffect(() => {
@@ -25,5 +25,10 @@ export default function useAutoescola() {
         return configs;
     }
 
-    return { searchAllAutoecolas, getConfigs, autoescolas, loading, error }
+    const updateConfig = async (id, valor) => {
+        const res = await GenericPath("adm", "atualizarConfig", "", { id_configuracao: +id, novo_valor: valor})
+        console.log(res);
+    }
+
+    return { searchAllAutoecolas, getConfigs, updateConfig, autoescolas, loading, error }
 }

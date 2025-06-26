@@ -155,7 +155,7 @@ export default function useGeneric() {
         }
     };
 
-    const GenericPath = async (rota, caminho, att) => {
+    const GenericPath = async (rota, caminho, att, body = null) => {
         const token = getToken();
         if (!token) {
             setError('Sem token!');
@@ -172,6 +172,7 @@ export default function useGeneric() {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
+                body: body ? JSON.stringify(body) : null
             });
 
             const response = await res.json();
