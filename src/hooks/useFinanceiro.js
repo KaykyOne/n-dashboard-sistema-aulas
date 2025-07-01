@@ -39,7 +39,8 @@ export default function useFinanceiro() {
 
     };
     const buscarTransacoes = async (autoescola_id) => {
-        const res = await GenericSearch("financeiro", "listarPorAutoescola", `?autoescola_id=${autoescola_id}`);
+        const id = sessionStorage.getItem("id_autoescola");
+        const res = await GenericSearch("financeiro", "listarPorAutoescola", `?autoescola_id=${id}`);
         setTransacoes(res);
     };
     const buscarTransacaoPorUsuario = async (cpf) => {
