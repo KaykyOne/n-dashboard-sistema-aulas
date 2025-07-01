@@ -19,6 +19,7 @@ export default function useInstrutores() {
     try {
       const res = await GenericSearch("adm", "buscarTodosInstrutores", `?autoescola_id=${autoescola_id}`);
       if (!res) throw new Error("Resposta vazia");
+      console.log(res);
       setInstrutores(res || []);
     } catch (error) {
       toast.error(`Erro ao buscar instrutores: ${error.message || error}`);
@@ -39,12 +40,17 @@ export default function useInstrutores() {
     }
   }
 
-  async function editarInstrutor(instrutorEditado) {
+  async function editarInstrutor(instrutorEditado, instrutor) {
     instrutorEditado.autoescola_id = sessionStorage.getItem("id_autoescola");
-    try {
-      const response = await GenericUpdate("instrutor", "updateinstrutor", instrutorEditado);
+    instrutor.autoescola_id = sessionStorage.getItem("id_autoescola");
 
-      if (!response) throw new Error(resJSON?.message || "Erro na atualização");
+    try {
+      const [response, response2] = await Promise.all([
+        GenericUpdate("instrutor", "updateinstrutor", instrutorEditado),
+        GenericUpdate("adm", "attaluno", instrutor)
+      ]);
+
+      if (!response || !response2) throw new Error("Erro na atualização");
 
       toast.success(response.message);
       await buscarInstrutores();
@@ -56,7 +62,8 @@ export default function useInstrutores() {
   async function mudarAtividadeInstrutor(instrutor_id, ativo) {
     try {
       const res = await GenericPath("instrutor", "updateatividade", `?instrutor_id=${instrutor_id}&ativo=${ativo}`);
-      if (!res || !res.ok) throw new Error("Erro ao mudar atividade.");
+      console.log(res);
+      if (!res) throw new Error("Erro ao mudar atividade.");
       toast.success("Atividade alterada com sucesso!");
       await buscarInstrutores();
     } catch (err) {

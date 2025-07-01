@@ -67,15 +67,27 @@ export default function InstrutoresPage() {
       return;
     }
 
-    const categoriaFormat = categoria.join("");
-
     const dados = {
       nome_instrutor: nome,
-      tipo_instrutor: categoriaFormat,
+      tipo_instrutor: categoria,
       hora_inicio: horaInicio,
       hora_fim: horaFim,
       hora_inicio_almoco: inicioAlmoco,
       hora_fim_almoco: fimAlmoco,
+    };
+
+    const instrutor = {
+      usuario_id : 0,
+      nome: nome,
+      sobrenome: sobrenome,
+      cpf: cpf,
+      tipo: "instrutor",
+      telefone:telefone,
+      categoria: categoria,
+      atividade: true,
+      autoescola_id: 0,
+      data_cadastro: new Date(),
+      outra_cidade: outraCidade,
     };
 
     if (editando) {
@@ -84,26 +96,15 @@ export default function InstrutoresPage() {
       const instrutorOriginal = instrutores.find(i => i.instrutor_id === idEditando);
       if (instrutorOriginal) {
         dados.atividade_instrutor = instrutorOriginal.atividade_instrutor;
+        instrutor.atividade = instrutorOriginal.atividade_instrutor;
+        instrutor.usuario_id = instrutorOriginal.usuario_id;
         dados.usuario_id = instrutorOriginal.usuario_id;
       }
-      await editarInstrutor(dados);
+      await editarInstrutor(dados, instrutor);
     } else {
-      // criar usuário e depois cadastrar como instrutor
-      const aluno = {
-        nome,
-        sobrenome,
-        cpf,
-        tipo: "instrutor",
-        telefone,
-        categoria: categoriaFormat,
-        data_cadastro: new Date(),
-        outra_cidade: outraCidade,
-      };
-
       let res;
       try {
-        res = await inserirInstrutor(aluno);
-        console.log(res);
+        res = await inserirInstrutor(instrutor);
       } catch (err) {
         console.error("Erro ao inserir instrutor:", err);
         toast.error("Erro ao criar o usuário do instrutor.");
@@ -145,6 +146,9 @@ export default function InstrutoresPage() {
   const startEdit = (instrutor) => {
     setEditando(true);
     setNome(instrutor.nome_instrutor);
+    setTelefone(instrutor.telefone);
+    setCpf(instrutor.cpf);
+    setSobrenome(instrutor.sobrenome)
     setCategoria(instrutor.tipo_instrutor);
     setIdEditando(instrutor.instrutor_id);
     setHoraInicio(instrutor.hora_inicio || "08:00");
@@ -169,53 +173,59 @@ export default function InstrutoresPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="flex flex-col p-6 gap-2">
       {loading && <Loading />}
       <h1 className="text-3xl font-bold mb-4">Gerenciar Instrutores</h1>
 
-      <div className="flex flex-col gap-2 mb-6 bg-white p-2 rounded-sm">
-        <h2 className="font-bold text-xl">{idEditando ? "Editando" : "Cadastrando"} Instrutor</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <Input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
-          <Input placeholder="Sobrenome" value={sobrenome} onChange={(e) => setSobrenome(e.target.value)} />
-          <Input placeholder="CPF" value={cpf} onChange={(e) => setCpf(e.target.value)} />
-          <Input placeholder="Telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
-        </div>
-        <label className="font-medium">Categoria:</label>
-        <div className="flex gap-4 flex-wrap">
-          {opcoesDeTipo.map((tipo) => {
-            const isChecked = categoria.includes(tipo.value);
-            return (
-              <div className="flex items-center gap-1" key={tipo.value}>
-                <input
-                  type="checkbox"
-                  id={`tipo${tipo.value}`}
-                  checked={isChecked}
-                  onChange={(event) => handleCheckboxChange(event, tipo.value)}
-                />
-                <label htmlFor={`tipo${tipo.value}`} className="text-sm">{tipo.value}</label>
-              </div>
-            );
-          })}
-        </div>
+      <div className="grid grid-cols-3 gap-2 bg-white p-2 rounded-sm">
+        <div className="flex col-span-2 flex-col gap-2 mb-6">
+          <h2 className="font-bold text-xl">{idEditando ? "Editando" : "Cadastrando"} Instrutor</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <Input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+            <Input placeholder="Sobrenome" value={sobrenome} onChange={(e) => setSobrenome(e.target.value)} />
+            <Input placeholder="CPF" value={cpf} onChange={(e) => setCpf(e.target.value)} />
+            <Input placeholder="Telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+          </div>
+          <label className="font-medium">Categoria:</label>
+          <div className="flex gap-4 flex-wrap">
+            {opcoesDeTipo.map((tipo) => {
+              const isChecked = categoria.includes(tipo.value);
+              return (
+                <div className="flex items-center gap-1" key={tipo.value}>
+                  <input
+                    type="checkbox"
+                    id={`tipo${tipo.value}`}
+                    checked={isChecked}
+                    onChange={(event) => handleCheckboxChange(event, tipo.value)}
+                  />
+                  <label htmlFor={`tipo${tipo.value}`} className="text-sm">{tipo.value}</label>
+                </div>
+              );
+            })}
+          </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <Input type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} placeholder="Hora Início" />
-          <Input type="time" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} placeholder="Hora Fim" />
-          <Input type="time" value={inicioAlmoco} onChange={(e) => setInicioAlmoco(e.target.value)} placeholder="Início Almoço" />
-          <Input type="time" value={fimAlmoco} onChange={(e) => setFimAlmoco(e.target.value)} placeholder="Fim Almoço" />
-        </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <Input type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} placeholder="Hora Início" />
+            <Input type="time" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} placeholder="Hora Fim" />
+            <Input type="time" value={inicioAlmoco} onChange={(e) => setInicioAlmoco(e.target.value)} placeholder="Início Almoço" />
+            <Input type="time" value={fimAlmoco} onChange={(e) => setFimAlmoco(e.target.value)} placeholder="Fim Almoço" />
+          </div>
 
-        <div className="flex gap-2 mt-2">
-          <Button onClick={handleSubmit}>{editando ? "Salvar Edição" : "Cadastrar"}</Button>
-          {editando && <Button variant="destructive" onClick={clear}>Cancelar</Button>}
+          <div className="flex gap-2 mt-2">
+            <Button onClick={handleSubmit}>{editando ? "Salvar Edição" : "Cadastrar"}</Button>
+            {editando && <Button variant="destructive" onClick={clear}>Cancelar</Button>}
+          </div>
+        </div>
+        <div className="flex flex-col">
+
         </div>
       </div>
 
-      <Table>
+      <Table className={'bg-white p-2 rounded-sm'}>
         <TableHeader>
           <TableRow>
             <TableHead>Nome</TableHead>
+            <TableHead>CPF</TableHead>
             <TableHead>Tipo</TableHead>
             <TableHead>Hora Início</TableHead>
             <TableHead>Hora Fim</TableHead>
@@ -229,6 +239,7 @@ export default function InstrutoresPage() {
           {Array.isArray(instrutores) && instrutores.map((instrutor) => (
             <TableRow key={instrutor.instrutor_id}>
               <TableCell>{instrutor.nome_instrutor}</TableCell>
+              <TableCell>{(instrutor.cpf).length > 11 ? 'inviavel' : instrutor.cpf}</TableCell>
               <TableCell>{instrutor.tipo_instrutor}</TableCell>
               <TableCell>{instrutor.hora_inicio?.slice(0, 5) || "--:--"}</TableCell>
               <TableCell>{instrutor.hora_fim?.slice(0, 5) || "--:--"}</TableCell>
