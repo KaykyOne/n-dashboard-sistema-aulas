@@ -5,17 +5,13 @@ import { toast } from "react-toastify";
 
 export default function useAula() {
     const { GenericDelete, GenericSearch, GenericCreate, GenericPath, error, loading } = useGeneric();
-    let id
-    useEffect(() => {
-        id = sessionStorage.getItem("id_autoescola");
-    })
     const [aulas, setAulas] = useState([]);
     const [vagas, setVagas] = useState([]);
     const [instrutor, setInstrutor] = useState();
     const [data, setData] = useState(new Date());
 
     async function buscarAulasInstrutor(id_instrutor, data) {
-        console.log(`ROla: ${id}`)
+        const id = sessionStorage.getItem("id_autoescola");
         const [res1, res2] = await Promise.all([
             GenericSearch('adm', 'buscarAulasDoDiaInstrutor', `?id=${id_instrutor}&data=${data}&autoescola_id=${id}`),
             GenericSearch('adm', 'buscarHorariosVagos', `?id=${id_instrutor}&data=${data}&autoescola_id=${id}`)
@@ -26,6 +22,7 @@ export default function useAula() {
     }
 
     async function testAulas(aluno_id, data, tipo, marcada_por) {
+        const id = sessionStorage.getItem("id_autoescola");
         const pesquisa = `?aluno_id=${aluno_id}&data=${data}&tipo=${tipo}&marcada_por=${marcada_por}&autoescola_id=${id}`;
         const res = await GenericSearch('aulas', 'testAula', pesquisa);
         return res;
@@ -41,7 +38,7 @@ export default function useAula() {
     }
 
     const InsertClass = async (aula) => {
-
+        const id = sessionStorage.getItem("id_autoescola");
         const configs = await GenericSearch('adm', 'buscarConfigs', `?autoescola_id=${id}`);
 
         aula.autoescola_id = id;

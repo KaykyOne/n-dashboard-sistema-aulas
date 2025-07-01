@@ -9,6 +9,7 @@ export default function useGeneric() {
     const [error, setError] = useState('');
 
     const GenericDelete = async (rota, id, caminho, campo) => {
+        setError("");
         const token = getToken();
         if (!token || !id) setError('Sem token!');
 
@@ -35,6 +36,7 @@ export default function useGeneric() {
     };
 
     const GenericDeleteRelation = async (rota, caminho, campo1, campo2, id1, id2) => {
+        setError("");
         const token = getToken();
         if (!token) setError('Sem token!');
 
@@ -62,6 +64,7 @@ export default function useGeneric() {
     };
 
     const GenericCreate = async (rota, caminho, body) => {
+        setError("");
         const token = getToken();
         if (!token) {
             setError('Sem token!');
@@ -95,6 +98,7 @@ export default function useGeneric() {
     };
 
     const GenericSearch = async (rota, caminho, pesquisa = null) => {
+        setError("");
         const token = getToken();
         if (!token) setError('Sem token!');
 
@@ -120,6 +124,7 @@ export default function useGeneric() {
     };
 
     const GenericUpdate = async (rota, caminho, body) => {
+        setError("");
         const token = getToken();
         if (!token) {
             setError('Sem token!');
@@ -156,6 +161,7 @@ export default function useGeneric() {
     };
 
     const GenericPath = async (rota, caminho, att, body = null) => {
+        setError("");
         const token = getToken();
         if (!token) {
             setError('Sem token!');

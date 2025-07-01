@@ -247,7 +247,7 @@ export default function Page() {
           </div>
 
           <div className='flex gap-2'>
-            <div className='w-full'>
+            <div className='flex-1'>
               <h1 className='font-semibold'>Horário:</h1>
               <Combobox
                 options={vagas}
@@ -255,11 +255,11 @@ export default function Page() {
                 disabled={!liberaHorario}
                 onChange={setHorarioSelecionado}
                 value={horarioSelecionado}
-              />
+              />  
             </div>
             <div className='flex flex-col'>
               <h1 className='font-semibold'>Horário Avulso:</h1>
-              <Input className="bg-white" value={horarioAvulso} onChange={(e) => setHorarioAvulso(e.target.value)} disabled={!liberaHorario} />
+              <Input className="bg-white" value={horarioAvulso} type="time" onChange={(e) => setHorarioAvulso(e.target.value)} disabled={!liberaHorario} />
             </div>
           </div>
 

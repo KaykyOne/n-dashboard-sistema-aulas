@@ -75,32 +75,41 @@ export default function AulasPage() {
     if (!id) return;
     setModalVisible(true);
     setModalContent(
-      <div className='flex flex-col gap-3 text-center justify-center items-center'>
-        <h1 className='text-2xl mb-2'>Deseja realmente excluir essa aula?</h1>
+      <div className="flex flex-col items-center justify-center gap-4 text-center p-4">
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Tem certeza que deseja excluir esta aula?
+        </h1>
+
         <img
-          src={`/imageDelete.svg`}
-          alt="logo da empresa"
-          className="w-auto h-auto" />
-        <div className='flex gap-2'>
-          <Button variant={'green'} onClick={async () => {
-            setModalVisible(false);
-            await deleteAula(id);
-          }}>
-            Confirmar
-            <span className="material-icons">
-              check_circle
-            </span>
-          </Button>
+          src="/imageDelete.svg"
+          alt="Ícone de exclusão"
+          className="max-w-[200px] w-full h-auto"
+        />
+
+        <div className="flex gap-3 mt-4">
           <Button
-            variant={'destructive'}
-            onClick={() => setModalVisible(false)}>
+            variant="green"
+            className="flex items-center gap-2"
+            onClick={async () => {
+              setModalVisible(false);
+              await deleteAula(id);
+            }}
+          >
+            <span className="material-icons">check_circle</span>
+            Confirmar
+          </Button>
+
+          <Button
+            variant="destructive"
+            className="flex items-center gap-2"
+            onClick={() => setModalVisible(false)}
+          >
+            <span className="material-icons">cancel</span>
             Cancelar
-            <span className="material-icons">
-              cancel
-            </span>
           </Button>
         </div>
       </div>
+
     )
     return;
   }
@@ -136,6 +145,46 @@ export default function AulasPage() {
     setAulaDrag({ aula: aula, index: index });
   }
 
+  const confirmDrop = (aula, index) => {
+    setModalVisible(true);
+    setModalContent(
+      <div className="flex flex-col items-center justify-center gap-4 text-center p-4">
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Tem certeza que deseja troacar essas aulas?
+        </h1>
+
+        <img
+          src="/imagemAlterar.svg"
+          alt="Ícone de alteração"
+          className="max-w-[200px] w-full h-auto"
+        />
+
+        <div className="flex gap-3 mt-4">
+          <Button
+            variant="green"
+            className="flex items-center gap-2"
+            onClick={async () => {
+              setModalVisible(false);
+              await dragDrop(aula, index);
+            }}
+          >
+            <span className="material-icons">check_circle</span>
+            Confirmar
+          </Button>
+
+          <Button
+            variant="destructive"
+            className="flex items-center gap-2"
+            onClick={() => setModalVisible(false)}
+          >
+            <span className="material-icons">cancel</span>
+            Cancelar
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   const dragDrop = async (aula, index) => {
     const newAulas = [...aulas];
     const aula1 = aula.hora;
@@ -150,6 +199,8 @@ export default function AulasPage() {
 
       setAulas(newAulas);
       setAulaDrag(null);
+      if (!modalVisible && instrutor && data)
+        buscarAulasInstrutor(instrutor, data);
       return;
     } else {
       setAulaDrag(null);
@@ -200,7 +251,7 @@ export default function AulasPage() {
               {aulasFiltradas.map((aula, index) => (
                 aula.nome != null ?
                   <div key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id} className='grid grid-cols-5 text-start p-3 border border-gray-200 rounded-md' draggable
-                    onDrop={() => dragDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
+                    onDrop={() => confirmDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
                     <p>{aula.hora}</p>
                     <p>{aula.nome + " " + aula.sobrenome}</p>
                     <p>{aula.placa}</p>
@@ -217,7 +268,7 @@ export default function AulasPage() {
                   </div>
                   :
                   <div key={`vaga-${aula.hora} `} className='grid grid-cols-4 text-start bg-red-700 text-white p-3 rounded-md' draggable
-                    onDrop={() => dragDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
+                    onDrop={() => confirmDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
                     <p>{aula.hora}</p>
                     <p>Vaga</p>
                     <p>Vaga</p>

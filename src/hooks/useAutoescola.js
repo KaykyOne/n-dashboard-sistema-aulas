@@ -7,11 +7,6 @@ export default function useAutoescola() {
 
     const { GenericSearch, GenericPath, loading, error } = useGeneric();
 
-    let id
-    useEffect(() => {
-        id = sessionStorage.getItem("id_autoescola");
-    });
-
     const searchAllAutoecolas = async (autoescola_id) => {
         const pesquisa = `?autoescola_id=${autoescola_id}`;
         const res = await GenericSearch("adm", "autoescolasBuscar", pesquisa)
@@ -20,6 +15,7 @@ export default function useAutoescola() {
     }
 
     const getConfigs = async () => {
+        const id = sessionStorage.getItem("id_autoescola");
         const configs = await GenericSearch('adm', 'buscarConfigs', `?autoescola_id=${id}`);
         console.log(configs);
         return configs;

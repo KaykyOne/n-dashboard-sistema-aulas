@@ -10,6 +10,7 @@ import useInstrutores from "@/hooks/useInstrutores";
 import Loading from "@/components/Loading";
 import { addYears, format, parse } from 'date-fns'
 import { toast } from "react-toastify";
+import Modal from "@/components/Modal";
 
 const opcoesAtivoInativo = [
   {
@@ -60,6 +61,9 @@ const opcoesMes = [
   { value: "11", label: "Dezembro" },
 ]
 
+const cssSelecionado = 'p-2 border rounded-2xl cursor-pointer bg-black text-white hover:bg-white hover:text-black font-bold transition duration-300';
+const cssSemSelecao = 'p-2 border rounded-2xl cursor-pointer hover:bg-black hover:text-white font-bold transition duration-300';
+
 export default function AlunosPage() {
 
   //Buscar
@@ -70,13 +74,13 @@ export default function AlunosPage() {
     getInstrutoresResponsaveis,
     instrturesResponsaveis,
     inserirAluno,
+    deletarUsuario,
     excluirAlunoInstrutor,
     inserirRelacao,
     alterAtividadeAluno,
     editarAluno } = useAlunos();
 
   const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
-
   //Editar
   const [editando, setEditando] = useState(false);
   const [idEdit, setIdEdit] = useState("")
@@ -91,6 +95,7 @@ export default function AlunosPage() {
   const [outraCidade, setOutraCidade] = useState(false);
   const [instrutorResponsa, setInstrutorResponsa] = useState();
   const [dataCadastro, setDataCadastro] = useState("");
+  const [tipoUsuario, setTipoUsuario] = useState("aluno");
 
   //Pesquisar
   const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios);
@@ -107,6 +112,9 @@ export default function AlunosPage() {
   const [valorCriar, setValorCriar] = useState("");
   const [descricaoCriar, setDescicaoCriar] = useState("");
 
+  //Modal
+  const [modalContent, setModalContent] = useState("");
+
   const isNumeric = (str) => /^[0-9]+$/.test(str);
 
   const filtrarUsuarios = () => {
@@ -118,8 +126,9 @@ export default function AlunosPage() {
       const matchCat = searchForCat === "" || user.categoria_pretendida.toLowerCase().includes(searchForCat.toLowerCase());
       const matchForAtv = searchForAtv === "" || user.atividade == test;
       const userDate = new Date(user.data_cadastro).getMonth();
+      const tipoMach = tipoUsuario === "" || user.tipo_usuario === tipoUsuario;
       const matchData = searchDataCadastro === "" || Number(searchDataCadastro) === userDate;
-      return matchName && matchCpf && matchCat && matchForAtv && matchData;
+      return matchName && matchCpf && matchCat && matchForAtv && matchData && tipoMach;
     })
     setUsuariosFiltrados(users);
   };
@@ -153,7 +162,7 @@ export default function AlunosPage() {
     setCpf(user.cpf);
     setCpfInstrutorResponsavel(user.cpf);
     setTelefone(user.telefone);
-    let userCategoria = user.categoria_pretendida.toUpperCase();
+    let userCategoria = user.categoria_pretendida?.toUpperCase() || "";
     let categorias = userCategoria.split("");
     setCategoria(categorias);
     setOutraCidade(user.outra_cidade);
@@ -196,7 +205,7 @@ export default function AlunosPage() {
     setNumPagina(0);
     if (searchForName == "" && searchForCPF == "" && searchForCat == "" && searchDataCadastro == "") {
       let test = searchForAtv == "Inativo" ? false : true;
-      let users = usuarios.filter(user => user.atividade == test)
+      let users = usuarios.filter(user => user.atividade == test && user.tipo_usuario === tipoUsuario);
       setUsuariosFiltrados(users);
       return;
     }
@@ -247,7 +256,7 @@ export default function AlunosPage() {
         nome: nome,
         sobrenome: sobrenome,
         cpf: cpf,
-        tipo: 'aluno',
+        tipo: tipoUsuario,
         telefone: telefone,
         categoria: categoriaFormat,
         data_cadastro: dataCadastro,
@@ -273,7 +282,7 @@ export default function AlunosPage() {
       setValorCriar("");
       setDescicaoCriar("");
     }
-  }
+  };
   const handleEdit = async () => {
 
     const test = testCampos();
@@ -336,6 +345,39 @@ export default function AlunosPage() {
     }
   };
 
+  useEffect(() => {
+    let filterUsers = usuarios.filter(item => item.tipo_usuario === tipoUsuario);
+    if (tipoUsuario == 'aluno') {
+      filterUsers = usuarios.filter(item => !!item.atividade === true);
+    }
+    setUsuariosFiltrados(filterUsers);
+  }, [tipoUsuario])
+
+  const deletePreCadastroConfirm = async (id) => {
+    setModalContent(
+      <div>
+        <h1>Tem certeza que deseja excluir esse precadastro?</h1>
+
+        <Button onClick={async () => { deletarUsuario(id); setModalContent(""); }}>Confirmar</Button>
+        <Button onClick={() => setModalContent("")}>Cancelar</Button>
+      </div>
+    )
+  };
+  const CadastrarPreCadastroConfirm = async (user) => {
+    setModalContent(
+      <div>
+        <h1>Tem certeza que deseja Cadastrar esse precadastro?</h1>
+        <Button onClick={async () => cadastrarPreCadastro(user)}>Confirmar</Button>
+        <Button onClick={() => setModalContent("")}>Cancelar</Button>
+      </div>
+    )
+  };
+  const cadastrarPreCadastro = async (user) => {
+    user.tipo_usuario = "aluno";
+    await editarAluno(user);
+    setModalContent("");
+  }
+
   return (
     <div className="relative">
       {loading || loadingInstrutor && <Loading />}
@@ -344,8 +386,11 @@ export default function AlunosPage() {
 
           {/* Form de cadastro */}
           <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
-            <h1 className="font-bold text-3xl">{editando ? 'Editando' : 'Cadastrar'} Aluno:</h1>
-
+            <div className="flex gap-2">
+              <button onClick={() => setTipoUsuario('aluno')} className={tipoUsuario == "aluno" ? cssSelecionado : cssSemSelecao}>Aluno</button>
+              <button onClick={() => setTipoUsuario('precadastro')} className={tipoUsuario == "precadastro" ? cssSelecionado : cssSemSelecao}>Precadastro</button>
+            </div>
+            <h1 className="font-bold text-3xl capitalize">{editando ? 'Editando' : 'Cadastrar'} {tipoUsuario}:</h1>
             <p className="text-xl font-semibold">Nome:</p>
             <Input type="text" placeholder="Nome" required maxLength={20} value={nome} onChange={(e) => setNome(e.target.value)} />
             <p className="text-xl font-semibold">Sobrenome:</p>
@@ -529,7 +574,7 @@ export default function AlunosPage() {
           <div className="flex-1 overflow-auto">
             <div className="flex flex-col">
               {/* Cabeçalho */}
-              <div className="grid grid-cols-9 font-bold p-3 border-b bg-gray-100">
+              <div className={tipoUsuario === 'aluno' ? "grid grid-cols-9 font-bold p-3 border-b bg-gray-100" : "grid grid-cols-10 font-bold p-3 border-b bg-gray-100"}>
                 <p>Nome</p>
                 <p>CPF</p>
                 <p>Telefone</p>
@@ -537,8 +582,18 @@ export default function AlunosPage() {
                 <p>Data Cadastro</p>
                 <p>Data Limite</p>
                 <p>Preferência</p>
-                <p>Status</p>
-                <p>Ações</p>
+                {tipoUsuario === 'aluno' ?
+                  <>
+                    <p>Status</p>
+                    <p>Editar</p>
+                  </>
+                  :
+                  <>
+                    <p>Cadastrar</p>
+                    <p>Editar</p>
+                    <p>Excluir</p>
+                  </>}
+
               </div>
 
               {/* Lista */}
@@ -546,28 +601,40 @@ export default function AlunosPage() {
                 {usuariosFiltrados.filter((_, index) => index >= numPagina && index < numPagina + 10).map((user) => (
                   <div
                     key={user.usuario_id}
-                    className="grid grid-cols-9 items-center text-sm p-3"
+                    className={tipoUsuario === 'aluno' ? "grid grid-cols-9 items-center text-sm p-3" : "grid grid-cols-10 items-center text-sm p-3"}
                   >
                     <p className="capitalize">{user.nome} {user.sobrenome}</p>
                     <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
                     <p>{user.telefone}</p>
-                    <p>{user.categoria_pretendida.toUpperCase()}</p>
+                    <p>{user.categoria_pretendida?.toUpperCase() || ""}</p>
                     <p>{format(user.data_cadastro, 'dd/MM/yyyy')}</p>
                     <p>{format(addYears(user.data_cadastro, 1), 'dd/MM/yyyy')}</p>
                     <p>{user.outra_cidade ? "Sim" : "Não"}</p>
                     <div className="p-1">
-                      <Button
-                        className="w-full"
-                        variant={user.atividade ? "green" : "destructive"}
-                        onClick={() => handleAlterState(user)}
-                      >
-                        {user.atividade ? "Ativo" : "Inativo"}
-                      </Button>
+                      {tipoUsuario === 'aluno' ?
+                        <Button
+                          className="w-full"
+                          variant={user.atividade ? "green" : "destructive"}
+                          onClick={() => handleAlterState(user)}
+                        >
+                          {user.atividade ? "Ativo" : "Inativo"}
+                        </Button>
+                        :
+                        <Button
+                          className="w-full"
+                          variant={"green"}
+                          onClick={() => CadastrarPreCadastroConfirm(user)}
+                        >
+                          Cadastrar
+                          <span className="material-icons">add</span>
+                        </Button>
+                      }
+
                     </div>
                     <div className="w-full p-1">
                       <Button
                         className="w-full"
-                        variant="alert" 
+                        variant="alert"
                         onClick={() => {
                           startEdit(user);
                           setIdEdit(user.usuario_id);
@@ -577,6 +644,21 @@ export default function AlunosPage() {
                         <span className="material-icons">edit</span>
                       </Button>
                     </div>
+
+                    {tipoUsuario === 'precadastro' &&
+                      <div className="w-full p-1">
+                        <Button
+                          className="w-full"
+                          variant="destructive"
+                          onClick={() => {
+                            deletePreCadastroConfirm(user.usuario_id)
+                          }}
+                        >
+                          Excluir
+                          <span className="material-icons">delete</span>
+                        </Button>
+                      </div>
+                    }
                   </div>
                 )) || []}
               </div>
@@ -597,6 +679,10 @@ export default function AlunosPage() {
         </div>
 
       </div>
+      {modalContent &&
+        <Modal onClose={() => setModalContent("")}>
+          {modalContent}
+        </Modal>}
     </div>
   );
 }

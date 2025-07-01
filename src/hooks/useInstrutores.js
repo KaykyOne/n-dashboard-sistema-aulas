@@ -1,54 +1,108 @@
-"use client"
-import { useState, useEffect } from 'react';
-import { getToken } from '@/lib/utils';
-import useGeneric from './useGeneric';
-import { toast } from 'react-toastify';
+"use client";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import useGeneric from "./useGeneric";
 
 export default function useInstrutores() {
+  const {
+    GenericSearch,
+    GenericCreate,
+    GenericUpdate,
+    GenericPath, // ou GenericPatch, depende do seu hook, mas vou deixar assim
+    loading,
+  } = useGeneric();
 
-  const { GenericSearch, loading, error } = useGeneric();
   const [instrutores, setInstrutores] = useState([]);
-  let id
-  useEffect(() => {
-    id = sessionStorage.getItem("id_autoescola");
-  })
 
   async function buscarInstrutores() {
-    if (id === 0) return;
-    const res = await GenericSearch('adm', 'buscarTodosInstrutores', `?autoescola_id=${id}`);
-    setInstrutores(res);
-  }
-
-  async function mudarAtividadeInstrutor(id_instrutor) {
+    const autoescola_id = sessionStorage.getItem("id_autoescola");
     try {
-      const token = getToken();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/adm/mudarAtividadeInstrutor?id_instrutor=${id_instrutor}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      if (!res.ok) throw new Error("Erro ao mudar atividade");
-
-      toast.success("Atividade alterada com sucesso");
+      const res = await GenericSearch("adm", "buscarTodosInstrutores", `?autoescola_id=${autoescola_id}`);
+      if (!res) throw new Error("Resposta vazia");
+      setInstrutores(res || []);
     } catch (error) {
-      toast.error(`Erro ao mudar atividade do instrutor: ${error}`);
+      toast.error(`Erro ao buscar instrutores: ${error.message || error}`);
     }
   }
 
-  async function buscarVeiuculosInstrutor(id_instrutor, tipo) {
+  async function cadastrarInstrutor(instrutor) {
     try {
-      const res = await GenericSearch('adm', 'buscarVeiculosPorInstrutor', `?instrutor_id=${id_instrutor}&autoescola_id=${id}&tipo=${tipo}`);
-      if (!res) throw new Error("Erro ao buscar veiculos!");
+      instrutor.autoescola_id = sessionStorage.getItem("id_autoescola");
+
+      const response = await GenericCreate("instrutor", "addinstrutor", instrutor);
+      if (!response) throw new Error(resJSON?.message || "Erro na criação");
+
+      toast.success(response.message);
+      await buscarInstrutores();
+    } catch (err) {
+      toast.error(err.message || "Erro ao cadastrar instrutor.");
+    }
+  }
+
+  async function editarInstrutor(instrutorEditado) {
+    instrutorEditado.autoescola_id = sessionStorage.getItem("id_autoescola");
+    try {
+      const response = await GenericUpdate("instrutor", "updateinstrutor", instrutorEditado);
+
+      if (!response) throw new Error(resJSON?.message || "Erro na atualização");
+
+      toast.success(response.message);
+      await buscarInstrutores();
+    } catch (err) {
+      toast.error(err.message || "Erro ao atualizar instrutor.");
+    }
+  }
+
+  async function mudarAtividadeInstrutor(instrutor_id, ativo) {
+    try {
+      const res = await GenericPath("instrutor", "updateatividade", `?instrutor_id=${instrutor_id}&ativo=${ativo}`);
+      if (!res || !res.ok) throw new Error("Erro ao mudar atividade.");
+      toast.success("Atividade alterada com sucesso!");
+      await buscarInstrutores();
+    } catch (err) {
+      toast.error(err.message || "Erro ao mudar atividade do instrutor.");
+    }
+  }
+
+  const inserirInstrutor = async (instrutor) => {
+    const id = sessionStorage.getItem("id_autoescola");
+    instrutor.autoescola_id = id;
+    try {
+      if (!id) throw new Error("Autoescola desconhecida!");
+      const { resJSON, res } = await GenericCreate("adm", "addaluno", instrutor);
+      if (res.ok) {
+        toast.success("Instrutor cadastrado com sucesso!");
+        return resJSON;
+      } else {
+        toast.error(result?.error || "Erro ao cadastrar Aluno!");
+        return resJSON;
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+
+  };
+
+  async function buscarVeiculosInstrutor(instrutor_id, tipo) {
+    const autoescola_id = sessionStorage.getItem("id_autoescola");
+    try {
+      const res = await GenericSearch("adm", "buscarVeiculosPorInstrutor", `?instrutor_id=${instrutor_id}&autoescola_id=${autoescola_id}&tipo=${tipo}`);
+      if (!res) throw new Error("Erro ao buscar veículos!");
       return res;
     } catch (error) {
-      toast.error(`Erro ao buscar veiculos do instrutor: ${error}`);
+      toast.error(`Erro ao buscar veículos do instrutor: ${error.message || error}`);
+      return null;
     }
   }
 
-  return { buscarInstrutores, mudarAtividadeInstrutor, buscarVeiuculosInstrutor, loading, instrutores };
+  return {
+    instrutores,
+    buscarInstrutores,
+    cadastrarInstrutor,
+    editarInstrutor,
+    mudarAtividadeInstrutor,
+    buscarVeiculosInstrutor,
+    inserirInstrutor,
+    loading,
+  };
 }
