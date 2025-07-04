@@ -598,69 +598,80 @@ export default function AlunosPage() {
 
               {/* Lista */}
               <div className="flex flex-col divide-y">
-                {usuariosFiltrados.filter((_, index) => index >= numPagina && index < numPagina + 10).map((user) => (
-                  <div
-                    key={user.usuario_id}
-                    className={tipoUsuario === 'aluno' ? "grid grid-cols-9 items-center text-sm p-3" : "grid grid-cols-10 items-center text-sm p-3"}
-                  >
-                    <p className="capitalize">{user.nome} {user.sobrenome}</p>
-                    <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
-                    <p>{user.telefone}</p>
-                    <p>{user.categoria_pretendida?.toUpperCase() || ""}</p>
-                    <p>{format(user.data_cadastro, 'dd/MM/yyyy')}</p>
-                    <p>{format(addYears(user.data_cadastro, 1), 'dd/MM/yyyy')}</p>
-                    <p>{user.outra_cidade ? "Sim" : "Não"}</p>
-                    <div className="p-1">
-                      {tipoUsuario === 'aluno' ?
-                        <Button
-                          className="w-full"
-                          variant={user.atividade ? "green" : "destructive"}
-                          onClick={() => handleAlterState(user)}
-                        >
-                          {user.atividade ? "Ativo" : "Inativo"}
-                        </Button>
-                        :
-                        <Button
-                          className="w-full"
-                          variant={"green"}
-                          onClick={() => CadastrarPreCadastroConfirm(user)}
-                        >
-                          Cadastrar
-                          <span className="material-icons">add</span>
-                        </Button>
-                      }
-
-                    </div>
-                    <div className="w-full p-1">
-                      <Button
-                        className="w-full"
-                        variant="alert"
-                        onClick={() => {
-                          startEdit(user);
-                          setIdEdit(user.usuario_id);
-                        }}
+                {usuariosFiltrados && usuariosFiltrados.length > 0 ? (
+                  usuariosFiltrados
+                    .filter((_, index) => index >= numPagina && index < numPagina + 10)
+                    .map((user) => (
+                      <div
+                        key={user.usuario_id}
+                        className={
+                          tipoUsuario === 'aluno'
+                            ? "grid grid-cols-9 items-center text-sm p-3"
+                            : "grid grid-cols-10 items-center text-sm p-3"
+                        }
                       >
-                        Editar
-                        <span className="material-icons">edit</span>
-                      </Button>
-                    </div>
+                        <p className="capitalize">{user.nome || ''} {user.sobrenome || ''}</p>
+                        <p>{user.cpf?.length > 11 ? "inviável" : user.cpf || ''}</p>
+                        <p>{user.telefone || ''}</p>
+                        <p>{user.categoria_pretendida?.toUpperCase() || ""}</p>
+                        <p>{user.data_cadastro ? format(user.data_cadastro, 'dd/MM/yyyy') : ''}</p>
+                        <p>{user.data_cadastro ? format(addYears(user.data_cadastro, 1), 'dd/MM/yyyy') : ''}</p>
+                        <p>{user.outra_cidade ? "Sim" : "Não"}</p>
 
-                    {tipoUsuario === 'precadastro' &&
-                      <div className="w-full p-1">
-                        <Button
-                          className="w-full"
-                          variant="destructive"
-                          onClick={() => {
-                            deletePreCadastroConfirm(user.usuario_id)
-                          }}
-                        >
-                          Excluir
-                          <span className="material-icons">delete</span>
-                        </Button>
+                        <div className="p-1">
+                          {tipoUsuario === 'aluno' ? (
+                            <Button
+                              className="w-full"
+                              variant={user.atividade ? "green" : "destructive"}
+                              onClick={() => handleAlterState(user)}
+                            >
+                              {user.atividade ? "Ativo" : "Inativo"}
+                            </Button>
+                          ) : (
+                            <Button
+                              className="w-full"
+                              variant="green"
+                              onClick={() => CadastrarPreCadastroConfirm(user)}
+                            >
+                              Cadastrar
+                              <span className="material-icons">add</span>
+                            </Button>
+                          )}
+                        </div>
+
+                        <div className="w-full p-1">
+                          <Button
+                            className="w-full"
+                            variant="alert"
+                            onClick={() => {
+                              startEdit(user);
+                              setIdEdit(user.usuario_id);
+                            }}
+                          >
+                            Editar
+                            <span className="material-icons">edit</span>
+                          </Button>
+                        </div>
+
+                        {tipoUsuario === 'precadastro' && (
+                          <div className="w-full p-1">
+                            <Button
+                              className="w-full"
+                              variant="destructive"
+                              onClick={() => {
+                                deletePreCadastroConfirm(user.usuario_id);
+                              }}
+                            >
+                              Excluir
+                              <span className="material-icons">delete</span>
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                    }
-                  </div>
-                )) || []}
+                    ))
+                ) : (
+                  <p className="text-center text-sm text-gray-500 p-4">Carregando usuários...</p>
+                )}
               </div>
             </div>
           </div>
