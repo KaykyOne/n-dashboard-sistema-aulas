@@ -73,6 +73,7 @@ export default function Page() {
       if (confirmado.tipo_usuario === "superadm") {
         router.push('/autoescolas');
       } else if (confirmado.tipo_usuario === "adm") {
+        localStorage.setItem("id_autoescola", confirmado.autoescola_id);
         router.push('/inicio');
       }
     

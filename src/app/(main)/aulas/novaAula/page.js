@@ -48,6 +48,7 @@ export default function Page() {
   const [modalContent, setModalContent] = useState();
   const [modalVisible, setModalVisible] = useState(false);
 
+  const safeUpper = (str) => typeof str === 'string' ? str.toUpperCase() : ''
 
   const tipos = ['A', 'B', 'C', 'D', 'E']
 
@@ -299,7 +300,7 @@ export default function Page() {
                   <div key={user.usuario_id} className='grid grid-cols-4 text-start p-3 border border-gray-200 rounded-md'>
                     <p className='capitalize'>{user.nome + ' ' + user.sobrenome}</p>
                     <p>{user.cpf.length > 11 ? "inviável" : user.cpf}</p>
-                    <p>{user.categoria_pretendida.toUpperCase()}</p>
+                    <p>{safeUpper(user?.categoria_pretendida)}</p>
                     <Button
                       className="w-full"
                       variant="default"
