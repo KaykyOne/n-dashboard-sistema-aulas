@@ -32,7 +32,7 @@ export default function InstrutoresPage() {
   const [sobrenome, setSobrenome] = useState("");
   const [cpf, setCpf] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [categoria, setCategoria] = useState([]);
+  const [categoria, setCategoria] = useState("");
   const [editando, setEditando] = useState(false);
   const [idEditando, setIdEditando] = useState(null);
   const [outraCidade, setOutraCidade] = useState(false);
@@ -67,6 +67,7 @@ export default function InstrutoresPage() {
       return;
     }
 
+
     const dados = {
       nome_instrutor: nome,
       tipo_instrutor: categoria,
@@ -77,12 +78,12 @@ export default function InstrutoresPage() {
     };
 
     const instrutor = {
-      usuario_id : 0,
+      usuario_id: 0,
       nome: nome,
       sobrenome: sobrenome,
       cpf: cpf,
       tipo: "instrutor",
-      telefone:telefone,
+      telefone: telefone,
       categoria: categoria,
       atividade: true,
       autoescola_id: 0,
@@ -163,14 +164,31 @@ export default function InstrutoresPage() {
   };
 
   const handleCheckboxChange = (event, tipo) => {
+    const tipoLimpo = tipo.trim();
+
     setCategoria((prev) => {
+      // Garante que prev sempre é string
+      let atual = (prev || "").trim();
+
       if (event.target.checked) {
-        return [...prev, tipo];
+        // Se já contém, não adiciona de novo
+        if (!atual.includes(tipoLimpo)) {
+          return (atual + tipoLimpo).slice(0, 6); // Evita ultrapassar limite do banco
+        }
+        return atual;
       } else {
-        return prev.filter((item) => item !== tipo);
+        // Remove o tipo
+        const removido = atual
+          .split('')
+          .filter((char) => char !== tipoLimpo)
+          .join('');
+        return removido;
       }
     });
   };
+
+
+
 
   return (
     <div className="flex flex-col p-6 gap-2">
