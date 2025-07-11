@@ -8,7 +8,7 @@ export default function useInstrutores() {
     GenericSearch,
     GenericCreate,
     GenericUpdate,
-    GenericPath, // ou GenericPatch, depende do seu hook, mas vou deixar assim
+    GenericPath,
     loading,
   } = useGeneric();
 
@@ -16,13 +16,14 @@ export default function useInstrutores() {
 
   async function buscarInstrutores() {
     const autoescola_id = sessionStorage.getItem("id_autoescola");
+
     try {
       const res = await GenericSearch("adm", "buscarTodosInstrutores", `?autoescola_id=${autoescola_id}`);
-      if (!res) throw new Error("Resposta vazia");
-      console.log(res);
+      if (!res) throw new Error("Erro ao buscar instrutores.");
       setInstrutores(res || []);
     } catch (error) {
-      toast.error(`Erro ao buscar instrutores: ${error.message || error}`);
+      toast.error(`Erro ao buscar instrutores: ${error.message || error.toString()}`);
+      setInstrutores([]);
     }
   }
 
@@ -30,11 +31,13 @@ export default function useInstrutores() {
     try {
       instrutor.autoescola_id = sessionStorage.getItem("id_autoescola");
 
-      const response = await GenericCreate("instrutor", "addinstrutor", instrutor);
-      if (!response) throw new Error(resJSON?.message || "Erro na criação");
-
-      toast.success(response.message);
-      await buscarInstrutores();
+      const { resJSON, res } = await GenericCreate("instrutor", "addinstrutor", instrutor);
+      if (res?.ok || res?.status === 200) {
+        toast.success(resJSON?.message || "Instrutor cadastrado com sucesso!");
+        await buscarInstrutores();
+      } else {
+        throw new Error(resJSON?.error || "Erro ao cadastrar instrutor");
+      }
     } catch (err) {
       toast.error(err.message || "Erro ao cadastrar instrutor.");
     }
@@ -45,14 +48,16 @@ export default function useInstrutores() {
     instrutor.autoescola_id = sessionStorage.getItem("id_autoescola");
 
     try {
-      const [response, response2] = await Promise.all([
+      const [response1, response2] = await Promise.all([
         GenericUpdate("instrutor", "updateinstrutor", instrutorEditado),
-        GenericUpdate("adm", "attaluno", instrutor)
+        GenericUpdate("adm", "attaluno", instrutor),
       ]);
 
-      if (!response || !response2) throw new Error("Erro na atualização");
+      if (!response1 || !response2) {
+        throw new Error("Erro na atualização dos dados.");
+      }
 
-      toast.success(response.message);
+      toast.success(response1.message || "Instrutor atualizado com sucesso!");
       await buscarInstrutores();
     } catch (err) {
       toast.error(err.message || "Erro ao atualizar instrutor.");
@@ -62,7 +67,6 @@ export default function useInstrutores() {
   async function mudarAtividadeInstrutor(instrutor_id, ativo) {
     try {
       const res = await GenericPath("instrutor", "updateatividade", `?instrutor_id=${instrutor_id}&ativo=${ativo}`);
-      console.log(res);
       if (!res) throw new Error("Erro ao mudar atividade.");
       toast.success("Atividade alterada com sucesso!");
       await buscarInstrutores();
@@ -74,30 +78,32 @@ export default function useInstrutores() {
   const inserirInstrutor = async (instrutor) => {
     const id = sessionStorage.getItem("id_autoescola");
     instrutor.autoescola_id = id;
+
     try {
       if (!id) throw new Error("Autoescola desconhecida!");
+
       const { resJSON, res } = await GenericCreate("adm", "addaluno", instrutor);
-      if (res.ok) {
+      if (res?.ok || res?.status === 200) {
         toast.success("Instrutor cadastrado com sucesso!");
         return resJSON;
       } else {
-        toast.error(result?.error || "Erro ao cadastrar Aluno!");
-        return resJSON;
+        throw new Error(resJSON?.error || "Erro ao cadastrar instrutor!");
       }
     } catch (error) {
-      toast.error(error);
+      toast.error(error.message || error.toString());
+      return null;
     }
-
   };
 
   async function buscarVeiculosInstrutor(instrutor_id, tipo) {
     const autoescola_id = sessionStorage.getItem("id_autoescola");
+
     try {
       const res = await GenericSearch("adm", "buscarVeiculosPorInstrutor", `?instrutor_id=${instrutor_id}&autoescola_id=${autoescola_id}&tipo=${tipo}`);
       if (!res) throw new Error("Erro ao buscar veículos!");
       return res;
     } catch (error) {
-      toast.error(`Erro ao buscar veículos do instrutor: ${error.message || error}`);
+      toast.error(`Erro ao buscar veículos do instrutor: ${error.message || error.toString()}`);
       return null;
     }
   }

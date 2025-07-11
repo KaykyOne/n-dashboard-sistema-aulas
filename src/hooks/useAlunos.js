@@ -1,27 +1,39 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState } from 'react';
 import useGeneric from './useGeneric';
 import useFinanceiro from './useFinanceiro';
 import { toast } from "react-toastify";
 
 export default function useAlunos() {
-    const { GenericSearch, GenericCreate, GenericDeleteRelation, GenericUpdate, GenericDelete, loading, error } = useGeneric();
+    const {
+        GenericSearch,
+        GenericCreate,
+        GenericDeleteRelation,
+        GenericUpdate,
+        GenericDelete,
+        loading,
+    } = useGeneric();
 
     const { criarTransacao } = useFinanceiro();
     const [instrturesResponsaveis, setInstrutoreResponsavel] = useState([]);
     const [alunos, setAlunos] = useState([]);
+    const [aulas, setAulas] = useState([])
 
     const buscarAlunos = async () => {
         const id = sessionStorage.getItem("id_autoescola");
         try {
             if (!id) throw new Error("Autoescola desconhecida!");
+
             const res = await GenericSearch('adm', 'buscarTodosAlunos', `?autoescola_id=${id}`);
-            if (!res || error) {
-                throw new Error(error || "Erro desconhecido ao buscar alunos");
+
+            if (!res || res?.error) {
+                throw new Error(res?.error || "Erro desconhecido ao buscar alunos");
             }
+
             setAlunos(res);
-        } catch (error) {
-            toast.error(error);
+        } catch (erro) {
+            toast.error(erro.message || erro.toString());
+            setAlunos([]);
         }
     };
 
@@ -33,12 +45,14 @@ export default function useAlunos() {
 
         try {
             const res = await GenericSearch('adm', 'buscarInstrutorResponsavel', `?cpf=${cpf}`);
-            if (!res || error) {
-                throw new Error(error || "Erro desconhecido ao buscar instrutores responsaveis!");
+
+            if (!res || res?.error) {
+                throw new Error(res?.error || "Erro ao buscar instrutores responsáveis");
             }
+
             setInstrutoreResponsavel(res);
-        } catch (error) {
-            toast.error(error.message);
+        } catch (erro) {
+            toast.error(erro.message || erro.toString());
             setInstrutoreResponsavel([]);
         }
     };
@@ -46,8 +60,10 @@ export default function useAlunos() {
     const inserirAluno = async (aluno, transacao) => {
         const id = sessionStorage.getItem("id_autoescola");
         aluno.autoescola_id = id;
+
         try {
             if (!id) throw new Error("Autoescola desconhecida!");
+
             const { resJSON, res } = await GenericCreate("adm", "addaluno", aluno);
 
             if (res.ok) {
@@ -56,59 +72,59 @@ export default function useAlunos() {
                 await buscarAlunos();
                 return resJSON;
             } else {
-                toast.error(result?.error || "Erro ao cadastrar Aluno!");
-                return resJSON;
+                throw new Error(resJSON?.error || "Erro ao cadastrar aluno");
             }
-        }catch(error){
-            toast.error(error);
+        } catch (erro) {
+            toast.error(erro.message || erro.toString());
         }
-        
     };
 
     const editarAluno = async (aluno) => {
         const id = sessionStorage.getItem("id_autoescola");
         aluno.autoescola_id = id;
-        console.log(aluno);
-        const response = await GenericUpdate("adm", "attaluno", aluno);
-        console.log(response);
-        if (response.message == "Aluno atualizado com sucesso!") {
-            toast.success("Aluno editado com sucesso!");
-            await buscarAlunos();
-        } else {
-            console.error(error);
-            toast.error("Erro ao editar Aluno!");
+
+        try {
+            const response = await GenericUpdate("adm", "attaluno", aluno);
+
+            if (response.message === "Aluno atualizado com sucesso!") {
+                toast.success("Aluno editado com sucesso!");
+                await buscarAlunos();
+            } else {
+                throw new Error(response.message || "Erro ao editar aluno");
+            }
+        } catch (erro) {
+            toast.error(`Erro ao editar aluno: ${erro.message || erro.toString()}`);
         }
     };
 
     const excluirAlunoInstrutor = async (cpf, id_instrutor) => {
-        const res = await GenericDeleteRelation("adm", "removerAlunoInstrutor", "cpf", "id_instrutor", cpf, id_instrutor);
-        console.log(res);
-        if (res === 'Relacao excluida com sucesso!') {
-            toast.success(res);
-        } else {
-            console.error(error);
-            toast.error(res);
-        }
+        try {
+            const res = await GenericDeleteRelation("adm", "removerAlunoInstrutor", "cpf", "id_instrutor", cpf, id_instrutor);
 
-        await getInstrutoresResponsaveis(cpf);
+            if (res === 'Relacao excluida com sucesso!') {
+                toast.success(res);
+            } else {
+                throw new Error(res?.error || "Erro ao remover relação");
+            }
+        } catch (erro) {
+            toast.error(`Erro ao remover relação: ${erro.message || erro.toString()}`);
+        } finally {
+            await getInstrutoresResponsaveis(cpf);
+        }
     };
 
     const inserirRelacao = async (cpf, id_instrutor) => {
         try {
-            const relacao = ({
-                cpf: cpf,
-                id_instrutor: id_instrutor,
-            });
+            const relacao = { cpf, id_instrutor };
             const { resJSON, res } = await GenericCreate("adm", "addRelacao", relacao);
 
             if (res.status === 200) {
                 toast.success("Relação cadastrada com sucesso!");
             } else {
-                console.error(error);
-                toast.error("Erro ao cadastrar relação!");
+                throw new Error(resJSON?.error || "Erro ao cadastrar relação");
             }
-        } catch (error) {
-            console.error(error);
+        } catch (erro) {
+            toast.error(`Erro ao inserir relação: ${erro.message || erro.toString()}`);
         } finally {
             await getInstrutoresResponsaveis(cpf);
         }
@@ -116,40 +132,66 @@ export default function useAlunos() {
 
     const alterAtividadeAluno = async (id) => {
         try {
-            const aluno = {
-                usuario_id: id,
-            };
-
+            const aluno = { usuario_id: id };
             const res = await GenericUpdate("adm", "alterarAtividadeAluno", aluno);
 
-            if (res.message == 'Atividade Aluno Alterado com sucesso!') {
-                toast.success("Alterado com sucesso!");
+            if (res.message === 'Atividade Aluno Alterado com sucesso!') {
+                toast.success("Atividade alterada com sucesso!");
                 return res;
             } else {
-                console.error(resJSON);
-                toast.error("Erro ao alterar aluno!");
-                return null;
+                throw new Error(res?.message || "Erro ao alterar atividade");
             }
-        } catch (error) {
-            console.error(error);
-            toast.error("Erro inesperado!");
+        } catch (erro) {
+            toast.error(erro.message || erro.toString());
         }
     };
 
     const limparInstrutores = () => {
-        setInstrutoreResponsavel('');
+        setInstrutoreResponsavel([]);
     };
 
     const deletarUsuario = async (id_usuario) => {
-        const res = await GenericDelete('adm', id_usuario, 'removerUsuario', 'id');
-        toast(res);
-        await buscarAlunos();
+        try {
+            const res = await GenericDelete('adm', id_usuario, 'removerUsuario', 'id');
+
+            if (!res) {
+                throw new Error("Erro ao excluir usuário");
+            }
+
+            toast.success("Usuário excluído com sucesso!");
+        } catch (erro) {
+            toast.error(`Erro ao excluir usuário: ${erro.message || erro.toString()}`);
+        } finally {
+            await buscarAlunos();
+        }
+    };
+
+    const searchAulas = async (id_usuario) => {
+        if (!id_usuario) {
+            setAulas([]);
+            return;
+        }
+
+        try {
+            const res = await GenericSearch('aulas', 'buscarAulas', `?id=${id_usuario}`);
+
+            if (!res || res?.error) {
+                throw new Error(res?.error || "Erro ao buscar aulas do aluno!");
+            }
+
+            setAulas(res);
+        } catch (erro) {
+            toast.error(erro.message || erro.toString());
+            setAulas([]);
+        }
     }
 
     return {
         buscarAlunos,
         alunos,
         loading,
+        aulas,
+        searchAulas,
         getInstrutoresResponsaveis,
         inserirAluno,
         editarAluno,
@@ -159,5 +201,5 @@ export default function useAlunos() {
         alterAtividadeAluno,
         limparInstrutores,
         deletarUsuario,
-    }
+    };
 }

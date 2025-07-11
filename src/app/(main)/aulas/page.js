@@ -277,56 +277,6 @@ export default function AulasPage() {
               ))}
             </div>
           </div>
-
-          {/* <Table className={'text-2xl'}>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Hora</TableHead>
-                <TableHead>Aluno</TableHead>
-                <TableHead>Veículo</TableHead>
-                <TableHead>Ação</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {aulasFiltradas.map((aula) => (
-                aula.nome != null ?
-                  <TableRow key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id}>
-                    <TableCell>{aula.hora}</TableCell>
-                    <TableCell className={'capitalize'}>{aula.nome + " " + aula.sobrenome}</TableCell>
-                    <TableCell>{aula.placa}</TableCell>
-                    <TableCell className={'max-w-[60px]'}>
-                      <Button
-                        className={"w-full"}
-                        variant={"destructive"}
-                        onClick={() => confirmDeleteAula(aula.aula_id)}>
-                        Excluir
-                        <span className="material-icons">
-                          delete
-                        </span>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  :
-                  <TableRow key={`vaga-${aula} `} className={"bg-red-700 text-white cursor-pointer hover:bg-red-900"}>
-                    <TableCell>{aula}</TableCell>
-                    <TableCell>Vaga</TableCell>
-                    <TableCell>Vaga</TableCell>
-                    <TableCell className={'max-w-[60px]'}>
-                      <Button
-                        className={"w-full"}
-                        variant={"alert"}
-                        onClick={() => createAula(aula)}
-                      >
-                        Marcar Aula
-                        <span className="material-icons">
-                          touch_app
-                        </span>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-              ))}
-            </TableBody>
-          </Table> */}
         </div>
       </div>
 

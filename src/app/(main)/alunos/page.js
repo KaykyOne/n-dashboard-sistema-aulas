@@ -11,6 +11,7 @@ import Loading from "@/components/Loading";
 import { addYears, format, parse } from 'date-fns'
 import { toast } from "react-toastify";
 import Modal from "@/components/Modal";
+import ModalAulas from "@/components/ModalAulas";
 
 const opcoesAtivoInativo = [
   {
@@ -114,6 +115,7 @@ export default function AlunosPage() {
 
   //Modal
   const [modalContent, setModalContent] = useState("");
+  const [idAlunoVerAulas, setIdAlunoVerAulas] = useState(0);
 
   const isNumeric = (str) => /^[0-9]+$/.test(str);
 
@@ -121,9 +123,9 @@ export default function AlunosPage() {
 
     const test = searchForAtv === "Inativo" ? false : true;
     const users = usuarios.filter((user) => {
-      const matchName = searchForName === "" || user.nome.toLowerCase().includes(searchForName.toLowerCase());
+      const matchName = searchForName === "" || (user.nome || "").toLowerCase().includes(searchForName.toLowerCase())
       const matchCpf = searchForCPF === "" || user.cpf.includes(searchForCPF);
-      const matchCat = searchForCat === "" || user.categoria_pretendida.toLowerCase().includes(searchForCat.toLowerCase());
+      const matchCat = searchForCat === "" || (user.categoria_pretendida || "").toLowerCase().includes(searchForCat.toLowerCase());
       const matchForAtv = searchForAtv === "" || user.atividade == test;
       const userDate = new Date(user.data_cadastro).getMonth();
       const tipoMach = tipoUsuario === "" || user.tipo_usuario === tipoUsuario;
@@ -376,7 +378,7 @@ export default function AlunosPage() {
     user.tipo_usuario = "aluno";
     await editarAluno(user);
     setModalContent("");
-  }
+  };
 
   return (
     <div className="relative">
@@ -574,7 +576,7 @@ export default function AlunosPage() {
           <div className="flex-1 overflow-auto">
             <div className="flex flex-col">
               {/* Cabeçalho */}
-              <div className={tipoUsuario === 'aluno' ? "grid grid-cols-9 font-bold p-3 border-b bg-gray-100" : "grid grid-cols-10 font-bold p-3 border-b bg-gray-100"}>
+              <div className={"grid grid-cols-10 font-bold p-3 border-b bg-gray-100"}>
                 <p>Nome</p>
                 <p>CPF</p>
                 <p>Telefone</p>
@@ -586,6 +588,7 @@ export default function AlunosPage() {
                   <>
                     <p>Status</p>
                     <p>Editar</p>
+                    <p>Aulas</p>
                   </>
                   :
                   <>
@@ -602,13 +605,9 @@ export default function AlunosPage() {
                   usuariosFiltrados
                     .filter((_, index) => index >= numPagina && index < numPagina + 10)
                     .map((user) => (
-                      <div
+                      <div                                                                                      
                         key={user.usuario_id}
-                        className={
-                          tipoUsuario === 'aluno'
-                            ? "grid grid-cols-9 items-center text-sm p-3"
-                            : "grid grid-cols-10 items-center text-sm p-3"
-                        }
+                        className={"grid grid-cols-10 items-center text-sm p-3"}
                       >
                         <p className="capitalize">{user.nome || ''} {user.sobrenome || ''}</p>
                         <p>{user.cpf?.length > 11 ? "inviável" : user.cpf || ''}</p>
@@ -653,7 +652,7 @@ export default function AlunosPage() {
                           </Button>
                         </div>
 
-                        {tipoUsuario === 'precadastro' && (
+                        {tipoUsuario === 'precadastro' ? (
                           <div className="w-full p-1">
                             <Button
                               className="w-full"
@@ -664,6 +663,18 @@ export default function AlunosPage() {
                             >
                               Excluir
                               <span className="material-icons">delete</span>
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="w-full p-1">
+                            <Button
+                              className="w-full"
+                              onClick={() => setIdAlunoVerAulas(user.usuario_id)}
+                            >
+                              Aulas
+                              <span className="material-icons">
+                                book
+                              </span>
                             </Button>
                           </div>
                         )}
@@ -682,7 +693,7 @@ export default function AlunosPage() {
             arrow_left
           </span>
           <div className="flex flex-col gap-1 justify-center items-center">
-            {`${numPagina} - ${usuariosFiltrados.length}`}
+            {`${numPagina / 10} - ${(usuariosFiltrados.length % 10)}`}
           </div>
           <span className="material-icons !text-5xl cursor-pointer" onClick={() => alterarNavegacao(10)}>
             arrow_right
@@ -690,10 +701,18 @@ export default function AlunosPage() {
         </div>
 
       </div>
-      {modalContent &&
+      {
+        modalContent &&
         <Modal onClose={() => setModalContent("")}>
           {modalContent}
-        </Modal>}
-    </div>
+        </Modal>
+      }
+      {
+        idAlunoVerAulas != 0 &&
+        <ModalAulas onClose={() => setIdAlunoVerAulas(0)} idAluno={idAlunoVerAulas}>
+
+        </ModalAulas>
+      }
+    </div >
   );
 }
