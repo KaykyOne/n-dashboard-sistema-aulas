@@ -9,6 +9,7 @@ import useAula from '@/hooks/useAulas';
 import useInstrutores from '@/hooks/useInstrutores';
 import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
+import { addMinutes, format } from 'date-fns';
 
 const opcoesAula = [
   {
@@ -27,13 +28,15 @@ const opcoesAula = [
 
 export default function AulasPage() {
   const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos, deleteAula, buscarAulasInstrutor, alterarAula } = useAula();
-  const { buscarInstrutores, instrutores, loading: loadingInstrutor } = useInstrutores();
+  const { buscarInstrutores, instrutores, loading: loadingInstrutor, inserirExeção, buscarExecoesDia, deletarExecao } = useInstrutores();
 
   const [aulas, setAulas] = useState([]);
   const [aulasFiltradas, setAulasFiltradas] = useState([]);
   const [tipo, setTipo] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState();
+  const [horariosBloqueados, setHorariosBloqueados] = useState([]);
+  const [execoes, setExecoes] = useState([]);
 
   const [aulaDrag, setAulaDrag] = useState();
 
@@ -141,6 +144,15 @@ export default function AulasPage() {
 
   }, [tipo])
 
+  useEffect(() => {
+    if (!instrutor || !data) return;
+    const buscarExecoes = async () => {
+      const res = await buscarExecoesDia(instrutor, data);
+      setExecoes(res || []);
+    }
+    buscarExecoes();
+  }, [instrutor, data])
+
   const dragIniti = (aula, index) => {
     setAulaDrag({ aula: aula, index: index });
   }
@@ -209,12 +221,66 @@ export default function AulasPage() {
 
   };
 
+  const atretrelarHorario = (a, hora) => {
+    if (a) {
+      setHorariosBloqueados((prev) => [...prev, hora]);
+    } else {
+      setHorariosBloqueados((prev) =>
+        prev.filter((item) => item !== hora) // remove o horário
+      );
+    }
+  };
+
+  const desmarcarCheckboxes = () => {
+    setHorariosBloqueados([])
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+  };
+
+  function horaParaMinutos(horaStr) {
+    const [h, m] = horaStr.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const handleExcluirExecao = async (execao_id) => {
+    await deletarExecao(execao_id);
+    await buscarExecoes();
+  }
+
+  const buscarExecoes = async () => {
+    const res = await buscarExecoesDia(instrutor, data);
+    setExecoes(res || []);
+  }
+
+  const confirmHorariosBloqueados = async () => {
+    let menor;
+    let maior
+    if (horariosBloqueados.length > 1) {
+      menor = horariosBloqueados.reduce((menor, atual) => {
+        return horaParaMinutos(atual) < horaParaMinutos(menor) ? atual : menor;
+      });
+      maior = horariosBloqueados.reduce((maior, atual) => {
+        return horaParaMinutos(atual) > horaParaMinutos(maior) ? atual : maior;
+      });
+    } else if (horariosBloqueados.length == 1) {
+      menor = horariosBloqueados[0];
+      maior = addMinutes(horariosBloqueados, 50);
+    }
+
+    await inserirExeção(instrutor, data, menor, maior);
+    desmarcarCheckboxes();
+    await buscarExecoes();
+  }
 
   return (
     <div className='relative'>
       {(loadingAulas || loadingInstrutor) && <Loading />}
       <div className="grid grid-cols-1 gap-4">
-
+        {horariosBloqueados.length > 0 &&
+          <div className='flex flex-col gap-2 w-full'>
+            <Button variant={'green'} onClick={() => confirmHorariosBloqueados()}>Salvar</Button>
+            <Button variant={'alert'} onClick={() => desmarcarCheckboxes()}>Cancelar</Button>
+          </div>
+        }
         <div className={`p-6 row-span-2 bg-white rounded-sm`}>
           {/* Barra de pesquisa */}
           <div className='grid grid-cols-5 align-middle gap-4 mb-3'>
@@ -272,12 +338,48 @@ export default function AulasPage() {
                     <p>{aula.hora}</p>
                     <p>Vaga</p>
                     <p>Vaga</p>
-                    <p>Vaga</p>
+                    <div className='flex gap-1 items-center'>
+                      <input onClick={(a) => atretrelarHorario(a.target.checked, aula.hora)} id={`checkBloqueio${aula.hora}`} type='checkbox' />
+                      <label htmlFor={`checkBloqueio${aula.hora}`}>Bloquear horário</label>
+                    </div>
                   </div>
               ))}
             </div>
           </div>
+          <div className='flex flex-col'>
+            {execoes.length > 0 && (
+              <div className="flex flex-col gap-4 mt-4 w-full">
+                <div className='flex flex-col'>
+                  <h1 className='text-3xl font-bold'>Bloqueios desse dia:</h1>
+                  <h2>Isso serve para impedir que você ou alunos marquem aulas em horarios que não podem!</h2>
+                </div>
+                {execoes.map((item) => (
+                  <div
+                    key={item.execao_id}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white border border-gray-300 p-4 rounded-xl shadow-md"
+                  >
+                    <div className="flex flex-col text-gray-700">
+                      <span><strong>Início:</strong> {item.hora_inicio}</span>
+                      <span><strong>Fim:</strong> {item.hora_fim}</span>
+                    </div>
+
+                    <Button
+                      type={3}
+                      onClick={() => handleExcluirExecao(item.execao_id)} // substitua pela sua função
+                      className="self-end sm:self-auto"
+                    >
+                      Excluir
+                      <span className="material-icons">delete</span>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+
+
+
       </div>
 
       {modalVisible &&

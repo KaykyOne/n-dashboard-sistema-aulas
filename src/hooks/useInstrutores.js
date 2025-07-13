@@ -9,6 +9,8 @@ export default function useInstrutores() {
     GenericCreate,
     GenericUpdate,
     GenericPath,
+    GenericDelete,
+    
     loading,
   } = useGeneric();
 
@@ -106,16 +108,70 @@ export default function useInstrutores() {
       toast.error(`Erro ao buscar veículos do instrutor: ${error.message || error.toString()}`);
       return null;
     }
-  }
+  };
+
+  async function inserirExeção(instrutor, data, menor, maior) {
+    try {
+      if (!instrutor || !data || !menor || !maior) {
+        throw new Error("Valores faltando!");
+      }
+
+      const execao = {
+        instrutor: instrutor,
+        data: data,
+        menor: menor,
+        maior: maior
+      }
+
+      const { resJSON, res } = await GenericCreate("adm", "inserirExcecao", execao);
+      if (res?.ok || res?.status === 200) {
+        toast.success("Bloqueio cadastrado");
+      } else {
+        throw new Error(resJSON?.error || "Erro ao inserir Bloqueio!");
+      }
+    } catch (error) {
+      toast.error(`Erro ao inserir exceção: ${error}`);
+    }
+
+  };
+
+  async function buscarExecoesDia(instrutor_id, data) {
+    try {
+      const res = await GenericSearch("adm", "buscarExecoes", `?instrutor_id=${instrutor_id}&data=${data}`);
+      if (!res) throw new Error("Erro ao buscar bloqueios!");
+      return res;
+    } catch (error) {
+      toast.error(`Erro ao buscar bloqueios do instrutor: ${error.message || error.toString()}`);
+      return null;
+    }
+  };
+
+  const deletarExecao = async (id_execao) => {
+    try {
+      const res = await GenericDelete('adm', id_execao, 'deleteExecao', 'id_execao');
+
+      if (!res) {
+        throw new Error("Erro ao excluir Bloqueio");
+      }
+
+      toast.success("Bloqueio excluído com sucesso!");
+    } catch (erro) {
+      toast.error(`Erro ao excluir bloqueio: ${erro.message || erro.toString()}`);
+    }
+  };
+
 
   return {
     instrutores,
     buscarInstrutores,
     cadastrarInstrutor,
     editarInstrutor,
+    buscarExecoesDia,
     mudarAtividadeInstrutor,
     buscarVeiculosInstrutor,
     inserirInstrutor,
+    inserirExeção,
+    deletarExecao,
     loading,
   };
 }
