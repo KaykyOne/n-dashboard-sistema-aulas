@@ -187,15 +187,10 @@ export default function InstrutoresPage() {
     });
   };
 
-
-
-
   return (
-    <div className="flex flex-col p-6 gap-2">
+    <div className="flex flex-col gap-2">
       {loading && <Loading />}
-      <h1 className="text-3xl font-bold mb-4">Gerenciar Instrutores</h1>
-
-      <div className="grid grid-cols-3 gap-2 bg-white p-2 rounded-sm">
+      <div className="grid grid-cols-3 gap-2 bg-white p-4 anim-hover">
         <div className="flex col-span-2 flex-col gap-2 mb-6">
           <h2 className="font-bold text-xl">{idEditando ? "Editando" : "Cadastrando"} Instrutor</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -238,45 +233,46 @@ export default function InstrutoresPage() {
 
         </div>
       </div>
-
-      <Table className={'bg-white p-2 rounded-sm'}>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>CPF</TableHead>
-            <TableHead>Tipo</TableHead>
-            <TableHead>Hora Início</TableHead>
-            <TableHead>Hora Fim</TableHead>
-            <TableHead>Início Almoço</TableHead>
-            <TableHead>Fim Almoço</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {Array.isArray(instrutores) && instrutores.map((instrutor) => (
-            <TableRow key={instrutor.instrutor_id}>
-              <TableCell>{instrutor.nome_instrutor}</TableCell>
-              <TableCell>{(instrutor.cpf).length > 11 ? 'inviavel' : instrutor.cpf}</TableCell>
-              <TableCell>{instrutor.tipo_instrutor}</TableCell>
-              <TableCell>{instrutor.hora_inicio?.slice(0, 5) || "--:--"}</TableCell>
-              <TableCell>{instrutor.hora_fim?.slice(0, 5) || "--:--"}</TableCell>
-              <TableCell>{instrutor.hora_inicio_almoco?.slice(0, 5) || "--:--"}</TableCell>
-              <TableCell>{instrutor.hora_fim_almoco?.slice(0, 5) || "--:--"}</TableCell>
-              <TableCell>{instrutor.atividade_instrutor ? "Ativo" : "Inativo"}</TableCell>
-              <TableCell className="flex gap-2">
-                <Button onClick={() => startEdit(instrutor)}>Editar</Button>
-                <Button
-                  variant={instrutor.atividade_instrutor ? "destructive" : "green"}
-                  onClick={() => toggleAtividade(instrutor)}
-                >
-                  {instrutor.atividade_instrutor ? "Desativar" : "Ativar"}
-                </Button>
-              </TableCell>
+      <div className="bg-white p-2 anim-hover">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>CPF</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Hora Início</TableHead>
+              <TableHead>Hora Fim</TableHead>
+              <TableHead>Início Almoço</TableHead>
+              <TableHead>Fim Almoço</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Ações</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {Array.isArray(instrutores) && instrutores.map((instrutor) => (
+              <TableRow key={instrutor.instrutor_id}>
+                <TableCell>{instrutor.nome_instrutor}</TableCell>
+                <TableCell>{(instrutor.cpf).length > 11 ? 'inviavel' : instrutor.cpf}</TableCell>
+                <TableCell>{instrutor.tipo_instrutor}</TableCell>
+                <TableCell>{instrutor.hora_inicio?.slice(0, 5) || "--:--"}</TableCell>
+                <TableCell>{instrutor.hora_fim?.slice(0, 5) || "--:--"}</TableCell>
+                <TableCell>{instrutor.hora_inicio_almoco?.slice(0, 5) || "--:--"}</TableCell>
+                <TableCell>{instrutor.hora_fim_almoco?.slice(0, 5) || "--:--"}</TableCell>
+                <TableCell>{instrutor.atividade_instrutor ? "Ativo" : "Inativo"}</TableCell>
+                <TableCell className="flex gap-2">
+                  <Button onClick={() => startEdit(instrutor)}>Editar</Button>
+                  <Button
+                    variant={instrutor.atividade_instrutor ? "destructive" : "green"}
+                    onClick={() => toggleAtividade(instrutor)}
+                  >
+                    {instrutor.atividade_instrutor ? "Desativar" : "Ativar"}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

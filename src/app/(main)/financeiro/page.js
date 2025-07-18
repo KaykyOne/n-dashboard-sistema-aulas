@@ -249,15 +249,15 @@ export default function FinanceiroPage() {
           {moodalContent}
         </Modal>}
       <div className='grid grid-cols-3 gap-4 text-green-800'>
-        <div className='bg-green-200 p-4 rounded-md'>
+        <div className='bg-green-200 p-4 rounded-md anim-hover'>
           <h1 className='text-xl font-medium'>Entradas: </h1>
           <h1 className='text-2xl font-bold'>{sumEntradas}</h1>
         </div>
-        <div className='bg-red-200 p-4 rounded-md text-red-800'>
+        <div className='bg-red-200 p-4 rounded-md text-red-800 anim-hover'>
           <h1 className='text-xl font-medium'>Saídas:</h1>
           <h1 className='text-2xl font-bold'>{sumSaidas}</h1>
         </div>
-        <div className='bg-orange-200 p-4 rounded-md text-orange-800'>
+        <div className='bg-orange-200 p-4 rounded-md text-orange-800 anim-hover'>
           <h1 className='text-xl font-medium'>Débitos:</h1>
           <h1 className='text-2xl font-bold'>{sumDebitos}</h1>
         </div>
@@ -265,7 +265,7 @@ export default function FinanceiroPage() {
 
       <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4'>
         {/* Parte de Criar Transacao */}
-        <div className='flex flex-col col-span-1 bg-white p-4 rounded-md gap-4'>
+        <div className='flex flex-col col-span-1 bg-white p-4 rounded-md gap-4 anim-hover'>
           <div className='flex flex-col xl:flex-row gap-4 justify-start'>
             <h1 className='text-3xl font-bold'>Gerar</h1>
             <Combobox
@@ -319,7 +319,7 @@ export default function FinanceiroPage() {
           </Button>
         </div>
         {/* Parte de visualizar Transacao */}
-        <div className='flex flex-col bg-white p-4 rounded-md gap-4 col-span-1 xl:col-span-2'>
+        <div className='flex flex-col bg-white p-4 rounded-md gap-4 col-span-1 xl:col-span-2 anim-hover'>
           <h1 className='text-3xl font-bold capitalize'>Ver transações Aluno</h1>
           <h3 className='font-medium text-2xl'>CPF:</h3>
           <div className='flex flex-col md:flex-row gap-2'>
@@ -382,7 +382,7 @@ export default function FinanceiroPage() {
 
       </div>
 
-      <div className='bg-white p-4 rounded-md'>
+      <div className='bg-white p-4 rounded-md anim-hover'>
         <div className='grid grid-cols-8 gap-4 p-4'>
           <Input placeholder={"Nome do Aluno"} className={'col-span-2'} value={buscaPorNome} onChange={(e) => setBuscaPorNome(e.target.value)} />
           <Input placeholder={"CPF do Aluno"} className={'col-span-2'} value={buscaPorCPF} onChange={(e) => setBuscaPorCPF(e.target.value)} />

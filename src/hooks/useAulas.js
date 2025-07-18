@@ -114,9 +114,9 @@ export default function useAula() {
     }
   };
 
-  const alterarAula = async (id1, hora1, id2, hora2) => {
+  const alterarAula = async (id1, hora1, id_instruto1, id2, hora2, id_instruto2) => {
     try {
-      const att = `?id1=${id1}&hora1=${hora1}&id2=${id2}&hora2=${hora2}`;
+      const att = `?id1=${id1}&hora1=${hora1}&id_instruto1=${id_instruto1}&id2=${id2}&hora2=${hora2}&id_instruto2=${id_instruto2}`;
       const response = await GenericPath('aulas', 'trocarHorarios', att);
 
       if (response?.sucesso) {
@@ -129,6 +129,11 @@ export default function useAula() {
     } catch (erro) {
       toast.error(erro.message || erro.toString());
       return false;
+    }finally{
+      console.log(instrutor);
+      console.log(data);
+
+      await buscarAulasInstrutor(instrutor, data);
     }
   };
 

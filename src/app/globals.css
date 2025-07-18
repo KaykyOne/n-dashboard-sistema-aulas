@@ -114,6 +114,12 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* global.css ou tailwind.css */
+.anim-hover {
+  @apply hover:translate-y-1 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer;
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -121,4 +127,15 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* global.css ou tailwind */
+.pdf-export {
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+  /* pode setar mais se quiser, mas só essas já resolvem 90% dos casos */
 }

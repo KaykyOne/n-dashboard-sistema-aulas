@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 
 
@@ -36,21 +35,21 @@ export default function page() {
 
   return (
     <div className="flex flex-col w-full gap-4 text-[#6F0A59]">
-      <div className="grid lg:grid-cols-2 p-10 bg-white rounded-sm">
+      <div className="grid lg:grid-cols-2 p-10 bg-white anim-hover">
         <div className="flex flex-col text-[#6F0A59] text-start p-3 justify-center">
           <h1 className="font-bold text-6xl">Bem-Vindo</h1>
           <h3>Aproveite nosso sistema!</h3>
 
           <h4 className="text-2xl font-medium">Feito por NovusTech</h4>
         </div>
-        <img alt="Imagem Tranquila" className="flex flex-1" src={`/DesenhoTranquilidade.svg`} />
+        <img alt="Imagem Tranquila" className="flex flex-1 opacity-50" src={`/DesenhoTranquilidade.svg`} />
       </div>
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="flex flex-col bg-white p-5 rounded-sm">
+        <div className="flex flex-col bg-white p-5 anim-hover">
           <h2 className="font-bold text-2xl">Frase do Dia:</h2>
           <h1 className="font-light text-4xl">{mensagemDiaria}</h1>
         </div>
-        <div className="flex flex-col bg-white p-5 text-start rounded-sm">
+        <div className="flex flex-col bg-white p-5 text-start anim-hover">
           <h2 className="font-bold text-2xl">Dicas de uso:</h2>
           <ul className="list-disc ml-5">
             {verLista}

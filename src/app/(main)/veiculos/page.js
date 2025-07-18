@@ -69,6 +69,16 @@ export default function VeiculoPage() {
     setModoEdicao(true);
   }
 
+  const clear = () => {
+    setFormData({
+      veiculo_id: "",
+      placa: "",
+      modelo: "",
+      categoria: "" // ajustar se necessário
+    });
+    setModoEdicao(false);
+  };
+
   async function abrirModalRelacionamentos(veiculo) {
     await buscarInstrutores();
     setVeiculoSelecionado(veiculo);
@@ -76,12 +86,11 @@ export default function VeiculoPage() {
     setModalAberto(true);
   }
 
-
   return (
-    <div className='flex flex-col gap-4 text-[#6F0A59]'>
+    <div className='flex flex-col gap-4'>
 
       {/* Formulário */}
-      <div className='bg-white p-4 rounded-sm'>
+      <div className='bg-white p-4 anim-hover'>
         <h2 className='font-bold text-xl mb-2'>{modoEdicao ? "Editar Veículo" : "Cadastrar Veículo"}</h2>
         <form onSubmit={handleSubmit} className='grid grid-cols-1 md:grid-cols-4 gap-4'>
           <Input
@@ -102,12 +111,26 @@ export default function VeiculoPage() {
             value={formData.categoria}
             onChange={handleChange}
           />
-          <Button type="submit">{modoEdicao ? "Salvar Alterações" : "Cadastrar"}</Button>
+          <div className='flex w-full justify-between gap-2'>
+            <Button type="submit" className={"flex-1"}>
+              {modoEdicao ? "Salvar Alterações" : "Cadastrar"}
+              <span className="material-icons">
+                done
+              </span>
+            </Button>
+            {modoEdicao &&
+              <Button className={"flex-1"} type={"destructive"} onClick={() => clear()}>
+                Cancelar Edição
+                <span className="material-icons">
+                  clear
+                </span>
+              </Button>}
+          </div>
         </form>
       </div>
 
       {/* Busca + tabela */}
-      <div className='p-6 bg-white rounded-sm'>
+      <div className='p-6 bg-white anim-hover'>
         <Input
           placeholder="Buscar veículo por modelo ou placa..."
           value={search}

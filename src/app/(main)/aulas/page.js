@@ -1,189 +1,47 @@
 "use client"
-import React, { useEffect, useState, useMemo } from 'react'
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Combobox } from '@/components/ui/combobox';
-import { DatePicker } from '@/components/ui/datePicker';
-import { Button } from '@/components/ui/button';
-import useAula from '@/hooks/useAulas';
-import useInstrutores from '@/hooks/useInstrutores';
-import Loading from '@/components/Loading';
-import Modal from '@/components/Modal';
-import { addMinutes, format } from 'date-fns';
+import React, { useState } from 'react'
+import ListAulasInstrutor from '@/components/ListAulasInstrutor'
+import { Button } from '@/components/ui/button'
+import useAula from '@/hooks/useAulas'
 
-const opcoesAula = [
-  {
-    value: "Marcada",
-    label: "Marcada"
-  },
-  {
-    value: "Vaga",
-    label: "Vaga"
-  },
-  {
-    value: "Todas",
-    label: "Todas",
-  }
-]
+export default function Page() {
+  const aula1 = useAula()
+  const aula2 = useAula()
 
-export default function AulasPage() {
-  const { aulas: aulasMarcadas, loading: loadingAulas, setData, setInstrutor, instrutor, data, vagas: horariosVagos, deleteAula, buscarAulasInstrutor, alterarAula } = useAula();
-  const { buscarInstrutores, instrutores, loading: loadingInstrutor, inserirExeção, buscarExecoesDia, deletarExecao } = useInstrutores();
-
-  const [aulas, setAulas] = useState([]);
-  const [aulasFiltradas, setAulasFiltradas] = useState([]);
-  const [tipo, setTipo] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState();
-  const [horariosBloqueados, setHorariosBloqueados] = useState([]);
-  const [execoes, setExecoes] = useState([]);
-
-  const [aulaDrag, setAulaDrag] = useState();
-
-  const instrutoresOptions = useMemo(() => {
-    return instrutores
-      .filter(i => i.atividade_instrutor === true)
-      .map(i => ({
-        value: i.instrutor_id.toString(),
-        label: i.nome_instrutor,
-      }));
-  }, [instrutores]);
-
-  aulasFiltradas.sort((a, b) => {
-    let hora1, hora2;
-    if (a.hora == null) hora1 = a;
-    else hora1 = a.hora;
-    if (b.hora == null) hora2 = b;
-    else hora2 = b.hora;
-
-    const horaA = hora1.split(':').map(Number);
-    const horaB = hora2.split(':').map(Number);
-
-    const minutosA = horaA[0] * 60 + horaA[1];
-    const minutosB = horaB[0] * 60 + horaB[1];
-
-    return minutosA - minutosB;
-  });
-
-  const novasAulas = useMemo(() => {
-    const horariosVagosFormatados = horariosVagos.map(item => {
-      return { hora: item };
-    });
-
-    console.log(horariosVagosFormatados);
-    return [...horariosVagosFormatados, ...aulasMarcadas];
-  }, [horariosVagos, aulasMarcadas]);
-
-  const confirmDeleteAula = async (id) => {
-    if (!id) return;
-    setModalVisible(true);
-    setModalContent(
-      <div className="flex flex-col items-center justify-center gap-4 text-center p-4">
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Tem certeza que deseja excluir esta aula?
-        </h1>
-
-        <img
-          src="/imageDelete.svg"
-          alt="Ícone de exclusão"
-          className="max-w-[200px] w-full h-auto"
-        />
-
-        <div className="flex gap-3 mt-4">
-          <Button
-            variant="green"
-            className="flex items-center gap-2"
-            onClick={async () => {
-              setModalVisible(false);
-              await deleteAula(id);
-            }}
-          >
-            <span className="material-icons">check_circle</span>
-            Confirmar
-          </Button>
-
-          <Button
-            variant="destructive"
-            className="flex items-center gap-2"
-            onClick={() => setModalVisible(false)}
-          >
-            <span className="material-icons">cancel</span>
-            Cancelar
-          </Button>
-        </div>
-      </div>
-
-    )
-    return;
-  }
-
-  useEffect(() => {
-    if (!modalVisible && instrutor && data)
-      buscarAulasInstrutor(instrutor, data);
-  }, [modalVisible])
-
-  useEffect(() => {
-    buscarInstrutores();
-  }, [])
-
-  useEffect(() => {
-    setAulas(novasAulas);
-    setAulasFiltradas(novasAulas);
-    setTipo(opcoesAula[2].value);
-  }, [novasAulas]);
-
-  useEffect(() => {
-    let filtragem;
-    if (tipo === "Vaga" || tipo === "Marcada") {
-      if (tipo === "Vaga") filtragem = aulas.filter(aula => typeof aula == 'string');
-      if (tipo === "Marcada") filtragem = aulas.filter(aula => typeof aula == 'object');
-      setAulasFiltradas(filtragem);
-    } else {
-      setAulasFiltradas([...horariosVagos, ...aulasMarcadas]);
-    }
-
-  }, [tipo])
-
-  useEffect(() => {
-    if (!instrutor || !data) return;
-    const buscarExecoes = async () => {
-      const res = await buscarExecoesDia(instrutor, data);
-      setExecoes(res || []);
-    }
-    buscarExecoes();
-  }, [instrutor, data])
+  const [doisInstrutores, setDoisInstrutores] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [aulaDrag, setAulaDrag] = useState()
+  const [modalContent, setModalContent] = useState()
 
   const dragIniti = (aula, index) => {
-    setAulaDrag({ aula: aula, index: index });
+    setAulaDrag({ aula, index })
   }
 
   const confirmDrop = (aula, index) => {
-    setModalVisible(true);
+    setModalVisible(true)
     setModalContent(
       <div className="flex flex-col items-center justify-center gap-4 text-center p-4">
         <h1 className="text-2xl font-semibold text-gray-800">
-          Tem certeza que deseja troacar essas aulas?
+          Tem certeza que deseja trocar essas aulas?
         </h1>
-
         <img
           src="/imagemAlterar.svg"
           alt="Ícone de alteração"
           className="max-w-[200px] w-full h-auto"
         />
-
         <div className="flex gap-3 mt-4">
           <Button
             variant="green"
             className="flex items-center gap-2"
             onClick={async () => {
-              setModalVisible(false);
-              await dragDrop(aula, index);
+              setModalVisible(false)
+              await dragDrop(aula, index)
             }}
           >
             <span className="material-icons">check_circle</span>
             Confirmar
           </Button>
-
           <Button
             variant="destructive"
             className="flex items-center gap-2"
@@ -197,196 +55,85 @@ export default function AulasPage() {
     )
   }
 
-  const dragDrop = async (aula, index) => {
-    const newAulas = [...aulas];
-    const aula1 = aula.hora;
-    const aula2 = aulaDrag.aula.hora;
-    const res = await alterarAula(aula.aula_id || 'vago', aula1, aulaDrag.aula.aula_id || 'vago', aula2)
-    console.log(res);
+  const dragDrop = async (aulaSoltada) => {
+
+    if (!aulaDrag || !aulaDrag.aula) return
+
+    const aulaArrastada = aulaDrag.aula
+    console.log(aulaSoltada);
+    console.log(aulaArrastada);
+
+    // Verifica de qual lista (hook) vem a aula arrastada
+    const vemDeAula1 = aula1.aulas.some(a => a.aula_id === aulaArrastada.aula_id)
+    const hookOrigem = vemDeAula1 ? aula1 : aula2
+    const hookDestino = vemDeAula1 ? aula2 : aula1
+
+    const res = await hookOrigem.alterarAula(
+      aulaSoltada.aula_id || 'vago',
+      aulaSoltada.hora,
+      aulaSoltada.instrutor_id || 'vago',
+      aulaArrastada.aula_id || 'vago',
+      aulaArrastada.hora,
+      aulaArrastada.instrutor_id || 'vago'
+    )
+
     if (res === true) {
-      aulaDrag.aula.hora = aula1;
-      aula.hora = aula2
-      newAulas[index] = aulaDrag.aula;
-      newAulas[aulaDrag.index] = aula;
-
-      setAulas(newAulas);
-      setAulaDrag(null);
-      if (!modalVisible && instrutor && data)
-        buscarAulasInstrutor(instrutor, data);
-      return;
-    } else {
-      setAulaDrag(null);
-      return;
+      // Atualiza as duas listas
+      await hookOrigem.buscarAulasInstrutor()
+      await hookDestino.buscarAulasInstrutor()
     }
 
-  };
-
-  const atretrelarHorario = (a, hora) => {
-    if (a) {
-      setHorariosBloqueados((prev) => [...prev, hora]);
-    } else {
-      setHorariosBloqueados((prev) =>
-        prev.filter((item) => item !== hora) // remove o horário
-      );
-    }
-  };
-
-  const desmarcarCheckboxes = () => {
-    setHorariosBloqueados([])
-    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-  };
-
-  function horaParaMinutos(horaStr) {
-    const [h, m] = horaStr.split(":").map(Number);
-    return h * 60 + m;
-  };
-
-  const handleExcluirExecao = async (execao_id) => {
-    await deletarExecao(execao_id);
-    await buscarExecoes();
+    setAulaDrag(null)
   }
 
-  const buscarExecoes = async () => {
-    const res = await buscarExecoesDia(instrutor, data);
-    setExecoes(res || []);
-  }
-
-  const confirmHorariosBloqueados = async () => {
-    let menor;
-    let maior
-    if (horariosBloqueados.length > 1) {
-      menor = horariosBloqueados.reduce((menor, atual) => {
-        return horaParaMinutos(atual) < horaParaMinutos(menor) ? atual : menor;
-      });
-      maior = horariosBloqueados.reduce((maior, atual) => {
-        return horaParaMinutos(atual) > horaParaMinutos(maior) ? atual : maior;
-      });
-    } else if (horariosBloqueados.length == 1) {
-      menor = horariosBloqueados[0];
-      maior = addMinutes(horariosBloqueados, 50);
-    }
-
-    await inserirExeção(instrutor, data, menor, maior);
-    desmarcarCheckboxes();
-    await buscarExecoes();
-  }
 
   return (
-    <div className='relative'>
-      {(loadingAulas || loadingInstrutor) && <Loading />}
-      <div className="grid grid-cols-1 gap-4">
-        {horariosBloqueados.length > 0 &&
-          <div className='flex flex-col gap-2 w-full'>
-            <Button variant={'green'} onClick={() => confirmHorariosBloqueados()}>Salvar</Button>
-            <Button variant={'alert'} onClick={() => desmarcarCheckboxes()}>Cancelar</Button>
-          </div>
-        }
-        <div className={`p-6 row-span-2 bg-white rounded-sm`}>
-          {/* Barra de pesquisa */}
-          <div className='grid grid-cols-5 align-middle gap-4 mb-3'>
-
-            <Combobox
-              options={instrutoresOptions}
-              value={instrutor}
-              onChange={setInstrutor}
-              placeholder="Escolha o instrutor"
-              className={'col-span-2'}
-            />
-
-            <DatePicker value={data} onChange={setData} className={'col-span-2 w-full'} />
-
-            <Combobox
-              options={opcoesAula}
-              value={tipo}
-              onChange={setTipo}
-              placeholder="Escolha o tipo"
-              className={'col-span-1'}
-            />
-
-          </div>
-
-          <div className='flex flex-col'>
-            <div className='grid grid-cols-5 p-3'>
-              <h1 className='text-2xl font-bold'>Hora</h1>
-              <h1 className='text-2xl font-bold'>Aluno</h1>
-              <h1 className='text-2xl font-bold'>Veículo</h1>
-              <h1 className='text-2xl font-bold'>Tipo</h1>
-              <h1 className='text-2xl font-bold'>Ação</h1>
-            </div>
-            <div className='flex flex-col gap-1'>
-              {aulasFiltradas.map((aula, index) => (
-                aula.nome != null ?
-                  <div key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id} className='grid grid-cols-5 text-start p-3 border border-gray-200 rounded-md' draggable
-                    onDrop={() => confirmDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
-                    <p>{aula.hora}</p>
-                    <p>{aula.nome + " " + aula.sobrenome}</p>
-                    <p>{aula.placa}</p>
-                    <p className='font-black'>{aula.tipo}</p>
-                    <Button
-                      className={"w-full"}
-                      variant={"destructive"}
-                      onClick={() => confirmDeleteAula(aula.aula_id)}>
-                      Excluir
-                      <span className="material-icons">
-                        delete
-                      </span>
-                    </Button>
-                  </div>
-                  :
-                  <div key={`vaga-${aula.hora} `} className='grid grid-cols-4 text-start bg-red-700 text-white p-3 rounded-md' draggable
-                    onDrop={() => confirmDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
-                    <p>{aula.hora}</p>
-                    <p>Vaga</p>
-                    <p>Vaga</p>
-                    <div className='flex gap-1 items-center'>
-                      <input onClick={(a) => atretrelarHorario(a.target.checked, aula.hora)} id={`checkBloqueio${aula.hora}`} type='checkbox' />
-                      <label htmlFor={`checkBloqueio${aula.hora}`}>Bloquear horário</label>
-                    </div>
-                  </div>
-              ))}
-            </div>
-          </div>
-          <div className='flex flex-col'>
-            {execoes.length > 0 && (
-              <div className="flex flex-col gap-4 mt-4 w-full">
-                <div className='flex flex-col'>
-                  <h1 className='text-3xl font-bold'>Bloqueios desse dia:</h1>
-                  <h2>Isso serve para impedir que você ou alunos marquem aulas em horarios que não podem!</h2>
-                </div>
-                {execoes.map((item) => (
-                  <div
-                    key={item.execao_id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white border border-gray-300 p-4 rounded-xl shadow-md"
-                  >
-                    <div className="flex flex-col text-gray-700">
-                      <span><strong>Início:</strong> {item.hora_inicio}</span>
-                      <span><strong>Fim:</strong> {item.hora_fim}</span>
-                    </div>
-
-                    <Button
-                      type={3}
-                      onClick={() => handleExcluirExecao(item.execao_id)} // substitua pela sua função
-                      className="self-end sm:self-auto"
-                    >
-                      Excluir
-                      <span className="material-icons">delete</span>
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-
-
+    <div className='flex'>
+      <div className='flex-1'>
+        <ListAulasInstrutor
+          dragIniti={dragIniti}
+          dragDrop={dragDrop}
+          confirmDrop={confirmDrop}
+          modalVisibleDrag={modalVisible}
+          modalContentDrag={modalContent}
+          aulasMarcadas={aula1.aulas}
+          horariosVagos={aula1.vagas}
+          loadingAulas={aula1.loading}
+          setData={aula1.setData}
+          setInstrutor={aula1.setInstrutor}
+          instrutor={aula1.instrutor}
+          data={aula1.data}
+          deleteAula={aula1.deleteAula}
+          buscarAulasInstrutor={aula1.buscarAulasInstrutor}
+        />
       </div>
 
-      {modalVisible &&
-        <Modal onClose={() => setModalVisible(false)}>
-          {modalContent}
-        </Modal>}
+      <div className='p-1 pl-2'>
+        <Button className={'h-full'} onClick={() => setDoisInstrutores(!doisInstrutores)}>
+          {doisInstrutores ? '-' : '+'}
+        </Button>
+      </div>
 
+      {doisInstrutores && (
+        <div className='flex-1'>
+          <ListAulasInstrutor
+            dragIniti={dragIniti}
+            dragDrop={dragDrop}
+            confirmDrop={confirmDrop}
+            modalVisibleDrag={modalVisible}
+            modalContentDrag={modalContent}
+            aulasMarcadas={aula2.aulas}
+            horariosVagos={aula2.vagas}
+            loadingAulas={aula2.loading}
+            setData={aula2.setData}
+            setInstrutor={aula2.setInstrutor}
+            instrutor={aula2.instrutor}
+            data={aula2.data}
+            deleteAula={aula2.deleteAula}
+            buscarAulasInstrutor={aula2.buscarAulasInstrutor}
+          />
+        </div>
+      )}
     </div>
-  );
+  )
 }

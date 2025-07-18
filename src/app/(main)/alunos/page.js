@@ -387,7 +387,7 @@ export default function AlunosPage() {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
           {/* Form de cadastro */}
-          <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
+          <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2 anim-hover">
             <div className="flex gap-2">
               <button onClick={() => setTipoUsuario('aluno')} className={tipoUsuario == "aluno" ? cssSelecionado : cssSemSelecao}>Aluno</button>
               <button onClick={() => setTipoUsuario('precadastro')} className={tipoUsuario == "precadastro" ? cssSelecionado : cssSemSelecao}>Precadastro</button>
@@ -473,7 +473,7 @@ export default function AlunosPage() {
           </div>
 
           {/* Parte Instrutor responsavel */}
-          <div className="flex flex-col col-span-1 p-6 bg-white rounded-sm gap-3">
+          <div className="flex flex-col col-span-1 p-6 bg-white rounded-sm gap-3 anim-hover">
             <div className="flex flex-col gap-2">
               <h1 className="font-bold text-3xl">Instrutores Respónsaveis pelo Aluno:</h1>
               <Input
@@ -516,7 +516,7 @@ export default function AlunosPage() {
         </div>
 
         {/* Listar Alunos */}
-        <div className="p-6 row-span-2 col-span-2 bg-white rounded-sm">
+        <div className="p-6 row-span-2 col-span-2 bg-white rounded-sm anim-hover">
           <h1 className="font-bold text-3xl">Pesquisar Alunos:</h1>
           {/* Barra de pesquisa */}
           <div className="flex gap-4">

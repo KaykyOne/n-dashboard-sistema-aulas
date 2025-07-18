@@ -62,12 +62,22 @@ export default function Sidebar() {
         </Link>
       </nav>
 
-      <Link href="/aulas/novaAula">
-        <Button className="w-full mt-3">
-          <p className={classTextResponsive}>Nova Aula</p>
-          <span className="material-icons">add</span>
-        </Button>
-      </Link>
+      <div className="flex flex-col">
+        <Link href="/aulas/novaAula">
+          <Button className="w-full mt-3">
+            <p className={classTextResponsive}>Nova Aula</p>
+            <span className="material-icons">add</span>
+          </Button>
+        </Link>
+        <Link href="/mensagens">
+          <Button className="w-full mt-3">
+            <p className={classTextResponsive}>Mensagens</p>
+            <span className="material-icons">message</span>
+          </Button>
+        </Link>
+      </div>
+
+
 
       <div className="mt-15 flex justify-center items-center pb-4">
         <img src={`/DesenhoMenu.png`} className="w-[200px] h-[120px] hidden lg:inline" alt="Desenho do menu lateral" />
