@@ -1,31 +1,145 @@
-import React from "react";
+"use client"
+import React, { useEffect, useState } from "react";
+import useMensagens from "@/hooks/useMensagens";
+import { Button } from "@/components/ui/button";
+import useAlunos from "@/hooks/useAlunos";
 
 export default function EnvioMensagensPage() {
+  const { inserirMensagem, setUsuarios, usuarios, loading: loadingMensagens } = useMensagens();
+  const { alunos, buscarAlunos, loading: loadingAlunos } = useAlunos();
+  const [text, setText] = useState('');
+  const [filtro, setFiltro] = useState('');
+
+  useEffect(() => {
+    buscarAlunos();
+  }, []);
+
+  const enviarMensagens = async () => {
+    setUsuarios(usuarios);
+    await inserirMensagem(text || "Essa é uma mensagem automatica!");
+  };
+
+  const adicionarUsuarioSelecionado = (aluno) => {
+    const alunoFormatado = {
+      telefone: aluno.telefone,
+      nome: `${aluno.nome} ${aluno.sobrenome}`,
+    };
+    setUsuarios((prev) => {
+      const jaAdicionado = prev.find((u) => u.telefone === aluno.telefone);
+      if (jaAdicionado || prev.length >= 20) return prev;
+      return [...prev, alunoFormatado];
+    });
+  };
+
+  const removerUsuario = (telefone) => {
+    setUsuarios((prev) => prev.filter((u) => u.telefone !== telefone));
+  };
+
+  const alunosFiltrados = alunos
+    .filter((aluno) => aluno.atividade === true)
+    .filter((aluno) =>
+      `${aluno.nome} ${aluno.sobrenome}`
+        .toLowerCase()
+        .includes(filtro.toLowerCase())
+    );
+
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800">
-        Envio de Mensagens em Massa
-      </h1>
+    <div className="max-w-5xl mx-auto p-6 flex flex-col gap-6">
+      {/* Título e introdução */}
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold text-gray-800">📤 Envio de Mensagens em Massa</h1>
+        <p className="text-gray-600">
+          Envie mensagens para vários alunos de forma rápida e automatizada.
+        </p>
+      </div>
 
-      <p className="text-gray-700 leading-relaxed">
-        O que é o envio de mensagens em massa? É uma forma prática de se
-        comunicar com vários alunos da sua autoescola de uma vez só. Aqui, você
-        poderá conectar seu número do <strong>WhatsApp</strong> e enviar
-        mensagens diretamente para os contatos que escolher.
-      </p>
-
+      {/* Alerta */}
       <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-md">
         <p className="text-yellow-800 font-semibold">⚠️ Aviso importante:</p>
-        <p className="text-yellow-700 mt-2">
-          Embora as mensagens sejam enviadas por um canal seguro, essa prática
-          não é autorizada oficialmente pelo WhatsApp. Por isso, evite envios em
-          massa com intervalos menores que <strong>1 minuto</strong> para cada
-          mensagem, pois isso pode causar o bloqueio do seu número.
+        <p className="text-yellow-700 mt-1">
+          O envio é feito para no máximo <strong>20 alunos</strong>, e pode ser usado até <strong>2 vezes por dia</strong>, com intervalo de 30 minutos.
         </p>
         <p className="text-yellow-700 mt-2 font-medium">
-          A NovusTech não se responsabiliza por bloqueios causados pelo uso
-          indevido desta ferramenta.
+          A NovusTech não se responsabiliza pelo conteúdo enviado nessas mensagens.
         </p>
+      </div>
+
+      {/* Formulário */}
+      <div className="bg-white rounded-xl shadow-md p-6 flex flex-col gap-4">
+        <label className="font-medium text-gray-800">Digite a mensagem:</label>
+        <textarea
+          rows="5"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Ex: Olá! Suas aulas estão marcadas..."
+        ></textarea>
+
+        <Button
+          onClick={enviarMensagens}
+          disabled={loadingMensagens}
+          className="w-fit gap-2"
+        >
+          {loadingMensagens ? (
+            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" />
+          ) : (
+            <>
+              <span className="material-icons">send</span>
+              Enviar
+            </>
+          )}
+        </Button>
+
+        {/* Contador de usuários */}
+        <p className="text-sm text-gray-600">Selecionados: <strong>{usuarios.length}</strong> / 20</p>
+
+        {/* Lista de usuários selecionados */}
+        <div className="flex flex-wrap gap-3">
+          {(usuarios || []).map((usuario) => (
+            <div
+              key={usuario.telefone}
+              className="flex items-center justify-between bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-xl shadow-sm w-full max-w-md"
+            >
+              <h1 className="font-medium text-sm truncate">{usuario.nome}</h1>
+              <span
+                className="material-icons cursor-pointer hover:text-red-900 transition"
+                onClick={() => removerUsuario(usuario.telefone)}
+              >
+                remove
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Filtro de pesquisa */}
+      <input
+        type="text"
+        placeholder="Buscar aluno por nome ou sobrenome..."
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+        className="border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+      />
+
+      {/* Lista de alunos */}
+      <div className="bg-white rounded-xl shadow-md p-4 max-h-[400px] overflow-auto space-y-3">
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">Alunos ativos:</h2>
+        {alunosFiltrados.map((aluno) => (
+          <div
+            key={aluno.usuario_id}
+            className="border border-gray-200 rounded-md p-3 bg-gray-50"
+          >
+            <p className="text-sm text-gray-800 font-medium">{aluno.nome} {aluno.sobrenome}</p>
+            <p className="text-sm text-gray-600">📞 {aluno.telefone}</p>
+            <p className="text-sm text-gray-600">
+              Categoria: {(aluno.categoria_pretendida || "").toUpperCase()}
+            </p>
+            <Button className="mt-2" onClick={() => adicionarUsuarioSelecionado(aluno)}>
+              Adicionar
+              <span className="material-icons">add</span>
+            </Button>
+          </div>
+        ))}
       </div>
     </div>
   );

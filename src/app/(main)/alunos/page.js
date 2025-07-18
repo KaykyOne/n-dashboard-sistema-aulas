@@ -12,6 +12,7 @@ import { addYears, format, parse } from 'date-fns'
 import { toast } from "react-toastify";
 import Modal from "@/components/Modal";
 import ModalAulas from "@/components/ModalAulas";
+import Imprimir from "@/components/Imprimir";
 
 const opcoesAtivoInativo = [
   {
@@ -605,7 +606,7 @@ export default function AlunosPage() {
                   usuariosFiltrados
                     .filter((_, index) => index >= numPagina && index < numPagina + 10)
                     .map((user) => (
-                      <div                                                                                      
+                      <div
                         key={user.usuario_id}
                         className={"grid grid-cols-10 items-center text-sm p-3"}
                       >
@@ -684,10 +685,49 @@ export default function AlunosPage() {
                   <p className="text-center text-sm text-gray-500 p-4">Carregando usuários...</p>
                 )}
               </div>
+              <Imprimir>
+                <div className="flex flex-col" style={{ display: 'none' }} id="print-area">
+                  <div className="grid grid-cols-10 font-semibold text-sm border-b pb-2 mb-2">
+                    <p>Nome</p>
+                    <p>CPF</p>
+                    <p>Telefone</p>
+                    <p>Categoria</p>
+                    <p>Data Cadastro</p>
+                    <p>Data Limite</p>
+                    <p>Preferência</p>
+                    <p>Status</p>
+                    <p colSpan={2}>---</p>
+                  </div>
+
+                  {usuariosFiltrados && usuariosFiltrados.length > 0 ? (
+                    usuariosFiltrados.map((user) => (
+                      <div
+                        key={user.usuario_id}
+                        className="grid grid-cols-10 items-center text-sm p-2 border-b"
+                      >
+                        <p className="capitalize">{user.nome || ''} {user.sobrenome || ''}</p>
+                        <p>{user.cpf?.length > 11 ? "inviável" : user.cpf || ''}</p>
+                        <p>{user.telefone || ''}</p>
+                        <p>{user.categoria_pretendida?.toUpperCase() || ""}</p>
+                        <p>{user.data_cadastro ? format(user.data_cadastro, 'dd/MM/yyyy') : ''}</p>
+                        <p>{user.data_cadastro ? format(addYears(user.data_cadastro, 1), 'dd/MM/yyyy') : ''}</p>
+                        <p>{user.outra_cidade ? "Sim" : "Não"}</p>
+                        <p>{user.atividade ? "Ativo" : "Inativo"}</p>
+                        <p colSpan={2}> </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-sm p-4">
+                      Nenhum usuário encontrado...
+                    </p>
+                  )}
+                </div>
+              </Imprimir>
             </div>
           </div>
         </div>
 
+        {/*Navegação de Paginas*/}
         <div className="flex justify-center items-center text-black">
           <span className="material-icons !text-5xl cursor-pointer" onClick={() => alterarNavegacao(-10)}>
             arrow_left
@@ -701,6 +741,9 @@ export default function AlunosPage() {
         </div>
 
       </div>
+
+
+      {/*#region Modal*/}
       {
         modalContent &&
         <Modal onClose={() => setModalContent("")}>
@@ -713,6 +756,8 @@ export default function AlunosPage() {
 
         </ModalAulas>
       }
+      {/*#endregion*/}
+
     </div >
   );
 }
