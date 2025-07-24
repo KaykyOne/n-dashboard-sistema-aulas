@@ -19,10 +19,11 @@ export default function RootLayout({ children }) {
           <Header />
           <main className="p-6">
             <LoadingUIProvider>
-            {children}
+              {children}
             </LoadingUIProvider>
           </main>
         </div>
+
         <ToastContainer
           theme="colored"
           closeOnClick={false}

@@ -131,6 +131,7 @@ export default function useInstrutores() {
       }
     } catch (error) {
       toast.error(`Erro ao inserir exceção: ${error}`);
+      console.log(error);
     }
 
   };

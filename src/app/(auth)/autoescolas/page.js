@@ -26,23 +26,29 @@ export default function page() {
   const renderAutoescola = (autoescola) => {
     return (
       <div key={autoescola.autoescola_id}
-        className='flex flex-col bg-white shadow-2xl p-2 rounded-md text-black justify-start items-center duration-300 hover:scale-102'>
+        className='flex flex-col bg-white shadow-2xl p-4 rounded-md text-gray-500 justify-start items-start anim-hover'>
         <h1 className='font-bold text-start w-full'>Nome:</h1>
         <h2 className='text-start w-full'>{autoescola.nome}</h2>
         <h1 className='font-bold text-start w-full'>Endereço:</h1>
         <h2 className='text-start w-full'>{autoescola.endereco}</h2>
         <Button
           onClick={() => clickAutoescola(autoescola.autoescola_id)}
-          className={'w-full mt-3'}
-        >Escolher</Button>
+          className={'w-fit mt-3'}
+        >
+          Escolher
+          <span className="material-icons">
+            beenhere
+          </span>
+        </Button>
       </div>
     )
   }
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex flex-col gap-2 text-gray-500'>
       <div className='flex justify-between bg-white w-screen p-4 shadow-md left-0 top-0'>
         <h1 className='text-xl'>Olá! Seja Bem-Vindo</h1>
+        <p></p>
         <Link href="/">
           <Button className="text-white px-4 py-2">
             Sair
@@ -50,12 +56,19 @@ export default function page() {
           </Button>
         </Link>
       </div>
+      <div className='flex flex-col p-5 gap-3'>
+        <div className='flex flex-col'>
+          <h1 className='text-3xl font-bold text-gray-700'>Escolha a Autoescola:</h1>
+          <p>É só clicar na autoescola que você tem interesse em administrar!</p>
+        </div>
 
-      <div className='flex p-2 gap-5'>
-        {autoescolas.map(autoescola =>
-          renderAutoescola(autoescola)
-        )}
+        <div className='flex flex-col gap-5'>
+          {autoescolas.map(autoescola =>
+            renderAutoescola(autoescola)
+          )}
+        </div>
       </div>
+
     </div>
   )
 }

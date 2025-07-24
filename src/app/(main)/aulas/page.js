@@ -68,21 +68,47 @@ export default function Page() {
     const hookOrigem = vemDeAula1 ? aula1 : aula2
     const hookDestino = vemDeAula1 ? aula2 : aula1
 
-    const res = await hookOrigem.alterarAula(
-      aulaSoltada.aula_id || 'vago',
-      aulaSoltada.hora,
-      aulaSoltada.instrutor_id || 'vago',
-      aulaArrastada.aula_id || 'vago',
-      aulaArrastada.hora,
-      aulaArrastada.instrutor_id || 'vago'
-    )
+    let id_instrutor1 = hookOrigem.instrutor;
+    let id_instrutor2 = hookDestino.instrutor;
 
-    if (res === true) {
-      // Atualiza as duas listas
-      await hookOrigem.buscarAulasInstrutor()
-      await hookDestino.buscarAulasInstrutor()
+    if (id_instrutor1 && id_instrutor2) {
+      const res = await hookOrigem.alterarAula(
+        aulaSoltada.aula_id || 'vago',
+        aulaSoltada.hora,
+        id_instrutor2 || 'vago',
+        aulaArrastada.aula_id || 'vago',
+        aulaArrastada.hora,
+        id_instrutor1 || 'vago',
+      )
+
+      await hookOrigem.buscarAulasInstrutor();
+      await hookDestino.buscarAulasInstrutor();
+    } else {
+      if (id_instrutor1) {
+        const res = await hookOrigem.alterarAula(
+          aulaSoltada.aula_id || 'vago',
+          aulaSoltada.hora,
+          id_instrutor1 || 'vago',
+          aulaArrastada.aula_id || 'vago',
+          aulaArrastada.hora,
+          id_instrutor1 || 'vago',
+        )
+        await hookOrigem.buscarAulasInstrutor();
+
+      } else {
+        const res = await hookDestino.alterarAula(
+          aulaSoltada.aula_id || 'vago',
+          aulaSoltada.hora,
+          id_instrutor2 || 'vago',
+          aulaArrastada.aula_id || 'vago',
+          aulaArrastada.hora,
+          id_instrutor2 || 'vago',
+        )
+        await hookDestino.buscarAulasInstrutor();
+      }
+
+
     }
-
     setAulaDrag(null)
   }
 

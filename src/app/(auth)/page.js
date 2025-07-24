@@ -68,7 +68,7 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    if (confirmado.usuario_id > 0) {  
+    if (confirmado.usuario_id > 0) {
       localStorage.setItem("dados", confirmado.autoescola_id);
       if (confirmado.tipo_usuario === "superadm") {
         router.push('/autoescolas');
@@ -76,16 +76,32 @@ export default function Page() {
         localStorage.setItem("id_autoescola", confirmado.autoescola_id);
         router.push('/inicio');
       }
-    
+
     }
   }, [confirmado]);
 
   return (
-    <div className="flex h-screen justify-center items-center bg-gray-100">
+    <div className="flex flex-col h-screen justify-center items-center bg-gray-100">
+      <div className="flex gap-2 p-3 w-full justify-start flex-1">
+        <div className="flex gap-2 h-fit items-center">
+          <div className="flex flex-col">
+            <h1 className="text-lg font-medium m-0 leading-tight">NovusTech</h1>
+            <p className="text-[9px] m-0 leading-tight">Inovação e organização!</p>
+          </div>
+          <img
+            src={`/NovusTech.png`}
+            alt="logo da empresa"
+            className="w-[30px] h-[30px] rounded-sm"
+          />
+        </div>
+      </div>
       {loading && <Loading />}
       <div className="bg-white grid grid-cols-1 md:grid-cols-2 max-w-4xl w-full h-full md:h-[500px] rounded-lg shadow-lg overflow-hidden">
         <LoginForm loginState={loginState} />
         <LoginImage />
+      </div>
+      <div className="flex p-3 w-full justify-start  flex-1">
+
       </div>
     </div>
   );

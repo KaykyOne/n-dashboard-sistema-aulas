@@ -200,6 +200,7 @@ export default function ListAulasInstrutor({
   const confirmHorariosBloqueados = async () => {
     let menor;
     let maior
+
     if (horariosBloqueados.length > 1) {
       menor = horariosBloqueados.reduce((menor, atual) => {
         return horaParaMinutos(atual) < horaParaMinutos(menor) ? atual : menor;
@@ -209,7 +210,7 @@ export default function ListAulasInstrutor({
       });
     } else if (horariosBloqueados.length == 1) {
       menor = horariosBloqueados[0];
-      maior = addMinutes(horariosBloqueados, 50);
+      maior = horariosBloqueados[0];
     }
 
     await inserirExeção(instrutor, data, menor, maior);

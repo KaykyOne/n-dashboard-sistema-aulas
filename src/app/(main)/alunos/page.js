@@ -98,6 +98,7 @@ export default function AlunosPage() {
   const [instrutorResponsa, setInstrutorResponsa] = useState();
   const [dataCadastro, setDataCadastro] = useState("");
   const [tipoUsuario, setTipoUsuario] = useState("aluno");
+  const [open, setOpen] = useState(false);
 
   //Pesquisar
   const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios);
@@ -169,6 +170,8 @@ export default function AlunosPage() {
     let categorias = userCategoria.split("");
     setCategoria(categorias);
     setOutraCidade(user.outra_cidade);
+    if(open) return;
+    setOpen(!open);
   };
   const clearAll = () => {
     setEditando(false);
@@ -385,136 +388,149 @@ export default function AlunosPage() {
     <div className="relative">
       {loading || loadingInstrutor && <Loading />}
       <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
-          {/* Form de cadastro */}
-          <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2 anim-hover">
-            <div className="flex gap-2">
-              <button onClick={() => setTipoUsuario('aluno')} className={tipoUsuario == "aluno" ? cssSelecionado : cssSemSelecao}>Aluno</button>
-              <button onClick={() => setTipoUsuario('precadastro')} className={tipoUsuario == "precadastro" ? cssSelecionado : cssSemSelecao}>Precadastro</button>
-            </div>
-            <h1 className="font-bold text-3xl capitalize">{editando ? 'Editando' : 'Cadastrar'} {tipoUsuario}:</h1>
-            <p className="text-xl font-semibold">Nome:</p>
-            <Input type="text" placeholder="Nome" required maxLength={20} value={nome} onChange={(e) => setNome(e.target.value)} />
-            <p className="text-xl font-semibold">Sobrenome:</p>
-            <Input type="text" placeholder="Sobrenome" required maxLength={20} value={sobrenome} onChange={(e) => setSobrenome(e.target.value)} />
-            <p className="text-xl font-semibold">CPF:</p>
-            <Input type="text" placeholder="CPF" required minLength={11} maxLength={11} value={cpf} onChange={(e) => setCpf(e.target.value)} />
-            <p className="text-xl font-semibold">Categoria:</p>
-            <div className="flex gap-2">
-              {opcoesDeTipo.map((tipo) => {
-                const isChecked = categoria.includes(tipo.value);
-                return (
-                  <div className="flex gap-2" key={tipo.value}>
-                    <input
-                      type="checkbox"
-                      id={`tipo${tipo.value}`}
-                      checked={isChecked}  // Verifica se a categoria está marcada
-                      onChange={(event) => handleCheckboxChange(event, tipo.value)}  // Atualiza o estado com base no evento
-                    />
-                    <label className="font-bold" htmlFor={`tipo${tipo.value}`}>
-                      {tipo.value}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
-            <p className="text-xl font-semibold">Telefone:</p>
-            <Input type="text" placeholder="Telefone" required minLength={10} maxLength={11} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
-            <p className="text-xl font-semibold">Data Cadastro:</p>
-            <Input type="date" placeholder="dia/mes/ano" required minLength={10} maxLength={10} value={dataCadastro} onChange={(e) => setDataCadastro(e.target.value)} />
-            <div className="flex gap-2">
-              <input type="checkbox" id="outraCidade" checked={outraCidade} onChange={(e) => setOutraCidade(e.target.checked)} />
-              <label className="font-bold" htmlFor="outraCidade">Privilégio(isso dará privilégio para o aluno)</label>
-            </div>
-            {!editando &&
-              <div className="flex flex-col border-gray-300 border-2 p-3 rounded-2xl gap-2">
-                <h1 className="text-2xl font-bold">Finaceiro Inicial</h1>
-                <p className="text-xl font-semibold">Valor:</p>
-                <div className='flex gap-2'>
-                  <span className='font-bold text-2xl'>R$</span>
-                  <Input
-                    placeholder="Valor"
-                    type="number"
-                    min="0"
-                    max="999999"  // Máximo de 11 dígitos
-                    step="0.01"         // Para permitir valores decimais, se necessário
-                    required
-                    value={valorCriar || ""}
-                    onChange={(e) => setValorCriar(e.target.valueAsNumber || 0)} />
-                </div>
-                <p className="text-xl font-semibold">Descrição:</p>
-                <Input
-                  placeholder="Descreva sobre oque é isso (máximo 30 caracteres)"
-                  type="text"
-                  maxLength={30}
-                  required
-                  value={descricaoCriar}
-                  onChange={(e) => setDescicaoCriar(e.target.value)} />
+        <details className="group anim-hover" open={open} onToggle={(e) => setOpen(e.target.open)}>
+          <summary className="flex gap-2 cursor-pointer font-semibold border text-gray-600 border-gray-30 bg-white rounded p-4"
+            onClick={(e) => {
+              e.preventDefault(); // <== isso impede o HTML de abrir sozinho
+              setOpen(!open);
+            }}>
+            Adicione ou atualize informações do usuáriom, só clicar aqui!
+            <span className="material-icons">
+              ads_click
+            </span>
+          </summary>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+
+            {/* Form de cadastro */}
+            <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
+              <div className="flex gap-2">
+                <button onClick={() => setTipoUsuario('aluno')} className={tipoUsuario == "aluno" ? cssSelecionado : cssSemSelecao}>Aluno</button>
+                <button onClick={() => setTipoUsuario('precadastro')} className={tipoUsuario == "precadastro" ? cssSelecionado : cssSemSelecao}>Precadastro</button>
               </div>
-            }
-            <div className={`gap-2 ${editando ? 'grid grid-cols-2' : 'flex'}`}>
-              <Button
-                type="submit"
-                className={editando ? "" : "w-full"}
-                onClick={editando ? () => handleEdit() : () => handleCadastrar()}>
-                {editando ? "Finalizar Edição" : "Cadastrar"}
-                <span className="material-icons">
-                  add
-                </span>
-              </Button>
-              {editando &&
-                <Button variant={"destructive"} onClick={cancelEdit}>
-                  Cancelar Edição
+              <h1 className="font-bold text-3xl capitalize">{editando ? 'Editando' : 'Cadastrar'} {tipoUsuario}:</h1>
+              <p className="text-xl font-semibold">Nome:</p>
+              <Input type="text" placeholder="Nome" required maxLength={20} value={nome} onChange={(e) => setNome(e.target.value)} />
+              <p className="text-xl font-semibold">Sobrenome:</p>
+              <Input type="text" placeholder="Sobrenome" required maxLength={20} value={sobrenome} onChange={(e) => setSobrenome(e.target.value)} />
+              <p className="text-xl font-semibold">CPF:</p>
+              <Input type="text" placeholder="CPF" required minLength={11} maxLength={11} value={cpf} onChange={(e) => setCpf(e.target.value)} />
+              <p className="text-xl font-semibold">Categoria:</p>
+              <div className="flex gap-2">
+                {opcoesDeTipo.map((tipo) => {
+                  const isChecked = categoria.includes(tipo.value);
+                  return (
+                    <div className="flex gap-2" key={tipo.value}>
+                      <input
+                        type="checkbox"
+                        id={`tipo${tipo.value}`}
+                        checked={isChecked}  // Verifica se a categoria está marcada
+                        onChange={(event) => handleCheckboxChange(event, tipo.value)}  // Atualiza o estado com base no evento
+                      />
+                      <label className="font-bold" htmlFor={`tipo${tipo.value}`}>
+                        {tipo.value}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-xl font-semibold">Telefone:</p>
+              <Input type="text" placeholder="Telefone" required minLength={10} maxLength={11} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+              <p className="text-xl font-semibold">Data Cadastro:</p>
+              <Input type="date" placeholder="dia/mes/ano" required minLength={10} maxLength={10} value={dataCadastro} onChange={(e) => setDataCadastro(e.target.value)} />
+              <div className="flex gap-2">
+                <input type="checkbox" id="outraCidade" checked={outraCidade} onChange={(e) => setOutraCidade(e.target.checked)} />
+                <label className="font-bold" htmlFor="outraCidade">Privilégio(isso dará privilégio para o aluno)</label>
+              </div>
+              {!editando &&
+                <div className="flex flex-col border-gray-300 border-2 p-3 rounded-2xl gap-2">
+                  <h1 className="text-2xl font-bold">Finaceiro Inicial</h1>
+                  <p className="text-xl font-semibold">Valor:</p>
+                  <div className='flex gap-2'>
+                    <span className='font-bold text-2xl'>R$</span>
+                    <Input
+                      placeholder="Valor"
+                      type="number"
+                      min="0"
+                      max="999999"  // Máximo de 11 dígitos
+                      step="0.01"         // Para permitir valores decimais, se necessário
+                      required
+                      value={valorCriar || ""}
+                      onChange={(e) => setValorCriar(e.target.valueAsNumber || 0)} />
+                  </div>
+                  <p className="text-xl font-semibold">Descrição:</p>
+                  <Input
+                    placeholder="Descreva sobre oque é isso (máximo 30 caracteres)"
+                    type="text"
+                    maxLength={30}
+                    required
+                    value={descricaoCriar}
+                    onChange={(e) => setDescicaoCriar(e.target.value)} />
+                </div>
+              }
+              <div className={`gap-2 ${editando ? 'grid grid-cols-2' : 'flex'}`}>
+                <Button
+                  type="submit"
+                  className={editando ? "" : "w-full"}
+                  onClick={editando ? () => handleEdit() : () => handleCadastrar()}>
+                  {editando ? "Finalizar Edição" : "Cadastrar"}
                   <span className="material-icons">
-                    close
+                    add
                   </span>
-                </Button>}
+                </Button>
+                {editando &&
+                  <Button variant={"destructive"} onClick={cancelEdit}>
+                    Cancelar Edição
+                    <span className="material-icons">
+                      close
+                    </span>
+                  </Button>}
+              </div>
             </div>
-          </div>
 
-          {/* Parte Instrutor responsavel */}
-          <div className="flex flex-col col-span-1 p-6 bg-white rounded-sm gap-3 anim-hover">
-            <div className="flex flex-col gap-2">
-              <h1 className="font-bold text-3xl">Instrutores Respónsaveis pelo Aluno:</h1>
-              <Input
-                placeholder={"CPF"}
-                className={"mt-3"}
-                value={cpfInstrutorResponsavel}
-                onChange={(e) => setCpfInstrutorResponsavel(e.target.value)} />
-              <Combobox
-                options={instrutoresOptions || []}
-                placeholder='Escolha o Instrutor'
-                onChange={setInstrutorResponsa}
-                value={instrutorResponsa} />
-              <Button className="mt-4" onClick={() => handleCreateRelation()}>
-                Adicionar Responsável
-                <span className="material-icons">
-                  add
-                </span>
-              </Button>
-            </div>
-            <div className='flex flex-col flex-1 overflow-x-auto border-gray-200 border-solid border-2 w-full rounded-sm'>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Instrutor ID</TableHead>
-                    <TableHead>Nome Instrutor</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {instrturesResponsaveis.map((instrutor) => (
-                    <TableRow key={instrutor.instrutor_id}>
-                      <TableCell>{instrutor.instrutor_id}</TableCell>
-                      <TableCell>{instrutor.nome_instrutor}</TableCell>
-                      <TableCell><Button variant={'destructive'} onClick={() => handleDeleteRelation(instrutor)}>Excluir</Button></TableCell>
+            {/* Parte Instrutor responsavel */}
+            <div className="flex flex-col col-span-1 p-6 bg-white rounded-sm gap-3">
+              <div className="flex flex-col gap-2">
+                <h1 className="font-bold text-3xl">Instrutores Respónsaveis pelo Aluno:</h1>
+                <Input
+                  placeholder={"CPF"}
+                  className={"mt-3"}
+                  value={cpfInstrutorResponsavel}
+                  onChange={(e) => setCpfInstrutorResponsavel(e.target.value)} />
+                <Combobox
+                  options={instrutoresOptions || []}
+                  placeholder='Escolha o Instrutor'
+                  onChange={setInstrutorResponsa}
+                  value={instrutorResponsa} />
+                <Button className="mt-4" onClick={() => handleCreateRelation()}>
+                  Adicionar Responsável
+                  <span className="material-icons">
+                    add
+                  </span>
+                </Button>
+              </div>
+              <div className='flex flex-col flex-1 overflow-x-auto border-gray-200 border-solid border-2 w-full rounded-sm'>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Instrutor ID</TableHead>
+                      <TableHead>Nome Instrutor</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {instrturesResponsaveis.map((instrutor) => (
+                      <TableRow key={instrutor.instrutor_id}>
+                        <TableCell>{instrutor.instrutor_id}</TableCell>
+                        <TableCell>{instrutor.nome_instrutor}</TableCell>
+                        <TableCell><Button variant={'destructive'} onClick={() => handleDeleteRelation(instrutor)}>Excluir</Button></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           </div>
-        </div>
+        </details>
 
         {/* Listar Alunos */}
         <div className="p-6 row-span-2 col-span-2 bg-white rounded-sm anim-hover">

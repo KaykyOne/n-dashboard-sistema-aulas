@@ -19,7 +19,7 @@ export default function Sidebar() {
   const classTextResponsive = "hidden lg:inline";
 
   return (
-    <aside className=" bg-white h-screen p-4 shadow-md fixed left-0 top-0">
+    <aside className=" bg-white h-screen p-4 shadow-md fixed left-0 top-0 overflow-hidden lg:w-[230px]">
       <div className="flex justify-start items-center py-4 gap-2">
         <img className="rounded-sm w-[40px] h-[40px]" src={`/NovusCFC.png`} alt="Logo da Autoescola" />
         <h1 className={`font-medium ${classTextResponsive}`}>NovusCFC</h1>
@@ -75,13 +75,8 @@ export default function Sidebar() {
             <span className="material-icons">message</span>
           </Button>
         </Link>
-      </div>
+      </div> 
 
-
-
-      <div className="mt-15 flex justify-center items-center pb-4">
-        <img src={`/DesenhoMenu.png`} className="w-[200px] h-[120px] hidden lg:inline" alt="Desenho do menu lateral" />
-      </div>
     </aside>
   );
 }
