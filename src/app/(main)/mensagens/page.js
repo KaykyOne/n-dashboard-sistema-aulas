@@ -35,6 +35,22 @@ export default function EnvioMensagensPage() {
     setUsuarios((prev) => prev.filter((u) => u.telefone !== telefone));
   };
 
+  const selectionarTodos = (tipo) => {
+    if (tipo === 'precadastros') {
+      const precadastros = alunos.filter(item => item.tipo_usuario == 'precadastro');
+      const filtrados = precadastros.filter(item => item.atividade === true);
+      setUsuarios(filtrados);
+    } else if (tipo === 'categorias') {
+      const categorias = alunos.filter(item => (item.categoria_pretendida.toLowerCase() == 'd' || item.categoria_pretendida.toLowerCase() == 'e'));
+      const filtrados = categorias.filter(item => item.atividade === true);
+      setUsuarios(filtrados);
+    } else if (tipo === 'primeiras') {
+      const primeiras = alunos.filter(item => (item.categoria_pretendida.toLowerCase() == 'a' || item.categoria_pretendida.toLowerCase() == 'b' | item.categoria_pretendida.toLowerCase() == 'ab'));
+      const filtrados = primeiras.filter(item => item.atividade === true);
+      setUsuarios(filtrados);
+    }
+  }
+
   const alunosFiltrados = alunos
     .filter((aluno) => aluno.atividade === true)
     .filter((aluno) =>
@@ -75,29 +91,40 @@ export default function EnvioMensagensPage() {
           placeholder="Ex: Olá! Suas aulas estão marcadas..."
         ></textarea>
 
-        <Button
-          onClick={enviarMensagens}
-          disabled={loadingMensagens}
-          className="w-fit gap-2"
-        >
-          {loadingMensagens ? (
-            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" />
-          ) : (
-            <>
-              <span className="material-icons">send</span>
-              Enviar
-            </>
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={enviarMensagens}
+            disabled={loadingMensagens}
+            className="w-fit gap-2"
+          >
+            {loadingMensagens ? (
+              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" />
+            ) : (
+              <>
+                <span className="material-icons">send</span>
+                Enviar
+              </>
+            )}
+          </Button>
+
+          <Button
+            onClick={() => setUsuarios([])}
+            disabled={loadingMensagens}
+            className="w-fit gap-2"
+          >
+            <span className="material-icons">cleaning_services</span>
+            Limpar
+          </Button>
+        </div>
 
         {/* Contador de usuários */}
         <p className="text-sm text-gray-600">Selecionados: <strong>{usuarios.length}</strong> / 20</p>
 
         {/* Lista de usuários selecionados */}
         <div className="flex flex-wrap gap-3">
-          {(usuarios || []).map((usuario) => (
+          {(usuarios || []).map((usuario, index) => (
             <div
-              key={usuario.telefone}
+              key={index}
               className="flex items-center justify-between bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-xl shadow-sm w-full max-w-md"
             >
               <h1 className="font-medium text-sm truncate">{usuario.nome}</h1>
@@ -120,6 +147,11 @@ export default function EnvioMensagensPage() {
         onChange={(e) => setFiltro(e.target.value)}
         className="border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
       />
+      <div className="flex flex-wrap gap-2 justify-between">
+        <button className="border p-2 cursor-pointer rounded-md flex-1 font-bold hover:text-amber-900 hover:bg-amber-500 transition duration-500" onClick={() => selectionarTodos('precadastros')}>Somente Pré-Cadastro</button>
+        <button className="border p-2 cursor-pointer rounded-md flex-1 font-bold hover:text-amber-900 hover:bg-amber-500 transition duration-500" onClick={() => selectionarTodos('primeiras')}>Somente Primeira Habilitação</button>
+        <button className="border p-2 cursor-pointer rounded-md flex-1 font-bold hover:text-amber-900 hover:bg-amber-500 transition duration-500" onClick={() => selectionarTodos('categorias')}>Somente Mudança de Categoria Alta</button>
+      </div>
 
       {/* Lista de alunos */}
       <div className="bg-white rounded-xl shadow-md p-4 max-h-[400px] overflow-auto space-y-3">

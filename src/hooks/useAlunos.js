@@ -184,6 +184,25 @@ export default function useAlunos() {
             toast.error(erro.message || erro.toString());
             setAulas([]);
         }
+    };
+
+    const transferenciaAluno = async (id_usuario, id_autoescola) => {
+        const body = {
+            usuario_id: id_usuario,
+            autoescola_id: id_autoescola
+        }
+
+        try {
+            const res = await GenericUpdate("usuario", "transferencia", body);
+            console.log(res.message)
+            if (res.message == 'Transferência realizada com sucesso') {
+                return 'Transferência realizada com sucesso'
+            } else {
+                throw new Error(res?.error || "Erro ao transferir relação");
+            }
+        } catch (erro) {
+            toast.error(`Erro ao transferir aluno: ${erro.message || erro.toString()}`);
+        }
     }
 
     return {
@@ -201,5 +220,6 @@ export default function useAlunos() {
         alterAtividadeAluno,
         limparInstrutores,
         deletarUsuario,
+        transferenciaAluno,
     };
 }

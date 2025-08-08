@@ -116,7 +116,7 @@
 
 /* global.css ou tailwind.css */
 .anim-hover {
-  @apply hover:translate-y-1 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer;
+  @apply hover:translate-y-1 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-400;
 }
 
 
@@ -124,6 +124,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -138,4 +139,20 @@
   --primary: #1d4ed8;
   --primary-foreground: #ffffff;
   /* pode setar mais se quiser, mas só essas já resolvem 90% dos casos */
+}
+
+.classe-aparecer {
+  animation-name: aparecer;
+  animation-duration: 1s;
+  animation-iteration-count: initial;
+}
+
+@keyframes aparecer {
+  0% {
+    right: -300px;
+  }
+
+  100% {
+    right: -0px;
+  }
 }

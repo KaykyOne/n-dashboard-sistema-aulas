@@ -60,6 +60,11 @@ export default function Sidebar() {
           <i className="material-icons">settings</i>
           <p className={classTextResponsive}>Configurações</p>
         </Link>
+
+        <Link href="/transferencia" className={selectedPage === "/transferencia" ? cssSelecionado : cssPadrao}>
+          <i className="material-icons">cloud_sync</i>
+          <p className={classTextResponsive}>Transferência</p>
+        </Link>
       </nav>
 
       <div className="flex flex-col">
@@ -75,7 +80,7 @@ export default function Sidebar() {
             <span className="material-icons">message</span>
           </Button>
         </Link>
-      </div> 
+      </div>
 
     </aside>
   );

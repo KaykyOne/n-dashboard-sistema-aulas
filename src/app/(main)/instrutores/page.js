@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import useInstrutores from "@/hooks/useInstrutores";
 import Loading from "@/components/Loading";
-import useAlunos from "@/hooks/useAlunos";
+import { Combobox } from "@/components/ui/combobox";
 
 const opcoesDeTipo = [
   { value: "A", label: "A" },
@@ -25,6 +25,7 @@ export default function InstrutoresPage() {
     editarInstrutor,
     mudarAtividadeInstrutor,
     inserirInstrutor,
+    gerarRelatorio,
     loading,
   } = useInstrutores();
 
@@ -42,12 +43,43 @@ export default function InstrutoresPage() {
   const [inicioAlmoco, setInicioAlmoco] = useState("12:00");
   const [fimAlmoco, setFimAlmoco] = useState("13:00");
 
+  const [aulasFeitas, setAulasFeitas] = useState(0);
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
+  const [instrutor, setInstrutor] = useState([]);
+
+  useEffect(() => {
+    async function atualizarRelatorio() {
+      if (instrutor && dataInicio && dataFim) {
+        try {
+          const relatorio = await gerarRelatorio(instrutor, dataInicio, dataFim);
+          setAulasFeitas(relatorio);
+        } catch (err) {
+          toast.error("Erro ao buscar relatório");
+          setAulasFeitas(0);
+        }
+      }
+    }
+    atualizarRelatorio();
+  }, [instrutor, dataInicio, dataFim]);
+
   useEffect(() => {
     const awaitInstrutores = async () => {
       await buscarInstrutores();
     }
     awaitInstrutores();
   }, []);
+
+  const instrutoresOptions = useMemo(() => {
+    if (!Array.isArray(instrutores)) return [];
+    return instrutores
+      .map(i => ({
+        value: i.instrutor_id.toString(),
+        label: i.nome_instrutor,
+      }));
+  }, [instrutores]);
+
+
 
   const handleSubmit = async () => {
     if (loading) return;
@@ -95,6 +127,7 @@ export default function InstrutoresPage() {
       // editar apenas o instrutor, sem criar novo usuário
       dados.instrutor_id = idEditando;
       const instrutorOriginal = instrutores.find(i => i.instrutor_id === idEditando);
+      instrutor.tipo_usuario = "instrutor";
       if (instrutorOriginal) {
         dados.atividade_instrutor = instrutorOriginal.atividade_instrutor;
         instrutor.atividade = instrutorOriginal.atividade_instrutor;
@@ -126,8 +159,6 @@ export default function InstrutoresPage() {
     clear();
     await buscarInstrutores();
   };
-
-
 
   const clear = () => {
     setNome("");
@@ -190,8 +221,8 @@ export default function InstrutoresPage() {
   return (
     <div className="flex flex-col gap-2">
       {loading && <Loading />}
-      <div className="grid grid-cols-3 gap-2 bg-white p-4 anim-hover">
-        <div className="flex col-span-2 flex-col gap-2 mb-6">
+      <div className="grid grid-cols-2 gap-5 bg-white p-4 anim-hover">
+        <div className="flex col-span-1 flex-col gap-2 mb-6">
           <h2 className="font-bold text-xl">{idEditando ? "Editando" : "Cadastrando"} Instrutor</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <Input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
@@ -218,11 +249,47 @@ export default function InstrutoresPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            <Input type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} placeholder="Hora Início" />
-            <Input type="time" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} placeholder="Hora Fim" />
-            <Input type="time" value={inicioAlmoco} onChange={(e) => setInicioAlmoco(e.target.value)} placeholder="Início Almoço" />
-            <Input type="time" value={fimAlmoco} onChange={(e) => setFimAlmoco(e.target.value)} placeholder="Fim Almoço" />
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600">Hora Início</p>
+              <Input
+                type="time"
+                value={horaInicio}
+                onChange={(e) => setHoraInicio(e.target.value)}
+                placeholder="Hora Início"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600">Hora Fim</p>
+              <Input
+                type="time"
+                value={horaFim}
+                onChange={(e) => setHoraFim(e.target.value)}
+                placeholder="Hora Fim"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600">Início Almoço</p>
+              <Input
+                type="time"
+                value={inicioAlmoco}
+                onChange={(e) => setInicioAlmoco(e.target.value)}
+                placeholder="Início Almoço"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600">Fim Almoço</p>
+              <Input
+                type="time"
+                value={fimAlmoco}
+                onChange={(e) => setFimAlmoco(e.target.value)}
+                placeholder="Fim Almoço"
+              />
+            </div>
           </div>
+
 
           <div className="flex gap-2 mt-2">
             <Button onClick={handleSubmit}>{editando ? "Salvar Edição" : "Cadastrar"}</Button>
@@ -230,7 +297,40 @@ export default function InstrutoresPage() {
           </div>
         </div>
         <div className="flex flex-col">
+          <h1 className="text-2xl font-bold">Métricas:</h1>
+          <div className="flex flex-wrap gap-3 mt-5">
 
+            <div className="w-full flex flex-col gap-2">
+              <Combobox
+                options={instrutoresOptions}
+                value={instrutor}
+                onChange={setInstrutor}
+                placeholder="Escolha o instrutor"
+                className={'col-span-2'}
+              />
+
+              <h1 className="font-medium">Data de pesquisa Inicial:</h1>
+              <input
+                className="border rounded-md p-2"
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+              />
+
+              <h1 className="font-medium">Data de pesquisa Final:</h1>
+              <input
+                className="border rounded-md p-2"
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+              />
+              <div className="flex flex-col justify-center items-center p-4 border border-green-700 bg-green-200 text-green-900 rounded-xl flex-1">
+                <h2>Aulas Feitas:</h2>
+                <h1 className="text-3xl font-bold">{aulasFeitas}</h1>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
       <div className="bg-white p-2 anim-hover">

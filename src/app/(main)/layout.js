@@ -1,10 +1,15 @@
+"use client"
+import { useState } from "react";
 import "../globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { ToastContainer } from 'react-toastify';
 import LoadingUIProvider from '../LoadingProvider';
+import { Button } from "@/components/ui/button";
+import Help from "@/components/Help";
 
 export default function RootLayout({ children }) {
+  const [helpVisivel, setHelpVisivel] = useState();
   return (
     <html lang="pt-BR">
       <head>
@@ -24,6 +29,14 @@ export default function RootLayout({ children }) {
           </main>
         </div>
 
+        {helpVisivel && <Help open={helpVisivel} setOpen={setHelpVisivel}/>}
+
+        <Button
+          className="fixed text-5xl bottom-4 right-6 rounded-full h-20 w-20 shadow-2xl"
+        onClick={() => setHelpVisivel(!helpVisivel)}>
+          ?
+        </Button>
+
         <ToastContainer
           theme="colored"
           closeOnClick={false}
@@ -32,6 +45,7 @@ export default function RootLayout({ children }) {
           closeButton={true}
           position="top-right"
           pauseOnHover={true} />
+
       </body>
     </html>
   );

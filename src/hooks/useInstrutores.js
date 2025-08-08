@@ -10,7 +10,7 @@ export default function useInstrutores() {
     GenericUpdate,
     GenericPath,
     GenericDelete,
-    
+
     loading,
   } = useGeneric();
 
@@ -26,6 +26,20 @@ export default function useInstrutores() {
     } catch (error) {
       toast.error(`Erro ao buscar instrutores: ${error.message || error.toString()}`);
       setInstrutores([]);
+    }
+  }
+
+  async function gerarRelatorio(instrutor_id, data_inicio, data_fim) {
+    const autoescola_id = sessionStorage.getItem("id_autoescola");
+    try {
+      const res = await GenericSearch("adm", "relatorio", `?instrutor_id=${instrutor_id}&autoescola_id=${autoescola_id}&dataInicio=${data_inicio}&dataFim=${data_fim}`);
+      if (!res) throw new Error("Erro ao gerar relatorio.");
+      console.log(res);
+      return res || 0;
+    } catch (error) {
+      toast.error(`Erro ao gerar relatorio. ${error.message || error.toString()}`);
+      console.log(error);
+      return 0;
     }
   }
 
@@ -173,6 +187,7 @@ export default function useInstrutores() {
     inserirInstrutor,
     inserirExeção,
     deletarExecao,
+    gerarRelatorio,
     loading,
   };
 }
