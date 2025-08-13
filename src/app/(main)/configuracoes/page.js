@@ -14,6 +14,7 @@ export default function ConfiguracoesPage() {
   const [editandoId, setEditandoId] = useState(null)
 
   // carrega configs
+
   const fetchConfigs = async () => {
     const res = await getConfigs()
     setConfigs(res || [])
@@ -24,11 +25,11 @@ export default function ConfiguracoesPage() {
     })
     setValores(inicial)
     setEditandoId(null)
-  }
+  };
 
   useEffect(() => {
     fetchConfigs()
-  }, [])
+  }, []);
 
   const handleChange = (id, novoValor) => {
     if (editandoId === null || editandoId === id) {
@@ -38,18 +39,18 @@ export default function ConfiguracoesPage() {
         [id]: novoValor
       }))
     }
-  }
+  };
 
   const salvar = async (id) => {
     const res = await updateConfig(id, valores[id])
     toast.success(res?.message || 'Configuração atualizada!')
     setEditandoId(null)
-  }
+  };
 
   const descartar = () => {
     fetchConfigs()
     toast.info('Alterações descartadas.')
-  }
+  };
 
   return (
     <div className="flex flex-col gap-4 p-5">
@@ -93,14 +94,24 @@ export default function ConfiguracoesPage() {
                     <label className="font-medium capitalize whitespace-nowrap w-1/3">
                       {item.chave.replace(/([A-Z])/g, ' $1').trim()}
                     </label>
-                    <input
-                      className="border border-gray-300 rounded px-3 py-1 w-2/3"
-                      value={valores[item.id_configuracao] || ''}
-                      onChange={(e) =>
-                        handleChange(item.id_configuracao, e.target.value)
-                      }
-                      disabled={editandoId !== null && !estaEditando}
-                    />
+                    {item.chave === 'manutencao' ?
+                        <input    
+                          type='checkbox'
+                          className="border border-gray-300 rounded px-3 py-1 w-2/3"
+                          checked={item.valor == 'TRUE' || valores[item.id_configuracao] == 'TRUE'}
+                          onChange={(e) =>
+                            handleChange(item.id_configuracao, e.target.checked ? 'TRUE' : 'FALSE')
+                          }
+                          disabled={editandoId !== null && !estaEditando}
+                        />
+                      : <input
+                        className="border border-gray-300 rounded px-3 py-1 w-2/3"
+                        value={valores[item.id_configuracao] || ''}
+                        onChange={(e) =>
+                          handleChange(item.id_configuracao, e.target.value)
+                        }
+                        disabled={editandoId !== null && !estaEditando}
+                      />}
                   </div>
 
                   {estaEditando && (

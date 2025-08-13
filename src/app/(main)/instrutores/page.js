@@ -79,8 +79,6 @@ export default function InstrutoresPage() {
       }));
   }, [instrutores]);
 
-
-
   const handleSubmit = async () => {
     if (loading) return;
 
