@@ -40,6 +40,7 @@ export default function useAutoescola() {
   };
 
   const updateConfig = async (id, valor) => {
+    if (loading) return;
     try {
       const payload = {
         id_configuracao: Number(id),
@@ -47,9 +48,11 @@ export default function useAutoescola() {
       };
 
       const res = await GenericPath("adm", "atualizarConfig", "", payload);
+      console.log(res)
 
-      if (res?.mensagem) {
+      if (res?.message) {
         toast.success(res.mensagem);
+        return;
       } else {
         throw new Error(res?.error || "Erro ao atualizar configuração");
       }

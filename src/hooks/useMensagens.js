@@ -20,7 +20,7 @@ export default function useMensagens() {
 
                 if (!resJSON || !res.ok) {
                     throw new Error(res?.error || "Erro ao inserir mensagem");
-                }else{
+                } else {
                     toast.success(`Mensagem número ${index + 1} enviada!`);
                 }
             }
@@ -30,9 +30,29 @@ export default function useMensagens() {
         }
     };
 
+    const inserirMensagemAvulsa = async (textoMensagem, numero) => {
+        try {
+                const mensagem = {
+                    mensagem: textoMensagem,
+                    telefone: numero
+                };
+                const { resJSON, res } = await GenericCreate('mensagens', 'inserirMensagem', mensagem) || {};
+                console.log(resJSON);
+                console.log(res);
+
+                if (!resJSON || !res.ok) {
+                    throw new Error(res?.error || "Erro ao inserir mensagem");
+                } else {
+                    toast.success(`Mensagem enviada!`);
+                }
+        } catch (erro) {
+            toast.error(erro.message || erro.toString());
+        }
+    };
     return {
         inserirMensagem,
         usuarios,
+        inserirMensagemAvulsa,
         setUsuarios,
         loading
     };

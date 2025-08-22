@@ -4,6 +4,9 @@ import React, { useState } from 'react'
 import ListAulasInstrutor from '@/components/ListAulasInstrutor'
 import { Button } from '@/components/ui/button'
 import useAula from '@/hooks/useAulas'
+import { format } from 'date-fns'
+import useMensagens from '@/hooks/useMensagens'
+import Loading from '@/components/Loading'
 
 export default function Page() {
   const aula1 = useAula()
@@ -12,9 +15,13 @@ export default function Page() {
   const [doisInstrutores, setDoisInstrutores] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [aulaDrag, setAulaDrag] = useState()
-  const [modalContent, setModalContent] = useState()
+  const [modalContent, setModalContent] = useState();
+  const { inserirMensagemAvulsa, loading } = useMensagens()
 
   const dragIniti = (aula, index) => {
+    const autoescola_id = sessionStorage.getItem("id_autoescola");
+
+    if (aula.autoescola_id != autoescola_id) return;
     setAulaDrag({ aula, index })
   }
 
@@ -56,7 +63,6 @@ export default function Page() {
   }
 
   const dragDrop = async (aulaSoltada) => {
-
     if (!aulaDrag || !aulaDrag.aula) return
 
     const aulaArrastada = aulaDrag.aula
@@ -71,8 +77,9 @@ export default function Page() {
     let id_instrutor1 = hookOrigem.instrutor;
     let id_instrutor2 = hookDestino.instrutor;
 
+    let res = false;
     if (id_instrutor1 && id_instrutor2) {
-      const res = await hookOrigem.alterarAula(
+      res = await hookOrigem.alterarAula(
         aulaSoltada.aula_id || 'vago',
         aulaSoltada.hora,
         id_instrutor2 || 'vago',
@@ -85,7 +92,7 @@ export default function Page() {
       await hookDestino.buscarAulasInstrutor();
     } else {
       if (id_instrutor1) {
-        const res = await hookOrigem.alterarAula(
+        res = await hookOrigem.alterarAula(
           aulaSoltada.aula_id || 'vago',
           aulaSoltada.hora,
           id_instrutor1 || 'vago',
@@ -96,7 +103,7 @@ export default function Page() {
         await hookOrigem.buscarAulasInstrutor();
 
       } else {
-        const res = await hookDestino.alterarAula(
+        res = await hookDestino.alterarAula(
           aulaSoltada.aula_id || 'vago',
           aulaSoltada.hora,
           id_instrutor2 || 'vago',
@@ -109,12 +116,79 @@ export default function Page() {
 
 
     }
+
     setAulaDrag(null)
+    if (res) {
+      perguntarSeQuerEnviarMensagem(aulaSoltada, aulaArrastada);
+    }
+  }
+
+  function perguntarSeQuerEnviarMensagem(aulaTrocada1, aulaTrocada2) {
+    setModalVisible(true);
+    setModalContent(
+      <div className="flex flex-col items-center justify-center gap-4 text-center p-4">
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Aulas trocadas, deseja enviar mensagens de aviso?
+        </h1>
+
+        <img
+          src="/imagemTroca.svg"
+          alt="Ícone de exclusão"
+          className="max-w-[200px] w-full h-auto"
+        />
+
+        <div className="flex gap-3 mt-4">
+          <Button
+            variant="green"
+            className="flex items-center gap-2"
+            onClick={async () => {
+              setModalVisible(false);
+              await confirmarEnvioDasMensagens(aulaTrocada1, aulaTrocada2);
+            }}
+          >
+            <span className="material-icons">check_circle</span>
+            Confirmar
+          </Button>
+
+          <Button
+            variant="destructive"
+            className="flex items-center gap-2"
+            onClick={() => setModalVisible(false)}
+          >
+            <span className="material-icons">cancel</span>
+            Não, Obrigado
+          </Button>
+        </div>
+      </div>
+
+    )
+    setModalVisible(true);
+  };
+
+  async function confirmarEnvioDasMensagens(aulaTrocada1, aulaTrocada2) {
+    if (loading) return;
+    let mensagem1 = '';
+    let mensagem2 = '';
+
+    mensagem1 = `💫 Olá ${aulaTrocada1.nome}! Sua aula marcada para o dia ${format(aula1.data, 'dd/MM/yyyy')} às ${aulaTrocada1.hora} foi remarcada para ${format(aula1.data, 'dd/MM/yyyy')} às ${aulaTrocada2.hora}, o tipo da aula e veiculo se mantem! pode somente ter alterado o instrutor, verifique no site! novuscfc.app.br`;
+
+    mensagem2 = `💫 Olá ${aulaTrocada2.nome}! Sua aula marcada para o dia ${format(aula1.data, 'dd/MM/yyyy')} às ${aulaTrocada2.hora} foi remarcada para ${format(aula1.data, 'dd/MM/yyyy')} às ${aulaTrocada1.hora}, o tipo da aula e veiculo se mantem! pode somente ter alterado o instrutor, verifique no site! novuscfc.app.br`;
+
+
+    if (aulaTrocada1.aluno_id) {
+      const res = await inserirMensagemAvulsa(mensagem1, aulaTrocada1.telefone);
+    }
+    if (aulaTrocada2.aluno_id) {
+      const res = await inserirMensagemAvulsa(mensagem2, aulaTrocada2.telefone);
+    } else {
+      return;
+    }
   }
 
 
   return (
     <div className='flex'>
+      {loading && <Loading />}
       <div className='flex-1'>
         <ListAulasInstrutor
           dragIniti={dragIniti}

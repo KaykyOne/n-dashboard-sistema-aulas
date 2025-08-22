@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 export default function useLogin() {
   const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [confirmado, setConfirmado] = useState(false);
   const [salvar, setSalvar] = useState(true);
 
   const login = async () => {
-    setError("");
+    toast.dismiss()
     // Validação simples
     if (!cpf || !senha) {
-      setError("Preencha CPF e senha corretamente.");
+      toast.error("Preencha CPF e senha corretamente.");
       return;
     }
 
@@ -42,7 +42,7 @@ export default function useLogin() {
 
       setConfirmado(data.result[0]);
     } catch (error) {
-      setError(`Erro ao tentar fazer login: ${error.message}`);
+      toast.error(`Erro ao tentar fazer login: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,6 @@ export default function useLogin() {
     setCpf,
     setSenha,
     loading,
-    error,
     cpf,
     senha,
     confirmado,

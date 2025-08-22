@@ -116,7 +116,7 @@
 
 /* global.css ou tailwind.css */
 .anim-hover {
-  @apply hover:translate-y-1 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-400;
+  @apply hover:translate-y-1 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-300;
 }
 
 

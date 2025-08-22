@@ -18,7 +18,7 @@ const LoginImage = () => (
 );
 
 const LoginForm = ({ loginState }) => {
-  const { cpf, error, login, senha, setCpf, setSenha, salvar, setSalvar, loading } = loginState;
+  const { cpf, login, senha, setCpf, setSenha, salvar, setSalvar, loading } = loginState;
 
   useEffect(() => {
     const cpf = localStorage.getItem("cpf");
@@ -38,7 +38,6 @@ const LoginForm = ({ loginState }) => {
         className="w-auto h-auto"
       />
       <h1 className="text-2xl font-bold mb-4">Login</h1>
-      {error && <h1>{error}</h1>}
       <Input
         placeholder={"CPF"}
         value={cpf}
@@ -55,8 +54,15 @@ const LoginForm = ({ loginState }) => {
         <label className="cursor-pointer" htmlFor="check">Salvar Acesso</label>
       </div>
       <Button className="w-full" onClick={login} disabled={loading}>
-        <span className="material-icons">logout</span>
-        Fazer Login
+        {!loading ? (
+          <>
+            <span className="material-icons">logout</span>
+            Fazer Login
+          </>
+        ) : (
+          <div className="w-5 h-5 border-4  border-t-transparent rounded-full animate-spin"></div>
+        )}
+
       </Button>
     </div>
   );
@@ -76,7 +82,6 @@ export default function Page() {
         localStorage.setItem("id_autoescola", confirmado.autoescola_id);
         router.push('/inicio');
       }
-
     }
   }, [confirmado]);
 
@@ -95,7 +100,6 @@ export default function Page() {
           />
         </div>
       </div>
-      {loading && <Loading />}
       <div className="bg-white grid grid-cols-1 md:grid-cols-2 max-w-4xl w-full h-full md:h-[500px] rounded-lg shadow-lg overflow-hidden">
         <LoginForm loginState={loginState} />
         <LoginImage />

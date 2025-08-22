@@ -28,6 +28,7 @@ export default function ConfiguracoesPage() {
   };
 
   useEffect(() => {
+    if(loading) return;
     fetchConfigs()
   }, []);
 
@@ -42,8 +43,7 @@ export default function ConfiguracoesPage() {
   };
 
   const salvar = async (id) => {
-    const res = await updateConfig(id, valores[id])
-    toast.success(res?.message || 'Configuração atualizada!')
+    await updateConfig(id, valores[id])
     setEditandoId(null)
   };
 

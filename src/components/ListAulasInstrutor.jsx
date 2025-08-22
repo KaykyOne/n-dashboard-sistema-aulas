@@ -50,6 +50,7 @@ export default function ListAulasInstrutor({
   const [horariosBloqueados, setHorariosBloqueados] = useState([]);
   const [execoes, setExecoes] = useState([]);
 
+  const autoescola_id = sessionStorage.getItem("id_autoescola");
 
 
   const instrutoresOptions = useMemo(() => {
@@ -268,17 +269,21 @@ export default function ListAulasInstrutor({
                       onDrop={() => confirmDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
                       <p>{aula.hora}</p>
                       <p>{aula.nome + " " + aula.sobrenome}</p>
+                      
                       <p>{aula.placa}</p>
                       <p className='font-black'>{aula.tipo}</p>
-                      <Button
-                        className={"w-full"}
-                        variant={"destructive"}
-                        onClick={() => confirmDeleteAula(aula.aula_id)}>
-                        Excluir
-                        <span className="material-icons">
-                          delete
-                        </span>
-                      </Button>
+                      {aula.autoescola_id == autoescola_id ?
+                        <Button
+                          className={"w-full"}
+                          variant={"destructive"}
+                          onClick={() => confirmDeleteAula(aula.aula_id)}>
+                          Excluir
+                          <span className="material-icons">
+                            delete
+                          </span>
+                        </Button> : 
+                        <div>Outra autoescola: {aula.autoescola_id}</div>}
+
                     </div>
                     :
                     <div key={`vaga-${aula.hora} `} className='grid grid-cols-4 text-start bg-red-700 text-white p-3 rounded-md' draggable

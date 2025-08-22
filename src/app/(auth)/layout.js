@@ -1,4 +1,5 @@
 // app/(auth)/layout.js
+import { ToastContainer } from "react-toastify";
 import "../globals.css";
 import LoadingUIProvider from '../LoadingProvider';
 export default function AuthLayout({ children }) {
@@ -14,6 +15,7 @@ export default function AuthLayout({ children }) {
         <LoadingUIProvider>
           {children}
         </LoadingUIProvider>
+        <ToastContainer theme="colored"/>
       </body>
     </html>
   )

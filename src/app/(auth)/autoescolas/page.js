@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useAutoescola from '@/hooks/useAutoescola';
 import { useRouter } from 'next/navigation';
+import Loading from '@/components/Loading';
 
 export default function page() {
   const { autoescolas, searchAllAutoecolas, loading } = useAutoescola();
   const router = useRouter();
+  const [loadingClick, setLoadingClick] = useState(false)
 
   useEffect(() => {
     const dado = localStorage.getItem("dados");
@@ -18,9 +20,18 @@ export default function page() {
     }
   }, []);
 
-  const clickAutoescola = (id) => {
-    sessionStorage.setItem("id_autoescola", id);
-    router.push('/inicio');
+  const clickAutoescola = async (id) => {
+    setLoadingClick(true)
+    try {
+      sessionStorage.setItem("id_autoescola", id);
+      router.push('/inicio');
+    } catch {
+      return;
+    }
+    finally {
+      setLoadingClick(false);
+    }
+
   }
 
   const renderAutoescola = (autoescola) => {
@@ -46,6 +57,7 @@ export default function page() {
 
   return (
     <div className='flex flex-col gap-2 text-gray-500'>
+      {(loading || loadingClick) && <Loading />}
       <div className='flex justify-between bg-white w-screen p-4 shadow-md left-0 top-0'>
         <h1 className='text-xl'>Olá! Seja Bem-Vindo</h1>
         <p></p>

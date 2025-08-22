@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
+import { Card } from '@/components/Card';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/datePicker';
 import { Combobox } from '@/components/ui/combobox';
@@ -61,6 +62,8 @@ export default function FinanceiroPage() {
   //Excluir Transacao
   const [modalVisible, setModalVisible] = useState(false);
   const [moodalContent, setModalContent] = useState();
+
+  const [financeiroVisible, setFInanceiroVisible] = useState(false);
 
   useEffect(() => {
     const buscar = async () => {
@@ -248,20 +251,13 @@ export default function FinanceiroPage() {
         <Modal onClose={() => setModalVisible(false)}>
           {moodalContent}
         </Modal>}
-      <div className='grid grid-cols-3 gap-4 text-green-800'>
-        <div className='bg-green-200 p-4 rounded-md anim-hover'>
-          <h1 className='text-xl font-medium'>Entradas: </h1>
-          <h1 className='text-2xl font-bold'>{sumEntradas}</h1>
-        </div>
-        <div className='bg-red-200 p-4 rounded-md text-red-800 anim-hover'>
-          <h1 className='text-xl font-medium'>Saídas:</h1>
-          <h1 className='text-2xl font-bold'>{sumSaidas}</h1>
-        </div>
-        <div className='bg-orange-200 p-4 rounded-md text-orange-800 anim-hover'>
-          <h1 className='text-xl font-medium'>Débitos:</h1>
-          <h1 className='text-2xl font-bold'>{sumDebitos}</h1>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-green-800 flex-1">
+        <Card titulo="Entradas:" valor={sumEntradas} corBg="bg-green-200" corTexto="text-green-800" />
+        <Card titulo="Saídas:" valor={sumSaidas} corBg="bg-red-200" corTexto="text-red-800" />
+        <Card titulo="Débitos:" valor={sumDebitos} corBg="bg-orange-200" corTexto="text-orange-800" />
       </div>
+
+
 
       <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4'>
         {/* Parte de Criar Transacao */}
