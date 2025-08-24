@@ -21,7 +21,7 @@ export default function Page() {
   const dragIniti = (aula, index) => {
     if (typeof window === "undefined") return;
 
-    const autoescola_id = sessionStorage.getItem("id_autoescola");
+    const autoescola_id = aula1.autoescola_id;
     if (aula.autoescola_id != autoescola_id) return;
 
     setAulaDrag({ aula, index });

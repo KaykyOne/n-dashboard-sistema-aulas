@@ -14,6 +14,7 @@ export default function useAula() {
 
   const [aulas, setAulas] = useState([]);
   const [vagas, setVagas] = useState([]);
+  const [autoescola_id, setAutoescola_id] = useState();
   const [instrutor, setInstrutor] = useState();
   const [data, setData] = useState(new Date());
 
@@ -32,7 +33,7 @@ export default function useAula() {
       setAulas([]);
       setVagas([]);
     }
-  }
+  };
 
   async function testAulas(aluno_id, data, tipo, marcada_por) {
     const id = sessionStorage.getItem("id_autoescola");
@@ -44,7 +45,7 @@ export default function useAula() {
       toast.error(erro.message || erro.toString());
       return null;
     }
-  }
+  };
 
   async function buscarHorariosLivres(id_instrutor, veiculo_id, dataA) {
     try {
@@ -58,7 +59,7 @@ export default function useAula() {
       toast.error(erro.message || erro.toString());
       setVagas([]);
     }
-  }
+  };
 
   const InsertClass = async (aula) => {
     try {
@@ -104,6 +105,11 @@ export default function useAula() {
     buscarAulasInstrutor(instrutor, data);
   }, [instrutor, data]);
 
+  useEffect(() => {
+    const id = sessionStorage.getItem("id_autoescola");
+    setAutoescola_id(id);
+  }, [])
+
   const deleteAula = async (id) => {
     try {
       const res = await GenericDelete("adm", id, 'removerAula', 'id');
@@ -141,6 +147,7 @@ export default function useAula() {
     setInstrutor,
     instrutor,
     data,
+    autoescola_id,
     setData,
     aulas,
     loading,
