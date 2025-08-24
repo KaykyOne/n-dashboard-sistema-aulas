@@ -63,7 +63,9 @@ export default function page() {
       .filter(item => getYear(item.data_cadastro) == getYear(new Date()));
 
     if (tipo != "") {
-      alunosFiltrados = alunosFiltrados.filter(item => ((item.categoria_pretendida).toLowerCase()).includes(tipo.toLowerCase()))
+      alunosFiltrados = alunosFiltrados.filter(item =>
+        (item.categoria_pretendida || "").toLowerCase().includes((tipo || "").toLowerCase())
+      );
     }
 
     if (mes != "") {

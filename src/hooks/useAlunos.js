@@ -95,6 +95,9 @@ export default function useAlunos() {
         } catch (erro) {
             toast.error(`Erro ao editar aluno: ${erro.message || erro.toString()}`);
         }
+        finally{
+            await buscarAlunos();
+        }
     };
 
     const excluirAlunoInstrutor = async (cpf, id_instrutor) => {

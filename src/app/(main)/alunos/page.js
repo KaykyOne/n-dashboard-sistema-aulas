@@ -125,7 +125,7 @@ export default function AlunosPage() {
 
     const test = searchForAtv === "Inativo" ? false : true;
     const users = usuarios.filter((user) => {
-      const matchName = searchForName === "" || (user.nome || "").toLowerCase().includes(searchForName.toLowerCase())
+      const matchName = searchForName === "" || (user.nome + ' ' + user.sobrenome || "").toLowerCase().includes(searchForName.toLowerCase())
       const matchCpf = searchForCPF === "" || user.cpf.includes(searchForCPF);
       const matchCat = searchForCat === "" || (user.categoria_pretendida || "").toLowerCase().includes(searchForCat.toLowerCase());
       const matchForAtv = searchForAtv === "" || user.atividade == test;
@@ -136,7 +136,7 @@ export default function AlunosPage() {
     })
     setUsuariosFiltrados(users);
   };
-
+  
   const startEdit = (user) => {
     setEditando(true);
     setNome(user.nome);
@@ -250,7 +250,7 @@ export default function AlunosPage() {
   };
   const CadastrarPreCadastroConfirm = async (user) => {
     setModalContent(
-      <div>
+      <div className="flex flex-col gap-2 items-center justify-center flex-1 h-full">
         <h1>Tem certeza que deseja Cadastrar esse precadastro?</h1>
         <Button onClick={async () => cadastrarPreCadastro(user)}>Confirmar</Button>
         <Button onClick={() => setModalContent("")}>Cancelar</Button>
@@ -262,8 +262,6 @@ export default function AlunosPage() {
     await editarAluno(user);
     setModalContent("");
   };
-
-
 
   return (
     <div className="relative">
@@ -399,7 +397,7 @@ export default function AlunosPage() {
                         <p>{user.outra_cidade ? "Sim" : "Não"}</p>
 
                         <div className="p-1">
-                          {tipoUsuario === 'aluno' ? (
+                          {searchTipoUsuario === 'aluno' ? (
                             <Button
                               className="w-full"
                               variant={user.atividade ? "green" : "destructive"}
@@ -434,7 +432,7 @@ export default function AlunosPage() {
                           </Button>
                         </div>
 
-                        {tipoUsuario === 'precadastro' ? (
+                        {searchTipoUsuario === 'precadastro' ? (
                           <div className="w-full p-1">
                             <Button
                               className="w-full"
