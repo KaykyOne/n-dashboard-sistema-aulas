@@ -90,7 +90,7 @@ export default function VeiculoPage() {
     <div className='flex flex-col gap-4'>
 
       {/* Formulário */}
-      <div className='bg-white p-4 anim-hover'>
+      <div className='bg-white p-4 anim-hover card'>
         <h2 className='font-bold text-xl mb-2'>{modoEdicao ? "Editar Veículo" : "Cadastrar Veículo"}</h2>
         <form onSubmit={handleSubmit} className='grid grid-cols-1 md:grid-cols-4 gap-4'>
           <Input
@@ -130,7 +130,7 @@ export default function VeiculoPage() {
       </div>
 
       {/* Busca + tabela */}
-      <div className='p-6 bg-white anim-hover'>
+      <div className='p-6 bg-white anim-hover card'>
         <Input
           placeholder="Buscar veículo por modelo ou placa..."
           value={search}

@@ -105,6 +105,8 @@ export default function AlunosPage() {
   const [searchForCat, setSearchForCat] = useState("");
   const [searchForAtv, setSearchForAtv] = useState("");
   const [searchDataCadastro, setSearchDataCadastro] = useState("");
+  const [searchTipoUsuario, setSearchTipoUsuario] = useState("aluno");
+
 
   const [modalAlunos, setModalAlunos] = useState(false);
 
@@ -116,8 +118,8 @@ export default function AlunosPage() {
   const [idAlunoVerAulas, setIdAlunoVerAulas] = useState(0);
 
 
-  const cssSelecionado = 'p-2 border rounded-md cursor-pointer bg-black text-white hover:bg-white hover:text-black font-bold transition duration-300 h-fit';
-  const cssSemSelecao = 'p-2 border rounded-md cursor-pointer hover:bg-black hover:text-white font-bold transition duration-300 h-fit';
+  const cssSelecionado = 'p-2 border rounded-md cursor-pointer bg-black text-white hover:bg-white hover:text-black font-bold transition duration-300 h-fit flex-1';
+  const cssSemSelecao = 'p-2 border rounded-md cursor-pointer hover:bg-black hover:text-white font-bold transition duration-300 h-fit flex-1';
 
   const filtrarUsuarios = () => {
 
@@ -171,6 +173,20 @@ export default function AlunosPage() {
     setSearchForAtv("");
     setSearchDataCadastro("");
   };
+  const clearSimple = () => {
+    setEditando(false);
+    setCpfInstrutorResponsavel("");
+    setTipoUsuario('aluno');
+
+    setNome("");
+    setSobrenome("");
+    setCpf("");
+    setTelefone("");
+    setCategoria("");
+    setOutraCidade(false);
+    setInstrutorResponsa(undefined);
+    setDataCadastro("");
+  };
 
   useEffect(() => {
     buscarAlunos();
@@ -215,12 +231,12 @@ export default function AlunosPage() {
   };
 
   useEffect(() => {
-    let filterUsers = usuarios.filter(item => item.tipo_usuario === tipoUsuario);
-    if (tipoUsuario == 'aluno') {
+    let filterUsers = usuarios.filter(item => item.tipo_usuario === searchTipoUsuario);
+    if (searchTipoUsuario == 'aluno') {
       filterUsers = usuarios.filter(item => !!item.atividade === true);
     }
     setUsuariosFiltrados(filterUsers);
-  }, [tipoUsuario])
+  }, [searchTipoUsuario])
 
   const deletePreCadastroConfirm = async (id) => {
     setModalContent(
@@ -247,6 +263,8 @@ export default function AlunosPage() {
     setModalContent("");
   };
 
+
+
   return (
     <div className="relative">
       {loading || loadingInstrutor && <Loading />}
@@ -270,7 +288,7 @@ export default function AlunosPage() {
 
 
         {/* Listar Alunos */}
-        <div className="p-6 row-span-2 col-span-2 bg-white rounded-sm anim-hover">
+        <div className="p-6 row-span-2 col-span-2 bg-white rounded-sm anim-hover card">
           <h1 className="font-bold text-3xl">Pesquisar Alunos:</h1>
           {/* Barra de pesquisa */}
           <div className="flex gap-4">
@@ -303,8 +321,8 @@ export default function AlunosPage() {
             <div className="flex flex-col mb-4 w-full">
               <h3 className="font-bold">Tipo Aluno:</h3>
               <div className="flex gap-2 ">
-                <button onClick={() => setTipoUsuario('aluno')} className={tipoUsuario == "aluno" ? cssSelecionado : cssSemSelecao}>Aluno</button>
-                <button onClick={() => setTipoUsuario('precadastro')} className={tipoUsuario == "precadastro" ? cssSelecionado : cssSemSelecao}>Precadastro</button>
+                <button onClick={() => setSearchTipoUsuario('aluno')} className={searchTipoUsuario == "aluno" ? cssSelecionado : cssSemSelecao}>Aluno</button>
+                <button onClick={() => setSearchTipoUsuario('precadastro')} className={searchTipoUsuario == "precadastro" ? cssSelecionado : cssSemSelecao}>Precadastro</button>
               </div>
             </div>
             <div className="flex flex-col">
@@ -522,7 +540,7 @@ export default function AlunosPage() {
       {/*#endregion*/}
 
       {modalAlunos &&
-        <Modal onClose={() => { setModalAlunos(false); clearAll() }}>
+        <Modal onClose={() => { setModalAlunos(false); clearSimple() }}>
           <ModalAlunos
             editando={editando}
             setEditando={setEditando}

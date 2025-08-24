@@ -273,7 +273,7 @@ export default function Page() {
         </div>
 
         {/* Lista de alunos */}
-        <div className='flex flex-col p-2 bg-white rounded-2xl'>
+        <div className='flex flex-col p-2 bg-white rounded-2xl '>
           <h1 className='text-2xl font-medium mb-2'>Selecionar Aluno:</h1>
           <Input
             placeholder="Buscar usuário por Nome..."

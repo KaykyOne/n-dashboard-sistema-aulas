@@ -230,7 +230,7 @@ export default function ListAulasInstrutor({
               <Button variant={'alert'} onClick={() => desmarcarCheckboxes()}>Cancelar</Button>
             </div>
           }
-          <div className={`p-6 row-span-2 bg-white rounded-sm anim-hover`}>
+          <div className={`p-6 row-span-2 bg-white rounded-sm anim-hover card`}>
             {/* Barra de pesquisa */}
             <div className='grid grid-cols-5 align-middle gap-4 mb-3'>
 

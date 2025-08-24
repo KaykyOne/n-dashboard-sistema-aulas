@@ -80,7 +80,7 @@ export default function TransferenciasPage() {
       </div>
 
       {/* Formulário */}
-      <div className="bg-white rounded-xl shadow-md p-6 flex flex-col gap-4">
+      <div className="flex flex-col gap-4 anim-hover card">
         <label className="font-medium">Autoescola ID:</label>
         <Input
           value={id}
@@ -138,7 +138,7 @@ export default function TransferenciasPage() {
       />
 
       {/* Lista de alunos */}
-      <div className="bg-white rounded-xl shadow-md p-4 max-h-[400px] overflow-auto space-y-3">
+      <div className="max-h-[400px] overflow-auto space-y-3 anim-hover card">
         <h2 className="text-xl font-semibold text-gray-800 mb-2">Alunos ativos:</h2>
         {alunosFiltrados.map((aluno) => (
           <div

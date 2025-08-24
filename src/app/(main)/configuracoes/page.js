@@ -59,7 +59,7 @@ export default function ConfiguracoesPage() {
         <p className="text-gray-600">Aqui você pode mudar como o sistema funciona!</p>
       </header>
 
-      <div className='bg-white p-3 rounded-2xl shadow anim-hover'>
+      <div className='bg-white p-3 rounded-2xl shadow anim-hover card'>
         <h1 className='text-xl font-semibold'>Alterar Senha:</h1>
         <p className='text-sm font-light'>Altere sua senha aqui! coloque a atual, e a nova!</p>
         <h2 className='text-lg font-medium'>Senha Atual:</h2>
@@ -88,7 +88,7 @@ export default function ConfiguracoesPage() {
               return (
                 <div
                   key={item.id_configuracao}
-                  className="flex flex-col gap-2 w-full bg-white p-5 rounded-2xl shadow anim-hover"
+                  className="flex flex-col gap-2 w-full bg-white p-5 rounded-2xl shadow anim-hover card"
                 >
                   <div className="flex items-center gap-2">
                     <label className="font-medium capitalize whitespace-nowrap w-1/3">

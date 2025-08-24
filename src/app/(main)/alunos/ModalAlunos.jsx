@@ -210,11 +210,13 @@ export default function ModalAlunos({
 
         return true;
     };
+
+    const css = tipoUsuario === 'aluno' ? 'grid grid-cols-1 xl:grid-cols-3 gap-4' : 'flex'
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div className={css}>
 
             {/* Form de cadastro */}
-            <div className="flex flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
+            <div className="flex flex-1 flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
                 <h1 className="font-bold text-3xl capitalize">{editando ? 'Editando' : 'Cadastrar'} {tipoUsuario}:</h1>
                 <p className="text-xl font-semibold">Nome:</p>
                 <Input type="text" placeholder="Nome" required maxLength={20} value={nome} onChange={(e) => setNome(e.target.value)} />
@@ -295,47 +297,52 @@ export default function ModalAlunos({
                 </div>
             </div>
 
-            {/* Parte Instrutor responsavel */}
-            <div className="flex flex-col col-span-1 p-6 bg-white rounded-sm gap-3">
-                <div className="flex flex-col gap-2">
-                    <h1 className="font-bold text-3xl">Instrutores Respónsaveis pelo Aluno:</h1>
-                    <Input
-                        placeholder={"CPF"}
-                        className={"mt-3"}
-                        value={cpfInstrutorResponsavel}
-                        onChange={(e) => setCpfInstrutorResponsavel(e.target.value)} />
-                    <Combobox
-                        options={instrutoresOptions || []}
-                        placeholder='Escolha o Instrutor'
-                        onChange={setInstrutorResponsa}
-                        value={instrutorResponsa} />
-                    <Button className="mt-4" onClick={() => handleCreateRelation()}>
-                        Adicionar Responsável
-                        <span className="material-icons">
-                            add
-                        </span>
-                    </Button>
-                </div>
-                <div className='flex flex-col flex-1 overflow-x-auto border-gray-200 border-solid border-2 w-full rounded-sm'>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Instrutor ID</TableHead>
-                                <TableHead>Nome Instrutor</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {instrturesResponsaveis.map((instrutor) => (
-                                <TableRow key={instrutor.instrutor_id}>
-                                    <TableCell>{instrutor.instrutor_id}</TableCell>
-                                    <TableCell>{instrutor.nome_instrutor}</TableCell>
-                                    <TableCell><Button variant={'destructive'} onClick={() => handleDeleteRelation(instrutor)}>Excluir</Button></TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
+            {tipoUsuario === 'aluno' &&
+                <>
+                    <div className="flex flex-col col-span-1 p-6 bg-white rounded-sm gap-3">
+                        <div className="flex flex-col gap-2">
+                            <h1 className="font-bold text-3xl">Instrutores Respónsaveis pelo Aluno:</h1>
+                            <Input
+                                placeholder={"CPF"}
+                                className={"mt-3"}
+                                value={cpfInstrutorResponsavel}
+                                onChange={(e) => setCpfInstrutorResponsavel(e.target.value)} />
+                            <Combobox
+                                options={instrutoresOptions || []}
+                                placeholder='Escolha o Instrutor'
+                                onChange={setInstrutorResponsa}
+                                value={instrutorResponsa} />
+                            <Button className="mt-4" onClick={() => handleCreateRelation()}>
+                                Adicionar Responsável
+                                <span className="material-icons">
+                                    add
+                                </span>
+                            </Button>
+                        </div>
+
+                        <div className='flex flex-col flex-1 overflow-x-auto border-gray-200 border-solid border-2 w-full rounded-sm'>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Instrutor ID</TableHead>
+                                        <TableHead>Nome Instrutor</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {instrturesResponsaveis.map((instrutor) => (
+                                        <TableRow key={instrutor.instrutor_id}>
+                                            <TableCell>{instrutor.instrutor_id}</TableCell>
+                                            <TableCell>{instrutor.nome_instrutor}</TableCell>
+                                            <TableCell><Button variant={'destructive'} onClick={() => handleDeleteRelation(instrutor)}>Excluir</Button></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </div>
+                </>
+            }
+
         </div>
     )
 }

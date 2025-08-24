@@ -219,7 +219,7 @@ export default function InstrutoresPage() {
   return (
     <div className="flex flex-col gap-2">
       {loading && <Loading />}
-      <div className="grid grid-cols-2 gap-5 bg-white p-4 anim-hover">
+      <div className="grid grid-cols-2 gap-5 bg-white p-4 anim-hover card">
         <div className="flex col-span-1 flex-col gap-2 mb-6">
           <h2 className="font-bold text-xl">{idEditando ? "Editando" : "Cadastrando"} Instrutor</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -331,7 +331,7 @@ export default function InstrutoresPage() {
           </div>
         </div>
       </div>
-      <div className="bg-white p-2 anim-hover">
+      <div className="bg-white p-2 anim-hover card">
         <Table>
           <TableHeader>
             <TableRow>
