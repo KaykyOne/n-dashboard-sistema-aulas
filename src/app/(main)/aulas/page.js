@@ -19,14 +19,10 @@ export default function Page() {
   const { inserirMensagemAvulsa, loading } = useMensagens()
 
   const dragIniti = (aula, index) => {
-    if (typeof window === "undefined") return;
-
-    const autoescola_id = aula1.autoescola_id;
-    if (aula.autoescola_id != autoescola_id) return;
-
-    setAulaDrag({ aula, index });
-  };
-
+    if (!aula1.autoescola_id) return;        // ainda não montou
+    if (aula.autoescola_id !== aula1.autoescola_id) return;
+    setAulaDrag({ aula, index })
+  }
 
   const confirmDrop = (aula, index) => {
     setModalVisible(true)
@@ -208,6 +204,7 @@ export default function Page() {
           data={aula1.data}
           deleteAula={aula1.deleteAula}
           buscarAulasInstrutor={aula1.buscarAulasInstrutor}
+          autoescola_id={aula1.autoescola_id}
         />
       </div>
 
@@ -234,6 +231,7 @@ export default function Page() {
             data={aula2.data}
             deleteAula={aula2.deleteAula}
             buscarAulasInstrutor={aula2.buscarAulasInstrutor}
+            autoescola_id={aula2.autoescola_id}
           />
         </div>
       )}

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import useGeneric from "@/hooks/useGeneric";
 import { toast } from "react-toastify";
 
+
 export default function useAula() {
   const {
     GenericDelete,
@@ -14,7 +15,7 @@ export default function useAula() {
 
   const [aulas, setAulas] = useState([]);
   const [vagas, setVagas] = useState([]);
-  const [autoescola_id, setAutoescola_id] = useState();
+  const [autoescola_id, setAutoescola_id] = useState(0);
   const [instrutor, setInstrutor] = useState();
   const [data, setData] = useState(new Date());
 
@@ -106,9 +107,15 @@ export default function useAula() {
   }, [instrutor, data]);
 
   useEffect(() => {
-    const id = sessionStorage.getItem("id_autoescola");
-    setAutoescola_id(id);
-  }, [])
+    if (typeof window !== "undefined") {
+      try {
+        const id = sessionStorage.getItem("id_autoescola");
+        setAutoescola_id(id);
+      } catch {
+        setAutoescola_id(null);
+      }
+    }
+  }, []);
 
   const deleteAula = async (id) => {
     try {
@@ -135,7 +142,7 @@ export default function useAula() {
     } catch (erro) {
       toast.error(erro.message || erro.toString());
       return false;
-    }finally{
+    } finally {
       console.log(instrutor);
       console.log(data);
 

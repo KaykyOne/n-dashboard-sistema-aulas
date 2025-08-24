@@ -39,6 +39,7 @@ export default function ListAulasInstrutor({
   data,
   deleteAula,
   buscarAulasInstrutor,
+  autoescola_id,
 }) {
   const { buscarInstrutores, instrutores, loading: loadingInstrutor, inserirExeção, buscarExecoesDia, deletarExecao } = useInstrutores();
 
@@ -49,8 +50,6 @@ export default function ListAulasInstrutor({
   const [modalContent, setModalContent] = useState();
   const [horariosBloqueados, setHorariosBloqueados] = useState([]);
   const [execoes, setExecoes] = useState([]);
-
-  const autoescola_id = sessionStorage.getItem("id_autoescola");
 
 
   const instrutoresOptions = useMemo(() => {
