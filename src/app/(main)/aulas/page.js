@@ -19,11 +19,14 @@ export default function Page() {
   const { inserirMensagemAvulsa, loading } = useMensagens()
 
   const dragIniti = (aula, index) => {
-    const autoescola_id = sessionStorage.getItem("id_autoescola");
+    if (typeof window === "undefined") return;
 
+    const autoescola_id = sessionStorage.getItem("id_autoescola");
     if (aula.autoescola_id != autoescola_id) return;
-    setAulaDrag({ aula, index })
-  }
+
+    setAulaDrag({ aula, index });
+  };
+
 
   const confirmDrop = (aula, index) => {
     setModalVisible(true)
