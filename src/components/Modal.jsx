@@ -1,10 +1,9 @@
 export default function Modal({ children, onClose }) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 ">
       <div
         className="bg-white p-6 rounded-2xl shadow-lg 
-                   w-[90%] h-[95%] 
-                   relative overflow-y-auto"
+                   relative overflow-y-auto classe-surgir"
       >
         {/* Botão de fechar */}
         <button
@@ -13,9 +12,9 @@ export default function Modal({ children, onClose }) {
         >
           ✕
         </button>
-
-        {/* Conteúdo */}
-        {children}
+        <div className="mt-5">
+          {children}
+        </div>
       </div>
     </div>
   );

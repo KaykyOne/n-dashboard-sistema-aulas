@@ -152,6 +152,12 @@
   animation-iteration-count: initial;
 }
 
+.classe-surgir {
+    animation-name: surgir;
+    animation-duration: 0.15s;
+    animation-iteration-count: initial;
+}
+
 @keyframes aparecer {
   0% {
     right: -300px;
@@ -159,5 +165,16 @@
 
   100% {
     right: -0px;
+  }
+}
+
+@keyframes surgir {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }

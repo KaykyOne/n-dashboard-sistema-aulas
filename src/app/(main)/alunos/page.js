@@ -130,10 +130,11 @@ export default function AlunosPage() {
       const matchCat = searchForCat === "" || (user.categoria_pretendida || "").toLowerCase().includes(searchForCat.toLowerCase());
       const matchForAtv = searchForAtv === "" || user.atividade == test;
       const userDate = new Date(user.data_cadastro).getMonth();
-      const tipoMach = tipoUsuario === "" || user.tipo_usuario === tipoUsuario;
+      const tipoMach = searchTipoUsuario === "" || user.tipo_usuario === searchTipoUsuario;
       const matchData = searchDataCadastro === "" || Number(searchDataCadastro) === userDate;
       return matchName && matchCpf && matchCat && matchForAtv && matchData && tipoMach;
     })
+    setNumPagina(0);
     setUsuariosFiltrados(users);
   };
   
@@ -225,7 +226,7 @@ export default function AlunosPage() {
 
   const alterarNavegacao = (num) => {
     const val = numPagina + num;
-    if (val >= 0 && (val - 10) <= usuariosFiltrados.length) {
+    if (val >= 0 && (val) <= usuariosFiltrados.length) {
       setNumPagina(val);
     }
   };
@@ -240,20 +241,20 @@ export default function AlunosPage() {
 
   const deletePreCadastroConfirm = async (id) => {
     setModalContent(
-      <div>
-        <h1>Tem certeza que deseja excluir esse precadastro?</h1>
+      <div className="flex flex-col gap-2 items-center justify-center flex-1 h-full">
+        <h1>Tem certeza que deseja excluir esse <strong>precadastro?</strong></h1>
 
-        <Button onClick={async () => { deletarUsuario(id); setModalContent(""); }}>Confirmar</Button>
-        <Button onClick={() => setModalContent("")}>Cancelar</Button>
+        <Button className={'w-full'} onClick={async () => { deletarUsuario(id); setModalContent(""); }}>Confirmar</Button>
+        <Button className={'w-full'} onClick={() => setModalContent("")}>Cancelar</Button>
       </div>
     )
   };
   const CadastrarPreCadastroConfirm = async (user) => {
     setModalContent(
       <div className="flex flex-col gap-2 items-center justify-center flex-1 h-full">
-        <h1>Tem certeza que deseja Cadastrar esse precadastro?</h1>
-        <Button onClick={async () => cadastrarPreCadastro(user)}>Confirmar</Button>
-        <Button onClick={() => setModalContent("")}>Cancelar</Button>
+        <h1>Tem certeza que deseja <strong>Cadastrar</strong> esse precadastro?</h1>
+        <Button className={'w-full'} onClick={async () => cadastrarPreCadastro(user)}>Confirmar</Button>
+        <Button className={'w-full'} onClick={() => setModalContent("")}>Cancelar</Button>
       </div>
     )
   };
@@ -512,7 +513,7 @@ export default function AlunosPage() {
             arrow_left
           </span>
           <div className="flex flex-col gap-1 justify-center items-center">
-            {`${numPagina / 10} - ${(usuariosFiltrados.length % 10)}`}
+            {`${numPagina / 10} - ${(usuariosFiltrados.length / 10).toFixed(0)}`}
           </div>
           <span className="material-icons !text-5xl cursor-pointer" onClick={() => alterarNavegacao(10)}>
             arrow_right

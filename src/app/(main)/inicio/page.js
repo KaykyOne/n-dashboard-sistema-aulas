@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   format,
   getMonth,
@@ -75,7 +75,14 @@ export default function page() {
     return alunosFiltrados.length || 0;
   }
 
-
+  const total = useMemo(() => {
+    return (
+      searchAlunos(mesSelecionado, 'ab') +
+      searchAlunos(mesSelecionado, 'd') +
+      searchAlunos(mesSelecionado, 'c') +
+      searchAlunos(mesSelecionado, 'e')
+    );
+  }, [mesSelecionado, alunos]);
 
   return (
     <div className="flex flex-col w-full gap-4 text-[#6F0A59]">
@@ -141,7 +148,7 @@ export default function page() {
             </p>
           </div>
           <div className="text-3xl font-bold">
-            {searchAlunos(mesSelecionado, 'd')}
+            {searchAlunos(mesSelecionado, 'e')}
           </div>
         </div>
       </div>
@@ -163,7 +170,9 @@ export default function page() {
             <h1 className="text-5xl font-semibold text-gray-500">{meses[mesSelecionado]}</h1>
           </div>
           <div>
-            <h1 className="text-[#6F0A59] font-bold text-3xl">{searchAlunos(mesSelecionado)}</h1>
+            <h1 className="text-[#6F0A59] font-bold text-3xl">
+              {total}
+            </h1>
           </div>
         </div>
       </div>
