@@ -259,17 +259,17 @@ export default function FinanceiroPage() {
 
 
 
-      <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
         {/* Parte de Criar Transacao */}
         <div className='flex flex-col col-span-1 bg-white p-4 rounded-md gap-4 anim-hover card'>
-          <div className='flex flex-col xl:flex-row gap-4 justify-start'>
+          <div className='flex flex-col gap-4 justify-start'>
             <h1 className='text-3xl font-bold'>Gerar</h1>
             <Combobox
               onChange={setTipoTransacao}
               options={opcoesPesquisa}
               value={tipoTransacao}
               placeholder='Tipo'
-              className={`max-w-[300px] text-black ${tipoTransacao === "Entrada" ? "bg-green-200" : tipoTransacao === "Saida" ? "bg-red-200" : tipoTransacao === "Debito" ? "bg-orange-200" : "bg-purple-200"}`}
+              className={` text-black ${tipoTransacao === "Entrada" ? "bg-green-200" : tipoTransacao === "Saida" ? "bg-red-200" : tipoTransacao === "Debito" ? "bg-orange-200" : "bg-purple-200"}`}
             />
           </div>
           <form className='flex flex-col gap-2 mt-5'>
@@ -315,12 +315,12 @@ export default function FinanceiroPage() {
           </Button>
         </div>
         {/* Parte de visualizar Transacao */}
-        <div className='flex flex-col bg-white p-4 rounded-md gap-4 col-span-1 xl:col-span-2 anim-hover card'>
+        <div className='flex flex-col bg-white p-4 rounded-md gap-4 col-span-1 anim-hover card'>
           <h1 className='text-3xl font-bold capitalize'>Ver transações Aluno</h1>
           <h3 className='font-medium text-2xl'>CPF:</h3>
           <div className='flex flex-col md:flex-row gap-2'>
             <Input
-              placeholder="00000000000"
+              placeholder="000.000.000-00"
               type="text"
               inputMode="numeric"
               pattern="\d{11}"

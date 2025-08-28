@@ -137,7 +137,7 @@ export default function AlunosPage() {
     setNumPagina(0);
     setUsuariosFiltrados(users);
   };
-  
+
   const startEdit = (user) => {
     setEditando(true);
     setNome(user.nome);
@@ -224,6 +224,11 @@ export default function AlunosPage() {
     }
   };
 
+  const voltarNormar = () => {
+    const body = document.getElementById('body');
+    body.style.overflow = 'auto';
+  }
+
   const alterarNavegacao = (num) => {
     const val = numPagina + num;
     if (val >= 0 && (val) <= usuariosFiltrados.length) {
@@ -263,6 +268,24 @@ export default function AlunosPage() {
     await editarAluno(user);
     setModalContent("");
   };
+
+  const calcularBalanca = (valorEntrada, valorDebitos) => {
+    const res = +valorEntrada - +valorDebitos;
+    const resFormat = res.toFixed(2) || 0;
+    const cssRuim = 'text-red-800 p-2 rounded-md border-2 border-red-800';
+    const cssBom = 'text-green-800 p-2 rounded-md border-2 border-green-800';
+    const text = resFormat >= 0 ? 'Ok!' : 'Devendo'
+    return (
+      <div className={resFormat >= 0 ? cssBom : cssRuim}>
+        <div className="flex items-center text-sm justify-between">
+          {text}
+          <span class="material-icons">
+            {resFormat >= 0 ? 'check_box' : 'cancel'}
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative">
@@ -356,7 +379,7 @@ export default function AlunosPage() {
           <div className="flex-1 overflow-auto">
             <div className="flex flex-col">
               {/* Cabeçalho */}
-              <div className={"grid grid-cols-10 font-bold p-3 border-b bg-gray-100"}>
+              <div className={"grid grid-cols-13 font-bold p-3 border-b bg-gray-100"}>
                 <p>Nome</p>
                 <p>CPF</p>
                 <p>Telefone</p>
@@ -364,6 +387,9 @@ export default function AlunosPage() {
                 <p>Data Cadastro</p>
                 <p>Data Limite</p>
                 <p>Preferência</p>
+                <p>Entradas</p>
+                <p>Débitos</p>
+                <p>Balança</p>
                 {tipoUsuario === 'aluno' ?
                   <>
                     <p>Status</p>
@@ -387,7 +413,7 @@ export default function AlunosPage() {
                     .map((user) => (
                       <div
                         key={user.usuario_id}
-                        className={"grid grid-cols-10 items-center text-sm p-3"}
+                        className={"grid grid-cols-13 items-center text-sm p-3"}
                       >
                         <p className="capitalize">{user.nome || ''} {user.sobrenome || ''}</p>
                         <p>{user.cpf?.length > 11 ? "inviável" : user.cpf || ''}</p>
@@ -396,6 +422,11 @@ export default function AlunosPage() {
                         <p>{user.data_cadastro ? format(user.data_cadastro, 'dd/MM/yyyy') : ''}</p>
                         <p>{user.data_cadastro ? format(addYears(user.data_cadastro, 1), 'dd/MM/yyyy') : ''}</p>
                         <p>{user.outra_cidade ? "Sim" : "Não"}</p>
+                        <p className="text-green-700 font-semibold">{user.total_entrada || 0}</p>
+                        <p className="text-red-700 font-semibold">{user.total_debito || 0}</p>
+                        <p>{calcularBalanca(user.total_entrada, user.total_debito)}</p>
+
+
 
                         <div className="p-1">
                           {searchTipoUsuario === 'aluno' ? (
@@ -508,7 +539,7 @@ export default function AlunosPage() {
         </div>
 
         {/*Navegação de Paginas*/}
-        <div className="flex justify-center items-center text-black">
+        <div className="flex justify-center items-center text-black no-select">
           <span className="material-icons !text-5xl cursor-pointer" onClick={() => alterarNavegacao(-10)}>
             arrow_left
           </span>
@@ -539,7 +570,7 @@ export default function AlunosPage() {
       {/*#endregion*/}
 
       {modalAlunos &&
-        <Modal onClose={() => { setModalAlunos(false); clearSimple() }}>
+        <Modal onClose={() => { setModalAlunos(false); clearSimple(); voltarNormar() }}>
           <ModalAlunos
             editando={editando}
             setEditando={setEditando}

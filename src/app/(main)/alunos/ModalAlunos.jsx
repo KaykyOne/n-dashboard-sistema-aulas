@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+"use client"
+import React, { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from "react-toastify";
@@ -70,6 +71,11 @@ export default function ModalAlunos({
         value: i.instrutor_id.toString(),
         label: i.nome_instrutor,
     }));
+
+    useEffect(() => {
+        const body = document.getElementById('body');
+        body.style.overflow = 'hidden';
+    }, [])
 
 
     const handleDeleteRelation = async (instrutor) => {
@@ -213,10 +219,8 @@ export default function ModalAlunos({
 
     const css = tipoUsuario === 'aluno' ? 'grid grid-cols-1 xl:grid-cols-3 gap-4' : 'flex'
     return (
-        <div className={css}>
-
-            {/* Form de cadastro */}
-            <div className="flex flex-1 flex-col col-span-2 p-6 bg-white rounded-sm gap-2">
+        <div className={css}>       
+            <div className="flex flex-1 flex-col col-span-2 p-6 bg-white rounded-sm gap-2 classe-surgir overflow-auto">
                 <h1 className="font-bold text-3xl capitalize">{editando ? 'Editando' : 'Cadastrar'} {tipoUsuario}:</h1>
                 <p className="text-xl font-semibold">Nome:</p>
                 <Input type="text" placeholder="Nome" required maxLength={20} value={nome} onChange={(e) => setNome(e.target.value)} />

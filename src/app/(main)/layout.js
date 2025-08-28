@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
         />
       </head>
-      <body className="bg-gray-100 flex">
+      <body className="bg-gray-100 flex" id="body">
         <Sidebar />
         <div className="flex-1 ml-20 lg:ml-56">
           <Header />

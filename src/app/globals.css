@@ -154,7 +154,7 @@
 
 .classe-surgir {
     animation-name: surgir;
-    animation-duration: 0.15s;
+    animation-duration: 0.2s;
     animation-iteration-count: initial;
 }
 
@@ -177,4 +177,8 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.no-select {
+  user-select: none;
 }

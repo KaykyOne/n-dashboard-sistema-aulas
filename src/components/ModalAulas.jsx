@@ -116,7 +116,7 @@ export default function ModalAulas({ onClose, idAluno }) {
 
   return (
     <div className="fixed flex inset-0 h-full w-full bg-black/50 justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-5xl relative">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-5xl relative classe-surgir">
         {(loading || loaginAulas) && <Loading />}
         <button
           onClick={onClose}

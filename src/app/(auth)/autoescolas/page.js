@@ -37,7 +37,7 @@ export default function page() {
   const renderAutoescola = (autoescola) => {
     return (
       <div key={autoescola.autoescola_id}
-        className='flex flex-col bg-white shadow-2xl p-4 rounded-md text-gray-500 justify-start items-start anim-hover'>
+        className='flex flex-col bg-white shadow-2xl p-4 rounded-md text-gray-500 justify-start items-start anim-hover card'>
         <h1 className='font-bold text-start w-full'>Nome:</h1>
         <h2 className='text-start w-full'>{autoescola.nome}</h2>
         <h1 className='font-bold text-start w-full'>Endereço:</h1>

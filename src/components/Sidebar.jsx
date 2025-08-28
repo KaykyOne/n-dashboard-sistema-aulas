@@ -19,7 +19,7 @@ export default function Sidebar() {
   const classTextResponsive = "hidden lg:inline";
 
   return (
-    <aside className=" bg-white h-screen p-4 shadow-md fixed left-0 top-0 overflow-hidden lg:w-[230px]">
+    <aside className=" bg-white h-full p-4 shadow-md fixed left-0 top-0 overflow-hidden lg:w-[230px]">
       <div className="flex justify-start items-center py-4 gap-2">
         <img className="rounded-sm w-[40px] h-[40px]" src={`/NovusCFC.png`} alt="Logo da Autoescola" />
         <h1 className={`font-medium ${classTextResponsive}`}>NovusCFC</h1>

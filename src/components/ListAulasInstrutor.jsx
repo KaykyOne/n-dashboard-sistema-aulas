@@ -231,7 +231,7 @@ export default function ListAulasInstrutor({
           }
           <div className={`p-6 row-span-2 bg-white rounded-sm anim-hover card`}>
             {/* Barra de pesquisa */}
-            <div className='grid grid-cols-5 align-middle gap-4 mb-3'>
+            <div className='grid grid-cols-1 lg:grid-cols-5 align-middle gap-4 mb-3'>
 
               <Combobox
                 options={instrutoresOptions}
@@ -254,26 +254,26 @@ export default function ListAulasInstrutor({
             </div>
 
             <div className='flex flex-col'>
-              <div className='grid grid-cols-5 p-3'>
+              <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 p-3'>
                 <h1 className='text-2xl font-bold'>Hora</h1>
                 <h1 className='text-2xl font-bold'>Aluno</h1>
-                <h1 className='text-2xl font-bold'>Veículo</h1>
-                <h1 className='text-2xl font-bold'>Tipo</h1>
-                <h1 className='text-2xl font-bold'>Ação</h1>
+                <h1 className='text-2xl font-bold hidden md:block'>Veículo</h1>
+                <h1 className='text-2xl font-bold hidden md:block'>Tipo</h1>
+                <h1 className='text-2xl font-bold hidden sm:block'>Ação</h1>
               </div>
               <div className='flex flex-col gap-1'>
                 {aulasFiltradas.map((aula, index) => (
                   aula.nome != null ?
-                    <div key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id} className='grid grid-cols-5 text-start p-3 border border-gray-200 rounded-md' draggable
+                    <div key={aula.instrutor_id + aula.data + aula.hora + aula.aluno_id} className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 text-start p-3 border border-gray-200 rounded-md' draggable
                       onDrop={() => confirmDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
                       <p>{aula.hora}</p>
                       <p>{aula.nome + " " + aula.sobrenome}</p>
-                      
-                      <p>{aula.placa}</p>
-                      <p className='font-black'>{aula.tipo}</p>
+
+                      <p className='hidden md:block'>{aula.placa}</p>
+                      <p className='font-black hidden md:block'>{aula.tipo}</p>
                       {aula.autoescola_id == autoescola_id ?
                         <Button
-                          className={"w-full"}
+                          className={"w-full hidden sm:block"}
                           variant={"destructive"}
                           onClick={() => confirmDeleteAula(aula.aula_id)}>
                           Excluir
@@ -281,16 +281,16 @@ export default function ListAulasInstrutor({
                             delete
                           </span>
                         </Button> : 
-                        <div>Outra autoescola: {aula.autoescola_id}</div>}
+                        <div className='hidden sm:block'>Outra autoescola: {aula.autoescola_id}</div>}
 
                     </div>
                     :
-                    <div key={`vaga-${aula.hora} `} className='grid grid-cols-4 text-start bg-red-700 text-white p-3 rounded-md' draggable
+                    <div key={`vaga-${aula.hora} ${index}`} className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 text-start bg-red-700 text-white p-3 rounded-md' draggable
                       onDrop={() => confirmDrop(aula, index)} onDragStart={() => dragIniti(aula, index)} onDragOver={(e) => e.preventDefault()}>
                       <p>{aula.hora}</p>
                       <p>Vaga</p>
-                      <p>Vaga</p>
-                      <div className='flex gap-1 items-center'>
+                      <p className='hidden md:block'>Vaga</p>
+                      <div className='gap-1 items-center hidden md:flex'>
                         <input onClick={(a) => atretrelarHorario(a.target.checked, aula.hora)} id={`checkBloqueio${aula.hora}`} type='checkbox' />
                         <label htmlFor={`checkBloqueio${aula.hora}`}>Bloquear horário</label>
                       </div>
