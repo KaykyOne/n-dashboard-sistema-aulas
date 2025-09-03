@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
 
         <ToastContainer
           theme="colored"
-          closeOnClick={false}
+          closeOnClick={true}
           limit={4}
           newestOnTop={true}
           closeButton={true}

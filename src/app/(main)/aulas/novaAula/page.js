@@ -176,7 +176,7 @@ export default function Page() {
   }));
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col card'>
       {loading || loadingInstrutor || veiculosLoading || loadingAulas && <Loading />}
       <h1 className='text-4xl font-bold ml-4'>Marcar Aulas</h1>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
@@ -187,7 +187,7 @@ export default function Page() {
             {aluno.nome ? <h1 className="bg-white capitalize text-black font-bold text-2xl">{aluno.nome + " " + aluno.sobrenome}</h1> : <h1 className='bg-red-900 text-white text-2xl capitalize font-bold p-1 rounded-md flex items-center gap-1'><span className="material-icons">
               highlight_off
             </span> Não Selecionado</h1>}
-          </div>
+          </div>  
 
           <div>
             <label className="font-semibold">Tipo da aula:</label>

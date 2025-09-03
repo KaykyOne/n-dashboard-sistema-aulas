@@ -37,15 +37,25 @@ export default function EnvioMensagensPage() {
 
   const selectionarTodos = (tipo) => {
     if (tipo === 'precadastros') {
-      const precadastros = alunos.filter(item => item.tipo_usuario == 'precadastro');
+      const precadastros = alunos.filter(item => item.tipo_usuario === 'precadastro');
       const filtrados = precadastros.filter(item => item.atividade === true);
       setUsuarios(filtrados);
+
     } else if (tipo === 'categorias') {
-      const categorias = alunos.filter(item => (item.categoria_pretendida.toLowerCase() == 'd' || item.categoria_pretendida.toLowerCase() == 'e'));
+      const categorias = alunos.filter(item =>
+        item.categoria_pretendida && item.categoria_pretendida.trim() !== "" &&
+        (item.categoria_pretendida.toLowerCase() === 'd' || item.categoria_pretendida.toLowerCase() === 'e')
+      );
       const filtrados = categorias.filter(item => item.atividade === true);
       setUsuarios(filtrados);
+
     } else if (tipo === 'primeiras') {
-      const primeiras = alunos.filter(item => (item.categoria_pretendida.toLowerCase() == 'a' || item.categoria_pretendida.toLowerCase() == 'b' | item.categoria_pretendida.toLowerCase() == 'ab'));
+      const primeiras = alunos.filter(item =>
+        item.categoria_pretendida && item.categoria_pretendida.trim() !== "" &&
+        (item.categoria_pretendida.toLowerCase() === 'a' ||
+          item.categoria_pretendida.toLowerCase() === 'b' ||
+          item.categoria_pretendida.toLowerCase() === 'ab')
+      );
       const filtrados = primeiras.filter(item => item.atividade === true);
       setUsuarios(filtrados);
     }

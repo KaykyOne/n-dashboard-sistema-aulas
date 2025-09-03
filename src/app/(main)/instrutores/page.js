@@ -357,14 +357,17 @@ export default function InstrutoresPage() {
                 <TableCell>{instrutor.hora_inicio_almoco?.slice(0, 5) || "--:--"}</TableCell>
                 <TableCell>{instrutor.hora_fim_almoco?.slice(0, 5) || "--:--"}</TableCell>
                 <TableCell>{instrutor.atividade_instrutor ? "Ativo" : "Inativo"}</TableCell>
-                <TableCell className="flex gap-2">
-                  <Button onClick={() => startEdit(instrutor)}>Editar</Button>
-                  <Button
-                    variant={instrutor.atividade_instrutor ? "destructive" : "green"}
-                    onClick={() => toggleAtividade(instrutor)}
-                  >
-                    {instrutor.atividade_instrutor ? "Desativar" : "Ativar"}
-                  </Button>
+                <TableCell>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button onClick={() => startEdit(instrutor)} className={'w-full'}>Editar</Button>
+                    <Button
+                      variant={instrutor.atividade_instrutor ? "destructive" : "green"}
+                      onClick={() => toggleAtividade(instrutor)}
+                      className={'w-full'}
+                    >
+                      {instrutor.atividade_instrutor ? "Desativar" : "Ativar"}
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

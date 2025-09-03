@@ -158,18 +158,19 @@ export default function VeiculoPage() {
                   <TableCell>
                     <Button
                       variant={veiculo.disponibilidade ? "green" : "destructive"}
+                      className={'w-full'}
                       onClick={() => atualizarDisponibilidade(veiculo.veiculo_id, !veiculo.disponibilidade)}
                     >
                       {veiculo.disponibilidade ? "Ativo" : "Inativo"}
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Button variant="alert" onClick={() => carregarParaEdicao(veiculo)}>
+                    <Button variant="alert" onClick={() => carregarParaEdicao(veiculo)} className={'w-full'}>
                       Editar
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Button variant="default" onClick={() => abrirModalRelacionamentos(veiculo)}>
+                    <Button className={'w-full'} variant="default" onClick={() => abrirModalRelacionamentos(veiculo)}>
                       Instrutor Responsável
                       <span className="material-icons">
                         key

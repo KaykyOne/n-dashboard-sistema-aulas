@@ -59,6 +59,9 @@ export default function ModalAlunos({
     excluirAlunoInstrutor,
     inserirRelacao,
     setTipoUsuario,
+    editarAluno,
+    buscarAlunos,
+    setModalAlunos,
     instrutores
 }) {
     //Transacao
@@ -133,6 +136,7 @@ export default function ModalAlunos({
 
             await inserirAluno(aluno, transacao);
 
+            setModalAlunos(false);
             setNome("");
             setSobrenome("");
             setCpf("");
@@ -164,6 +168,7 @@ export default function ModalAlunos({
 
             await editarAluno(aluno);
 
+            setModalAlunos(false);
             setNome("");
             setSobrenome("");
             setCpf("");

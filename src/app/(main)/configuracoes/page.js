@@ -45,6 +45,7 @@ export default function ConfiguracoesPage() {
   const salvar = async (id) => {
     await updateConfig(id, valores[id])
     setEditandoId(null)
+    await fetchConfigs();
   };
 
   const descartar = () => {
@@ -98,7 +99,7 @@ export default function ConfiguracoesPage() {
                         <input    
                           type='checkbox'
                           className="border border-gray-300 rounded px-3 py-1 w-2/3"
-                          checked={item.valor == 'TRUE' || valores[item.id_configuracao] == 'TRUE'}
+                          checked={valores[item.id_configuracao] == 'TRUE'}
                           onChange={(e) =>
                             handleChange(item.id_configuracao, e.target.checked ? 'TRUE' : 'FALSE')
                           }

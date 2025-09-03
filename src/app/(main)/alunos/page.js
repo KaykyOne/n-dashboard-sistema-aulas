@@ -279,7 +279,7 @@ export default function AlunosPage() {
       <div className={resFormat >= 0 ? cssBom : cssRuim}>
         <div className="flex items-center text-sm justify-between">
           {text}
-          <span class="material-icons">
+          <span className="material-icons">
             {resFormat >= 0 ? 'check_box' : 'cancel'}
           </span>
         </div>
@@ -424,7 +424,7 @@ export default function AlunosPage() {
                         <p>{user.outra_cidade ? "Sim" : "Não"}</p>
                         <p className="text-green-700 font-semibold">{user.total_entrada || 0}</p>
                         <p className="text-red-700 font-semibold">{user.total_debito || 0}</p>
-                        <p>{calcularBalanca(user.total_entrada, user.total_debito)}</p>
+                        <div>{calcularBalanca(user.total_entrada, user.total_debito)}</div>
 
 
 
@@ -602,7 +602,10 @@ export default function AlunosPage() {
             instrturesResponsaveis={instrturesResponsaveis || []}
             inserirAluno={inserirAluno}
             excluirAlunoInstrutor={excluirAlunoInstrutor}
+            editarAluno={editarAluno}
+            buscarAlunos={buscarAlunos}
             inserirRelacao={inserirRelacao}
+            setModalAlunos={setModalAlunos}
           />
         </Modal>
       }
