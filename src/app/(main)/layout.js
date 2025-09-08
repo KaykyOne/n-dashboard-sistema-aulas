@@ -28,14 +28,8 @@ export default function RootLayout({ children }) {
   }, [pathname]); // dispara sempre que a rota mudar
 
   return (
-    <html lang="pt-BR">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/icon?family=Material+Icons"
-        />
-      </head>
-      <body className={`bg-background flex ${loading ? 'overflow-hidden' : 'overflow-y-auto'}`} id="body">
+    <div>
+      <div className={`bg-background flex ${loading ? 'overflow-hidden' : 'overflow-y-auto'}`} id="body">
         <div className={`flex-1 flex h-s min-h-screen`}>
           {siderbarVisivel && <Sidebar siderbarVisivel={siderbarVisivel} setSiderbarVisivel={setSiderbarVisivel} />}
           <div className="flex flex-col flex-1">
@@ -65,7 +59,7 @@ export default function RootLayout({ children }) {
           position="top-right"
           pauseOnHover={true} />
 
-      </body>
-    </html>
+      </div>
+    </div>
   );
 }
