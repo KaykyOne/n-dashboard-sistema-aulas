@@ -245,7 +245,7 @@ export default function FinanceiroPage() {
 
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4 max-w-screen'>
       {loading && <Loading />}
       {modalVisible &&
         <Modal onClose={() => setModalVisible(false)}>
@@ -379,7 +379,7 @@ export default function FinanceiroPage() {
       </div>
 
       <div className='bg-white p-4 rounded-md anim-hover card'>
-        <div className='grid grid-cols-8 gap-4 p-4'>
+        <div className='grid grid-cols-1 xl:grid-cols-8 gap-4 p-4'>
           <Input placeholder={"Nome do Aluno"} className={'col-span-2'} value={buscaPorNome} onChange={(e) => setBuscaPorNome(e.target.value)} />
           <Input placeholder={"CPF do Aluno"} className={'col-span-2'} value={buscaPorCPF} onChange={(e) => setBuscaPorCPF(e.target.value)} />
           <DatePicker value={startDate} onChange={setStartDate} placeholder="Data Inicial" className={'col-span-1'} />

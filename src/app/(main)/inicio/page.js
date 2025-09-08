@@ -7,6 +7,7 @@ import {
 } from "date-fns";
 import { Combobox } from "@/components/ui/combobox";
 import useAlunos from "@/hooks/useAlunos";
+import TaskManager from "./TaskManager";
 
 const meses = [
   'Janeiro',
@@ -85,7 +86,7 @@ export default function page() {
   }, [mesSelecionado, alunos]);
 
   return (
-    <div className="flex flex-col w-full gap-4 text-[#6F0A59]">
+    <div className="flex flex-col w-full gap-4 text-[#6F0A59] h-screen">
       <Combobox
         placeholder="Mês..."
         options={opcoesMes}
@@ -176,7 +177,7 @@ export default function page() {
           </div>
         </div>
       </div>
-
+      <TaskManager/>
     </div>
   );
 }

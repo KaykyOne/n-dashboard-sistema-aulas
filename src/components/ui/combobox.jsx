@@ -40,7 +40,7 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between", className)}
+          className={cn("w-full justify-between bg-white text-gray-500 font-normal capitalize", className)}
         >
           {selectedLabel || placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -55,6 +55,7 @@ export function Combobox({
               {options.map((opt) => (
                 <CommandItem
                   key={opt.value}
+                  className={'capitalize'}
                   value={opt.value}
                   onSelect={(currentValue) => {
                     onChange(currentValue === value ? "" : currentValue)

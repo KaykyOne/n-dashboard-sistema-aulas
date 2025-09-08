@@ -47,13 +47,13 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: #f7f1f5;
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: ;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: #6F0A59;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -116,11 +116,11 @@
 
 /* global.css ou tailwind.css */
 .anim-hover {
-  @apply hover:translate-y-1 transition-all duration-300;
+  @apply hover:translate-y-1 transition-all duration-300 opacity-80 hover:opacity-100;
 }
 
 .card {
-  @apply bg-white dark:bg-neutral-800 p-6 border border-gray-200 dark:border-neutral-700 shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-1;
+  @apply bg-white dark:bg-neutral-800 p-6 border border-gray-200 dark:border-neutral-700 shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-1 rounded-xl text-gray-600;
 }
 
 
@@ -146,33 +146,58 @@
   /* pode setar mais se quiser, mas só essas já resolvem 90% dos casos */
 }
 
-.classe-aparecer {
-  animation-name: aparecer;
-  animation-duration: 1s;
-  animation-iteration-count: initial;
+/* Sidebar vinda da esquerda */
+.classe-aparecer-esquerdo {
+  animation: aparecer-esquerdo 0.2s forwards;
+}
+
+.classe-fechar-esquerdo {
+  animation: aparecer-esquerdo 0.2s reverse forwards;
+}
+
+@keyframes aparecer-esquerdo {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100vw;
+    opacity: 1;
+  }
+}
+
+/* Sidebar vinda da direita */
+.classe-aparecer-direito {
+  animation: aparecer-direito 0.2s forwards;
+}
+
+.classe-fechar-direito {
+  animation: aparecer-direito 0.2s reverse forwards;
+}
+
+@keyframes aparecer-direito {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 300px;
+    opacity: 1;
+  }
 }
 
 .classe-surgir {
-    animation-name: surgir;
-    animation-duration: 0.2s;
-    animation-iteration-count: initial;
-}
-
-@keyframes aparecer {
-  0% {
-    right: -300px;
-  }
-
-  100% {
-    right: -0px;
-  }
+  animation-name: surgir;
+  animation-duration: 0.5s;
+  animation-iteration-count: initial;
 }
 
 @keyframes surgir {
   0% {
-    transform: scale(0.9);
+    transform: scale(0);
     opacity: 0;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;

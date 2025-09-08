@@ -292,7 +292,7 @@ export default function AlunosPage() {
       {loading || loadingInstrutor && <Loading />}
       <div className="flex flex-col gap-4">
 
-        <div className="flex flex-wrap gap-2 w-full">
+        <div className="flex flex-col md:flex-row gap-2 w-full">
           <Button className={'flex-1'} onClick={() => { setModalAlunos(true); setTipoUsuario('aluno'); }}>
             Novo Aluno
             <span className="material-icons">
@@ -376,7 +376,7 @@ export default function AlunosPage() {
 
 
           {/* Tabela */}
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto max-h-full">
             <div className="flex flex-col">
               {/* Cabeçalho */}
               <div className={"grid grid-cols-13 font-bold p-3 border-b bg-gray-100"}>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import useGeneric from './useGeneric';
 import useFinanceiro from './useFinanceiro';
 import { toast } from "react-toastify";
+import useMensagens from './useMensagens';
 
 export default function useAlunos() {
     const {
@@ -13,6 +14,8 @@ export default function useAlunos() {
         GenericDelete,
         loading,
     } = useGeneric();
+
+    const { inserirMensagemAvulsa, loading: loadingMensagem } = useMensagens();
 
     const { criarTransacao } = useFinanceiro();
     const [instrturesResponsaveis, setInstrutoreResponsavel] = useState([]);
@@ -61,6 +64,18 @@ export default function useAlunos() {
         const id = sessionStorage.getItem("id_autoescola");
         aluno.autoescola_id = id;
 
+        const mensagemBoasVindas = `Olá, seja bem-vindo ao ecossistema da *NovusTech 🚀*
+        Você foi cadastrado na sua *autoescola!*
+
+        👉 Para gerenciar, agendar ou cancelar suas aulas, acesse:
+        novuscfc.app.br
+
+        🔑 Sua senha inicial é: 123456
+        (Sugerimos que altere assim que possível)
+
+        Qualquer dúvida, fale direto com a sua autoescola.
+        Bons estudos e boa sorte! 🎉`;
+
         try {
             if (!id) throw new Error("Autoescola desconhecida!");
 
@@ -69,6 +84,7 @@ export default function useAlunos() {
             if (res.ok) {
                 await criarTransacao(transacao);
                 toast.success("Aluno cadastrado com sucesso!");
+                await inserirMensagemAvulsa(mensagemBoasVindas, aluno.telefone);
                 await buscarAlunos();
                 return resJSON;
             } else {
@@ -95,7 +111,7 @@ export default function useAlunos() {
         } catch (erro) {
             toast.error(`Erro ao editar aluno: ${erro.message || erro.toString()}`);
         }
-        finally{
+        finally {
             await buscarAlunos();
         }
     };

@@ -50,7 +50,11 @@ export default function InstrutoresPage() {
 
   useEffect(() => {
     async function atualizarRelatorio() {
-      if (instrutor && dataInicio && dataFim) {
+      if (instrutor && dataInicio && dataFim ) {
+        if(instrutor.length == 0 || typeof instrutor == null){
+          toast.error("Selecione um instrutor!");
+          return;
+        }
         try {
           const relatorio = await gerarRelatorio(instrutor, dataInicio, dataFim);
           setAulasFeitas(relatorio);
@@ -217,9 +221,9 @@ export default function InstrutoresPage() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 max-w-screen">
       {loading && <Loading />}
-      <div className="grid grid-cols-2 gap-5 bg-white p-4 anim-hover card">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 bg-white anim-hover card">
         <div className="flex col-span-1 flex-col gap-2 mb-6">
           <h2 className="font-bold text-xl">{idEditando ? "Editando" : "Cadastrando"} Instrutor</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -331,7 +335,7 @@ export default function InstrutoresPage() {
           </div>
         </div>
       </div>
-      <div className="bg-white p-2 anim-hover card">
+      <div className="bg-white p-2 anim-hover card max-w-screen">
         <Table>
           <TableHeader>
             <TableRow>

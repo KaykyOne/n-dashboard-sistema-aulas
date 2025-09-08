@@ -75,7 +75,7 @@ export default function Help({ setOpen, open }) {
   }
 
   return (
-    <div className='flex flex-col fixed bg-white h-screen w-[500px] p-6 right-0 z-50 shadow-xl gap-2 classe-aparecer'>
+    <div className={`flex flex-col fixed bg-white h-screen w-[500px] p-6 right-0 z-50 shadow-xl gap-2 classe-aparecer-direito`}>
       <Button className='cursor-pointer w-full' onClick={() => setOpen(!open)}>
         Fechar
         <span className="material-icons">
