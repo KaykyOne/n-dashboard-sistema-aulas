@@ -84,6 +84,7 @@ export default function VeiculoPage() {
     setVeiculoSelecionado(veiculo);
     buscarRelacionamentos(veiculo.veiculo_id);
     setModalAberto(true);
+    console.log(instrutores);
   }
 
   return (
