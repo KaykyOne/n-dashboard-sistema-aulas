@@ -326,7 +326,7 @@ export default function InstrutoresPage() {
                 value={dataFim}
                 onChange={(e) => setDataFim(e.target.value)}
               />
-              <div className="flex flex-col justify-center items-center p-4 border border-green-700 bg-green-200 text-green-900 rounded-xl flex-1">
+              <div className="flex flex-col justify-center items-center p-4 border bg-[#014017] text-white rounded-xl flex-1">
                 <h2>Aulas Feitas:</h2>
                 <h1 className="text-3xl font-bold">{aulasFeitas}</h1>
               </div>

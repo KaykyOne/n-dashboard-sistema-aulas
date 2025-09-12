@@ -80,11 +80,16 @@ export default function useAlunos() {
             if (!id) throw new Error("Autoescola desconhecida!");
 
             const { resJSON, res } = await GenericCreate("adm", "addaluno", aluno);
+            console.log(res);
+            console.log(resJSON);
 
             if (res.ok) {
                 await criarTransacao(transacao);
-                toast.success("Aluno cadastrado com sucesso!");
-                await inserirMensagemAvulsa(mensagemBoasVindas, aluno.telefone);
+                toast.success(`${aluno.tipo == "aluno" ? "Aluno" : "Pre-Cadastro"} cadastrado com sucesso!`);
+
+                if (aluno.tipo == "aluno") {
+                    await inserirMensagemAvulsa(mensagemBoasVindas, aluno.telefone);
+                }
                 await buscarAlunos();
                 return resJSON;
             } else {

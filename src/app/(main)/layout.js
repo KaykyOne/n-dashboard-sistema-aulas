@@ -8,7 +8,7 @@ import LoadingUIProvider from '../LoadingProvider';
 import { Button } from "@/components/ui/button";
 import Help from "@/components/Help";
 import { usePathname } from 'next/navigation';
-
+import Link from "next/link";
 
 export default function RootLayout({ children }) {
   const [helpVisivel, setHelpVisivel] = useState(false);
@@ -27,6 +27,26 @@ export default function RootLayout({ children }) {
     return () => clearTimeout(timeout);
   }, [pathname]); // dispara sempre que a rota mudar
 
+  const local = pathname.replace("/", "");
+  const localList = local.split("/");
+
+  function navgationInterno() {
+    return (
+      <div className="flex gap-2 ml-4 mb-4">
+        <Link href="/inicio" className="capitalize mb-5 text-gray-500 cursor-pointer transition-all duration-300 hover:opacity-80">Inicio</Link>
+        {
+          local.split("/").map((item, index) => (
+            <div className="flex" key={index}>
+              <p>&gt;</p>
+              <Link href={`${item.toLocaleLowerCase() == localList[localList.length -1].toLocaleLowerCase() ? pathname : `/${item}`}`} className=" ml-2 capitalize text-gray-500 cursor-pointer transition-all duration-300 hover:opacity-80">{item}</Link>
+            </div>
+          ))
+        }
+
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className={`bg-background flex ${loading ? 'overflow-hidden' : 'overflow-y-auto'}`} id="body">
@@ -36,6 +56,8 @@ export default function RootLayout({ children }) {
             <Header setSiderbarVisivel={setSiderbarVisivel} siderbarVisivel={siderbarVisivel} />
             <main className={`p-6`}>
               <LoadingUIProvider loading={loading}>
+                {local != "inicio" && <h1 className="text-3xl ml-4 capitalize font-semibold text-gray-700">{localList[localList.length -1]}</h1>}
+                {local != 'inicio' && navgationInterno()}
                 {children}
               </LoadingUIProvider>
             </main>

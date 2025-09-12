@@ -113,6 +113,7 @@ export default function ModalAlunos({
     };
 
     const handleCadastrar = async () => {
+        console.log(tipoUsuario);
         const test = testCampos();
         if (test && !editando) {
             const categoriaFormat = categoria.join('');

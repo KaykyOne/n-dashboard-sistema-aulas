@@ -38,7 +38,7 @@ export default function Header({ setSiderbarVisivel, siderbarVisivel }) {
   }, []);
 
   return (
-    <header className="bg-white flex items-center justify-between px-6 h-20 w-full shadow-sm">
+    <header className="bg-white flex items-center justify-between px-6 h-20 w-full shadow-sm rounded-bl-2xl">
       <button
         onClick={() => setSiderbarVisivel(!siderbarVisivel)}
         className="cursor-pointer transition duration-150 hover:scale-135 ml-5">
