@@ -10,7 +10,9 @@ export default function Sidebar({ siderbarVisivel, setSiderbarVisivel }) {
   const path = usePathname();
 
   useEffect(() => {
-    setSelectedpage(path);
+    const pathFormat = path.replace("/", "");
+    console.log(pathFormat);
+    setSelectedpage(pathFormat);
   }, [path]); // ✅ Executa só quando a URL muda
 
   const cssPadrao = "text-sm flex text-gray-200 items-center gap-2 p-4 hover:font-bold group";
@@ -39,46 +41,46 @@ export default function Sidebar({ siderbarVisivel, setSiderbarVisivel }) {
 
       <nav className="mt-4 space-y-1">
 
-        <Link href="/inicio" className={selectedPage === "/inicio" ? cssSelecionado : cssPadrao}>
+        <Link href="/inicio" className={selectedPage === "inicio" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>home</i>
           <p className={classTextResponsive}> Inicio </p>
         </Link>
 
         <h1 className="uppercase text-md font-semibold mt-4 mb-3">Pessoal</h1>
-        <Link href="/veiculos" className={selectedPage === "/veiculos" ? cssSelecionado : cssPadrao}>
+        <Link href="/veiculos" className={selectedPage === "veiculos" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>directions_car</i>
           <p className={classTextResponsive}>Veículos</p>
         </Link>
 
-        <Link href="/instrutores" className={selectedPage === "/instrutores" ? cssSelecionado : cssPadrao}>
+        <Link href="/instrutores" className={selectedPage === "instrutores" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>group</i>
           <p className={classTextResponsive}>Instrutores</p>
         </Link>
 
-        <Link href="/alunos" className={selectedPage === "/alunos" ? cssSelecionado : cssPadrao}>
+        <Link href="/alunos" className={selectedPage === "alunos" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>person</i>
           <p className={classTextResponsive}>Alunos</p>
         </Link>
 
         <h1 className="uppercase text-md font-semibold mt-4 mb-3">Serviços</h1>
-        <Link href="/financeiro" className={selectedPage === "/financeiro" ? cssSelecionado : cssPadrao}>
+        <Link href="/financeiro" className={selectedPage === "financeiro" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>payments</i>
           <p className={classTextResponsive}>Financeiro</p>
         </Link>
 
-        <Link href="/aulas" className={selectedPage === "/aulas" ? cssSelecionado : cssPadrao}>
+        <Link href="/aulas" className={selectedPage === "aulas" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>school</i>
           <p className={classTextResponsive}>Aulas</p>
         </Link>
 
-        <Link href="/transferencia" className={selectedPage === "/transferencia" ? cssSelecionado : cssPadrao}>
+        <Link href="/transferencia" className={selectedPage === "transferencia" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>cloud_sync</i>
           <p className={classTextResponsive}>Transferência</p>
         </Link>
 
         <h1 className="uppercase text-md font-semibold mt-4 mb-3">Ajustes</h1>
 
-        <Link href="/configuracoes" className={selectedPage === "/configuracoes" ? cssSelecionado : cssPadrao}>
+        <Link href="/configuracoes" className={selectedPage === "configuracoes" ? cssSelecionado : cssPadrao}>
           <i className={cssIconePadrao}>settings</i>
           <p className={classTextResponsive}>Configurações</p>
         </Link>

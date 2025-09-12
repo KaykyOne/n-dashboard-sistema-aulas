@@ -28,7 +28,9 @@ export default function RootLayout({ children }) {
     return () => clearTimeout(timeout);
   }, [pathname]); // dispara sempre que a rota mudar
 
-  const local = pathname.replace("/", "");
+  let local = pathname;
+  const primeiro = local[0];
+  if(primeiro == "/") local = local.slice(1)
   const localList = local.split("/");
 
   function navgationInterno() {
@@ -57,7 +59,7 @@ export default function RootLayout({ children }) {
             <Header setSiderbarVisivel={setSiderbarVisivel} siderbarVisivel={siderbarVisivel} />
             <main className={`p-6`}>
               <LoadingUIProvider loading={loading}>
-                {local != "inicio" && <h1 className="text-3xl ml-4 capitalize font-semibold text-gray-700">{pathname}</h1>}
+                {local != "inicio" && <h1 className="text-3xl ml-4 capitalize font-semibold text-gray-700">{local}</h1>}
                 {local != 'inicio' && navgationInterno()}
                 {children}
               </LoadingUIProvider>
