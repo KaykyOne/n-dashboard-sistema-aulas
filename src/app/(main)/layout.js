@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
 
   let local = pathname;
   const primeiro = local[0];
-  if(primeiro == "/") local = local.slice(1)
+  if (primeiro == "/") local = local.slice(1)
   const localList = local.split("/");
 
   function navgationInterno() {
@@ -38,15 +38,19 @@ export default function RootLayout({ children }) {
       <div className="flex gap-2 ml-4 mb-4">
         <Link href="/inicio" className="capitalize mb-5 text-gray-500 cursor-pointer transition-all duration-300 hover:opacity-80">Inicio</Link>
         {
-          local.split("/").map((item, index) => (
-            <div className="flex" key={index}>
-              <p>&gt;</p> 
-              <Link href={`${item.toLocaleLowerCase() == localList[localList.length -1].toLocaleLowerCase() ? pathname : `/${item}`}`} className=" ml-2 capitalize text-gray-500 cursor-pointer transition-all duration-300 hover:opacity-80">{item}</Link>
-            </div>
-          ))
+          local.split("/").map((item, index) => {
+            if(item != null || item != ""){
+              return(
+                <div className="flex" key={index}>
+                  <p>&gt;</p>
+                  <Link href={`${item.toLocaleLowerCase() == localList[localList.length - 1].toLocaleLowerCase() ? pathname : `/${item}`}`} className=" ml-2 capitalize text-gray-500 cursor-pointer transition-all duration-300 hover:opacity-80">{item}</Link>
+                </div>
+              )
+            }
+          })
         }
 
-      </div>
+      </div >
     )
   }
 
@@ -59,7 +63,7 @@ export default function RootLayout({ children }) {
             <Header setSiderbarVisivel={setSiderbarVisivel} siderbarVisivel={siderbarVisivel} />
             <main className={`p-6`}>
               <LoadingUIProvider loading={loading}>
-                {local != "inicio" && <h1 className="text-3xl ml-4 capitalize font-semibold text-gray-700">{local}</h1>}
+                {local != "inicio" && <h1 className="text-3xl ml-4 capitalize font-semibold text-gray-700">{local.replace(/\//g, "")}</h1>}
                 {local != 'inicio' && navgationInterno()}
                 {children}
               </LoadingUIProvider>

@@ -10,8 +10,8 @@ export default function Sidebar({ siderbarVisivel, setSiderbarVisivel }) {
   const path = usePathname();
 
   useEffect(() => {
-    const pathFormat = path.replace("/", "");
-    console.log(pathFormat);
+    const pathFormat = path.replace(/\//g, "");
+
     setSelectedpage(pathFormat);
   }, [path]); // ✅ Executa só quando a URL muda
 
