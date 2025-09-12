@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log(pathname);
     setLoading(true); // quando a rota começa a mudar
 
     const timeout = setTimeout(() => {
@@ -37,7 +38,7 @@ export default function RootLayout({ children }) {
         {
           local.split("/").map((item, index) => (
             <div className="flex" key={index}>
-              <p>&gt;</p>
+              <p>&gt;</p> 
               <Link href={`${item.toLocaleLowerCase() == localList[localList.length -1].toLocaleLowerCase() ? pathname : `/${item}`}`} className=" ml-2 capitalize text-gray-500 cursor-pointer transition-all duration-300 hover:opacity-80">{item}</Link>
             </div>
           ))
@@ -56,7 +57,7 @@ export default function RootLayout({ children }) {
             <Header setSiderbarVisivel={setSiderbarVisivel} siderbarVisivel={siderbarVisivel} />
             <main className={`p-6`}>
               <LoadingUIProvider loading={loading}>
-                {local != "inicio" && <h1 className="text-3xl ml-4 capitalize font-semibold text-gray-700">{localList[localList.length -1]}</h1>}
+                {local != "inicio" && <h1 className="text-3xl ml-4 capitalize font-semibold text-gray-700">{pathname}</h1>}
                 {local != 'inicio' && navgationInterno()}
                 {children}
               </LoadingUIProvider>
